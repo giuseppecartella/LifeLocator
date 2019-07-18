@@ -125,6 +125,5 @@ public class SplashActivity extends AppCompatActivity {
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
         }
-       // else if(!isServicesOK())
     }
 }
