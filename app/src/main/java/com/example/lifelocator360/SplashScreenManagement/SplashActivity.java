@@ -10,19 +10,15 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
 import com.example.lifelocator360.MapManagement.MapsActivity;
 import com.example.lifelocator360.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
-import static java.lang.Thread.sleep;
 
 
 /**
@@ -43,7 +39,6 @@ public class SplashActivity extends AppCompatActivity {
     //Servono per gestire i permessi
     final private int STORAGE_PERMISSION_CODE = 1;
     private String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
-    int concessi = -1;
 
 
     private boolean isConnectionAvailable() {
@@ -130,14 +125,14 @@ public class SplashActivity extends AppCompatActivity {
 
 
             if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
-                Toast.makeText(this, "Ho gia' i permessi.", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Ho gia' i permessi");
                 startActivity(intentMaps);
                 finish();
             }
             else {
-                Toast.makeText(this, "Provo ad ottenere i permessi.", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Provo ad ottenere i permesi");
                if( ActivityCompat.shouldShowRequestPermissionRationale(SplashActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                   Toast.makeText(this, "Chiedo i permessi.", Toast.LENGTH_SHORT).show();
+                   Log.d(TAG, "Chiedo i permesi");
                }
               ActivityCompat.requestPermissions(SplashActivity.this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
             }
@@ -176,7 +171,7 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 
-        Log.d(TAG, "!!!!!!!!! Il request code e' " + requestCode);
+        Log.d(TAG, "Il request code e' " + requestCode);
 
         final Intent intentMaps = new Intent(this, MapsActivity.class);
 
@@ -186,7 +181,7 @@ public class SplashActivity extends AppCompatActivity {
                 finish();
             }
             else {
-                Toast.makeText(this, "Permesso precedentemente negato.", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Permesso precednetemente negato");
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
