@@ -5,8 +5,10 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
+
 import com.example.lifelocator360.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -25,7 +27,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private FusedLocationProviderClient fusedLocationProviderClient;
     boolean storagePermissionGranted;
     boolean locationPermissionGranted;
-    final float DEF_ZOOM= 15f;
+    final float DEF_ZOOM = 15f;
 
     private void getDeviceLocation() {
         Log.d(TAG, "getDeviceLocation: getting the device current location");
@@ -40,10 +42,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         if (task.isSuccessful()) {
 
                             Location currentLocation = (Location) task.getResult();
-                            Log.d(TAG, "onComplete: found location!" + currentLocation.getLatitude() + "  " + currentLocation.getLongitude());
+                            Log.d(TAG, "onComplete: found location!" + "  " + currentLocation.getLatitude() + "  " + currentLocation.getLongitude());
+                            Log.d(TAG, String.valueOf((new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()))));
+
+                            LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+
+                            moveCamera(latLng, DEF_ZOOM);
+                            Log.d(TAG, "Camera Moved Succesfully");
 
 
-                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEF_ZOOM);
                             //mMap.addMarker(new MarkerOptions().position(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())).title("current position"));
                         } else {
                             Log.d(TAG, "onComplete: current location is null");
@@ -78,7 +85,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        if(locationPermissionGranted){
+
+        mMap = googleMap;
+
+        if (locationPermissionGranted) {
             getDeviceLocation();
         }
     }

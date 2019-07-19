@@ -126,6 +126,8 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
+
+
     /**
      * @param savedInstanceState
      * The method calls the MapsActivity if connection is available, else shows an alert dialog.
