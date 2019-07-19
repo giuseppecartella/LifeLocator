@@ -1,24 +1,36 @@
 package com.example.lifelocator360.SplashScreenManagement;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.example.lifelocator360.MapManagement.MapsActivity;
 import com.example.lifelocator360.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
+import static java.lang.Thread.sleep;
+
+
 /**
  * The class shows a SplashScreen during the app loading.
  */
 public class SplashActivity extends AppCompatActivity {
+
+
     /**
      * Variabile to check if connection is available or not
      */
@@ -27,6 +39,12 @@ public class SplashActivity extends AppCompatActivity {
     //Servono per controllare google play services
     private static final String TAG = "SplashActivity";
     private static final int ERROR_DIALOG_REQUEST = 9001;
+
+    //Servono per gestire i permessi
+    final private int STORAGE_PERMISSION_CODE = 1;
+    private String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
+    int concessi = -1;
+
 
     private boolean isConnectionAvailable() {
         return connectionAvailable;
@@ -48,7 +66,6 @@ public class SplashActivity extends AppCompatActivity {
         else
             return false;
     }
-
 
     //Funzione per controllare google play services
     public boolean isServicesOK() {
@@ -87,23 +104,48 @@ public class SplashActivity extends AppCompatActivity {
     }
 
 
+
+
+
+
+
+
     /**
-     * @param savedInstanceState
-     * The method calls the MapsActivity if connection is available,
-     * else shows an alert dialog.
-     *
+     * @param savedInstanceState The method calls the MapsActivity if connection is available,
+     *                           else shows an alert dialog.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         final Intent intentMaps = new Intent(this, MapsActivity.class);
         final Intent intentSplash = new Intent(this, SplashActivity.class);
 
-
         setConnectionAvailable(connectionAvailable);
         if (isConnectionAvailable() && isServicesOK()) {
-            startActivity(intentMaps);
-            finish();
+
+
+
+
+
+
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+                Toast.makeText(this, "Ho gia' i permessi.", Toast.LENGTH_SHORT).show();
+                startActivity(intentMaps);
+                finish();
+            }
+            else {
+                Toast.makeText(this, "Provo ad ottenere i permessi.", Toast.LENGTH_SHORT).show();
+               if( ActivityCompat.shouldShowRequestPermissionRationale(SplashActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                   Toast.makeText(this, "Chiedo i permessi.", Toast.LENGTH_SHORT).show();
+               }
+              ActivityCompat.requestPermissions(SplashActivity.this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+            }
+
+
+
+
+
 
         } else if (!isConnectionAvailable()) {
             AlertDialog.Builder builder;
@@ -117,13 +159,38 @@ public class SplashActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
                     startActivity(intentSplash);
-                    overridePendingTransition(0,0);
+                    overridePendingTransition(0, 0);
                     finish();
-                    overridePendingTransition(0,0);
+                    overridePendingTransition(0, 0);
                 }
             });
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
         }
+    }
+
+
+
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+
+        Log.d(TAG, "!!!!!!!!! Il request code e' " + requestCode);
+
+        final Intent intentMaps = new Intent(this, MapsActivity.class);
+
+        if(requestCode == STORAGE_PERMISSION_CODE) {
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startActivity(intentMaps);
+                finish();
+            }
+            else {
+                Toast.makeText(this, "Permesso precedentemente negato.", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+
     }
 }
