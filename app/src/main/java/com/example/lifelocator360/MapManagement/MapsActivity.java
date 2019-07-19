@@ -48,7 +48,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                             moveCamera(latLng, DEF_ZOOM);
                             Log.d(TAG, "Camera Moved Succesfully");
-
+///
 
                             mMap.addMarker(new MarkerOptions().position(latLng).title("current position"));
                         } else {
