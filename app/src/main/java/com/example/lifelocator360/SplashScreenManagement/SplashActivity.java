@@ -119,14 +119,16 @@ public class SplashActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(SplashActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION}, ALL_PERMISSION_CODE);
         } else {
             Log.d(TAG, "Permission already granted");
+            intentMaps.putExtra("storagePermissionGranted", true);
+            intentMaps.putExtra("locationPermissionGranted", true);
             startActivity(intentMaps);
             finish();
         }
     }
 
     /**
-     * @param savedInstanceState The method calls the MapsActivity if connection is available,
-     *                           else shows an alert dialog.
+     * @param savedInstanceState
+     * The method calls the MapsActivity if connection is available, else shows an alert dialog.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,20 +167,28 @@ public class SplashActivity extends AppCompatActivity {
 
         if (requestCode == ALL_PERMISSION_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                intentMaps.putExtra("storagePermissionGranted", true);
+                intentMaps.putExtra("locationPermissionGranted", true);
                 startActivity(intentMaps);
                 finish();
             } else if (grantResults[0] == PackageManager.PERMISSION_DENIED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Foto disabilitate", Toast.LENGTH_SHORT).show();
+                intentMaps.putExtra("storagePermissionGranted", false);
+                intentMaps.putExtra("locationPermissionGranted", true);
                 startActivity(intentMaps);
                 finish();
 
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_DENIED) {
                 Toast.makeText(this, "Posizione disabilitata", Toast.LENGTH_SHORT).show();
+                intentMaps.putExtra("storagePermissionGranted", true);
+                intentMaps.putExtra("locationPermissionGranted", false);
                 startActivity(intentMaps);
                 finish();
 
             } else if (grantResults[0] == PackageManager.PERMISSION_DENIED && grantResults[1] == PackageManager.PERMISSION_DENIED) {
                 Toast.makeText(this, "Posizione e foto disabilitata", Toast.LENGTH_SHORT).show();
+                intentMaps.putExtra("storagePermissionGranted", false);
+                intentMaps.putExtra("locationPermissionGranted", false);
                 startActivity(intentMaps);
                 finish();
             }
