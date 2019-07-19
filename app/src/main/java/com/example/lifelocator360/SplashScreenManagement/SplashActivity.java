@@ -10,16 +10,17 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
 import com.example.lifelocator360.MapManagement.MapsActivity;
 import com.example.lifelocator360.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-
-
 
 /**
  * The class shows a SplashScreen during the app loading.
@@ -38,8 +39,8 @@ public class SplashActivity extends AppCompatActivity {
 
     //Servono per gestire i permessi
     final private int STORAGE_PERMISSION_CODE = 1;
-    private String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
-
+    final private int LOCATION_PERMISSION_CODE = 2;
+    final private int ALL_PERMISSION_CODE = 3;
 
     private boolean isConnectionAvailable() {
         return connectionAvailable;
@@ -98,12 +99,38 @@ public class SplashActivity extends AppCompatActivity {
         return false;
     }
 
+    private boolean storagePermissionGranted() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+            return true;
+        else
+            return false;
+    }
 
+    private boolean locationPermissionGranted() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+            return true;
+        else
+            return false;
+    }
 
+    public void checkPermissions() {
+        final Intent intentMaps = new Intent(this, MapsActivity.class);
 
-
-
-
+        if (storagePermissionGranted() && locationPermissionGranted()) {
+            Log.d(TAG, "Permission already granted");
+            startActivity(intentMaps);
+            finish();
+        } else if (!storagePermissionGranted() && !locationPermissionGranted()) {
+            Log.d(TAG, "Requesting all permissions");
+            ActivityCompat.requestPermissions(SplashActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION}, ALL_PERMISSION_CODE);
+        } else if (!storagePermissionGranted() && locationPermissionGranted()) {
+            Log.d(TAG, "Requesting storage permissions");
+            ActivityCompat.requestPermissions(SplashActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+        } else if(storagePermissionGranted() && !locationPermissionGranted()){
+            Log.d(TAG, "Requesting location permissions");
+            ActivityCompat.requestPermissions(SplashActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
+        }
+    }
 
     /**
      * @param savedInstanceState The method calls the MapsActivity if connection is available,
@@ -112,36 +139,11 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        final Intent intentMaps = new Intent(this, MapsActivity.class);
         final Intent intentSplash = new Intent(this, SplashActivity.class);
 
         setConnectionAvailable(connectionAvailable);
         if (isConnectionAvailable() && isServicesOK()) {
-
-
-
-
-
-
-            if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
-                Log.d(TAG, "Ho gia' i permessi");
-                startActivity(intentMaps);
-                finish();
-            }
-            else {
-                Log.d(TAG, "Provo ad ottenere i permesi");
-               if( ActivityCompat.shouldShowRequestPermissionRationale(SplashActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                   Log.d(TAG, "Chiedo i permesi");
-               }
-              ActivityCompat.requestPermissions(SplashActivity.this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
-            }
-
-
-
-
-
-
+            checkPermissions();
         } else if (!isConnectionAvailable()) {
             AlertDialog.Builder builder;
             builder = new AlertDialog.Builder(this);
@@ -165,27 +167,51 @@ public class SplashActivity extends AppCompatActivity {
     }
 
 
-
-
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-
-        Log.d(TAG, "Il request code e' " + requestCode);
-
         final Intent intentMaps = new Intent(this, MapsActivity.class);
 
-        if(requestCode == STORAGE_PERMISSION_CODE) {
-            if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startActivity(intentMaps);
-                finish();
+        switch (requestCode) {
+            case ALL_PERMISSION_CODE: {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    startActivity(intentMaps);
+                    finish();
+                } else if (grantResults[0] == PackageManager.PERMISSION_DENIED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Foto disabilitate", Toast.LENGTH_SHORT);
+                    startActivity(intentMaps);
+                    finish();
+                } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_DENIED) {
+                    Toast.makeText(this, "Posizione disabilitata", Toast.LENGTH_SHORT);
+                    startActivity(intentMaps);
+                    finish();
+                }
             }
-            else {
-                Log.d(TAG, "Permesso precednetemente negato");
-            }
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
 
+            case STORAGE_PERMISSION_CODE: {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startActivity(intentMaps);
+                    finish();
+                } else {
+                    Toast.makeText(this, "Foto disabilitate", Toast.LENGTH_SHORT);
+                    startActivity(intentMaps);
+                    finish();
+                }
+            }
+
+            case LOCATION_PERMISSION_CODE: {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startActivity(intentMaps);
+                    finish();
+                } else {
+                    Toast.makeText(this, "Posizione disabilitata", Toast.LENGTH_SHORT);
+                    startActivity(intentMaps);
+                    finish();
+                }
+            }
+
+            default: {
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            }
+        }
     }
 }
