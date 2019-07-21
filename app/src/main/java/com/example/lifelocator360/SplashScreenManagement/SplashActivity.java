@@ -11,12 +11,10 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
 import com.example.lifelocator360.MapManagement.MapsActivity;
 import com.example.lifelocator360.R;
 import com.google.android.gms.common.ConnectionResult;
@@ -26,7 +24,6 @@ import com.google.android.gms.common.GoogleApiAvailability;
  * The class shows a SplashScreen during the app loading.
  */
 public class SplashActivity extends AppCompatActivity {
-
 
     /**
      * Variabile to check if connection is available or not
@@ -126,11 +123,8 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
-
-
     /**
-     * @param savedInstanceState
-     * The method calls the MapsActivity if connection is available, else shows an alert dialog.
+     * @param savedInstanceState The method calls the MapsActivity if connection is available, else shows an alert dialog.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
