@@ -11,10 +11,12 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
 import com.example.lifelocator360.MapManagement.MapsActivity;
 import com.example.lifelocator360.R;
 import com.google.android.gms.common.ConnectionResult;
@@ -121,39 +123,44 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
+    private void createAlertDialogNoConnection() {
+        final Intent intentSplash = new Intent(this, SplashActivity.class);
+
+        AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(this);
+        builder.setTitle("No internet Connection");
+        builder.setMessage("Please turn on internet connection to continue");
+        builder.setCancelable(false);
+
+        builder.setPositiveButton("TRY AGAIN", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                startActivity(intentSplash);
+                overridePendingTransition(0, 0);
+                finish();
+                overridePendingTransition(0, 0);
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+
     /**
      * @param savedInstanceState The method calls the MapsActivity if connection is available, else shows an alert dialog.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final Intent intentSplash = new Intent(this, SplashActivity.class);
-
         setConnectionAvailable(connectionAvailable);
+
         if (isConnectionAvailable() && isServicesOK()) {
             checkPermissions();
         } else if (!isConnectionAvailable()) {
-            AlertDialog.Builder builder;
-            builder = new AlertDialog.Builder(this);
-            builder.setTitle("No internet Connection");
-            builder.setMessage("Please turn on internet connection to continue");
-            builder.setCancelable(false);
-
-            builder.setPositiveButton("TRY AGAIN", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                    startActivity(intentSplash);
-                    overridePendingTransition(0, 0);
-                    finish();
-                    overridePendingTransition(0, 0);
-                }
-            });
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
+            createAlertDialogNoConnection();
         }
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
