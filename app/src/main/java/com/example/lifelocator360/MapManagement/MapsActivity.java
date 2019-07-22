@@ -24,6 +24,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -46,32 +47,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     private void getDeviceLocation() {
-        Log.d(TAG, "getDeviceLocation: getting the device current location");
+
         final LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
         try {
             if (locationPermissionGranted() && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                Task location = fusedLocationProviderClient.getLastLocation();
-                location.addOnCompleteListener(new OnCompleteListener() {
-                    @Override
-                    public void onComplete(@NonNull Task task) {
-                        if (task.isSuccessful()) {
-
-                            Location currentLocation = (Location) task.getResult();
-                            Log.d(TAG, "onComplete: found location!" + "  " + currentLocation.getLatitude() + "  " + currentLocation.getLongitude());
-
-                            LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-                            moveCamera(latLng, DEF_ZOOM);
-                            Log.d(TAG, "Camera Moved Succesfully");
-                            mMap.addMarker(new MarkerOptions().position(latLng).title("current position"));
-                        } else {
-                            Log.d(TAG, "onComplete: current location is null");
-                            Toast.makeText(MapsActivity.this, "unable to get current location", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                fusedLocationProviderClient.getLastLocation()
+                        .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(Location location) {
+                                if (location != null) {
+                                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                                    //removeCamera(latLng, DEF_ZOOM);
+                                    Log.d(TAG, "Camera Moved Succesfully");
+                                    mMap.addMarker(new MarkerOptions().position(latLng).title("current position"));
+                                }
+                            }
+                        });
             }
-        } catch (SecurityException e) {
+        }catch (SecurityException e) {
             Log.e(TAG, "getDeviceLocation: SecurityException: " + e.getMessage());
         }
 
@@ -115,8 +110,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.d(TAG, "PARTITO L'ON CREATE");
 
 
-        final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
+        final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         if (locationPermissionGranted() && !manager.isProviderEnabled(manager.GPS_PROVIDER)) {
             new GpsUtils(this).turnGPSOn(new GpsUtils.onGpsListener() {
@@ -126,7 +121,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             });
         }
-
 
         setContentView(R.layout.activity_maps);
 
@@ -147,11 +141,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void run() {
                if (locationPermissionGranted() && manager.isProviderEnabled(manager.GPS_PROVIDER))
-                   getDeviceLocation();
+                  getDeviceLocation();
             }
         };
 
         timerObj.scheduleAtFixedRate(timerTask, 0, 100);
 
+
+        getDeviceLocation();
+
     }
+
 }
