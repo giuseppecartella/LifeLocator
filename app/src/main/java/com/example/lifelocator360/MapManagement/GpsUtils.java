@@ -7,7 +7,9 @@ import android.content.IntentSender;
 import android.location.LocationManager;
 import android.util.Log;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.LocationRequest;
@@ -73,7 +75,7 @@ public class GpsUtils {
                                         // Show the dialog by calling startResolutionForResult(), and check the
                                         // result in onActivityResult().
                                         ResolvableApiException rae = (ResolvableApiException) e;
-                                        rae.startResolutionForResult((Activity)context,1);
+                                        rae.startResolutionForResult((Activity) context, 1);
                                     } catch (IntentSender.SendIntentException sie) {
                                         Log.i(TAG, "PendingIntent unable to execute request.");
                                     }
