@@ -31,13 +31,14 @@ import com.google.android.gms.tasks.Task;
 import static android.content.Context.LOCATION_SERVICE;
 
 public class MapsFragment extends Fragment implements OnMapReadyCallback {
-    public GoogleMap mMap;
+    public static GoogleMap mMap;
     private String TAG = "MapsActivity";
     private FusedLocationProviderClient fusedLocationProviderClient;
     private final float DEF_ZOOM = 15f;
     boolean GPSActive;
 
 
+    /*
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -59,7 +60,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                 mMap.setMyLocationEnabled(true);
             }
         }
-    }
+    }*/
 
     public boolean isGPSActive() {
         return GPSActive;

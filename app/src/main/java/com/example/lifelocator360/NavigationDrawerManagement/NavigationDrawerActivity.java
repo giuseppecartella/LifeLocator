@@ -25,7 +25,9 @@ import com.example.lifelocator360.FragmentManagement.PhotoFragment;
 import com.example.lifelocator360.FragmentManagement.SettingsFragment;
 import com.example.lifelocator360.MapManagement.MapsFragment;
 import com.example.lifelocator360.R;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.material.navigation.NavigationView;
+import com.example.lifelocator360.MapManagement.MapsFragment;
 
 public class NavigationDrawerActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawerLayout;
@@ -58,6 +60,28 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        MapsFragment mapsFragment = new MapsFragment();
+
+        Log.d("tag", "chiamato!!!!!!!!");
+        //setGPSActive(true); // flag maintain before get location
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    Activity#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for Activity#requestPermissions for more details.
+            return;
+        }
+
+        GoogleMap mMap = MapsFragment.mMap;
+
+        mapsFragment.mMap.setMyLocationEnabled(true);
+
     }
 
     @Override
