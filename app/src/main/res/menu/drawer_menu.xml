@@ -3,38 +3,39 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/group_1"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_photo"
             android:icon="@drawable/ic_photo"
-            android:title="Foto" />
-        <item
-            android:id="@+id/nav_contacts"
-            android:icon="@drawable/ic_contacts"
-            android:title="Foto" />
+            android:title="@string/menu_photo" />
         <item
             android:id="@+id/nav_calendar"
             android:icon="@drawable/ic_calendar"
-            android:title="Foto" />
+            android:title="@string/menu_calendar" />
+        <item
+            android:id="@+id/nav_contacts"
+            android:icon="@drawable/ic_contacts"
+            android:title="@string/menu_contacts" />
+        <item
+            android:id="@+id/nav_notes"
+            android:icon="@drawable/ic_notes"
+            android:title="@string/menu_notes" />
+        <item
+            android:id="@+id/nav_instagram"
+            android:icon="@drawable/ic_instagram"
+            android:title="@string/menu_instagram" />
+
     </group>
 
-    <item android:title="Social">
-        <menu>
-            <item
-                android:id="@+id/nav_instagram"
-                android:icon="@drawable/ic_instagram"
-                android:title="Foto" />
-        </menu>
-    </item>
+    <group>
+        android:id="@+id/group_2"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings"
+            android:title="@string/menu_settings" />
 
-    <item android:title="">
-        <menu>
-            <item
-                android:id="@+id/nav_settings"
-                android:icon="@drawable/ic_settings"
-                android:title="Foto" />
-        </menu>
-    </item>
-
-
+    </group>
 </menu>

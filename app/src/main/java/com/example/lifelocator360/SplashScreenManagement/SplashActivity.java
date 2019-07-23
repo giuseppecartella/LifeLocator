@@ -18,6 +18,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.lifelocator360.MapManagement.MapsActivity;
+import com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity;
 import com.example.lifelocator360.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -111,7 +112,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     public void checkPermissions() {
-        final Intent intentMaps = new Intent(SplashActivity.this, MapsActivity.class);
+        final Intent intentMaps = new Intent(SplashActivity.this, NavigationDrawerActivity.class);
 
         if (!storagePermissionGranted() || !locationPermissionGranted()) {
             Log.d(TAG, "Requesting permissions");
@@ -164,7 +165,7 @@ public class SplashActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        final Intent intentMaps = new Intent(this, MapsActivity.class);
+        final Intent intentMaps = new Intent(this, NavigationDrawerActivity.class);
 
         if (requestCode == ALL_PERMISSION_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {

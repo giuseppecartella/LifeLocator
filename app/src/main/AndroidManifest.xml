@@ -39,5 +39,6 @@
         </activity>
 
         <activity android:name=".MapManagement.MapsActivity"></activity>
+        <activity android:name=".NavigationDrawerManagement.NavigationDrawerActivity"></activity>
     </application>
 </manifest>

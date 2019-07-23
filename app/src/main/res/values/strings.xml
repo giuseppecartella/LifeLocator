@@ -9,14 +9,11 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
-    <string name="menu_tools">Tools</string>
-    <string name="menu_share">Share</string>
-    <string name="menu_send">Send</string>
-
-
-
+    <string name="menu_photo">Foto galleria</string>
+    <string name="menu_calendar">Eventi calendario</string>
+    <string name="menu_contacts">Contatti</string>
+    <string name="menu_notes">Le tue note</string>
+    <string name="menu_instagram">Foto Instagram</string>
+    <string name="menu_settings">Impostazioni</string>
 
 </resources>
