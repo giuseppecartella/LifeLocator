@@ -2,7 +2,6 @@ package com.example.lifelocator360.MapManagement;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -18,11 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentTransaction;
-
 import com.example.lifelocator360.R;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -41,6 +36,30 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     private FusedLocationProviderClient fusedLocationProviderClient;
     private final float DEF_ZOOM = 15f;
     boolean GPSActive;
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == 1) {
+                setGPSActive(true); // flag maintain before get location
+
+                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    Activity#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for Activity#requestPermissions for more details.
+                    return;
+                }
+                mMap.setMyLocationEnabled(true);
+            }
+        }
+    }
 
     public boolean isGPSActive() {
         return GPSActive;
@@ -97,32 +116,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "Sono nell'on activity result");
-
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == 1) {
-                setGPSActive(true); // flag maintain before get location
-
-                getDeviceLocation();
-                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                        ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    Activity#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for Activity#requestPermissions for more details.
-                    return;
-                }
-                mMap.setMyLocationEnabled(true);
-            }
-        }
-    }
-
-    @Override
     public void onMapReady(GoogleMap googleMap) {
         Log.d(TAG, "PARTITO L'ON MAP READY");
         mMap = googleMap;
@@ -167,10 +160,5 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-/*
-        GoogleApiClient client = new GoogleApiClient.Builder(getContext())
-                .addApi(LocationServices.API)
-                .build();*/
-
     }
 }

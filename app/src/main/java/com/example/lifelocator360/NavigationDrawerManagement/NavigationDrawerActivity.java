@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -24,15 +25,13 @@ import com.example.lifelocator360.FragmentManagement.PhotoFragment;
 import com.example.lifelocator360.FragmentManagement.SettingsFragment;
 import com.example.lifelocator360.MapManagement.MapsFragment;
 import com.example.lifelocator360.R;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.material.navigation.NavigationView;
 
 public class NavigationDrawerActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private String currentFragment = "maps";
-    GoogleApiClient client;
-    MapsFragment mapsFragment;
+    private int navigationDrawerSize;
 
     public int getNavigationDrawerSize() {
         return navigationDrawerSize;
@@ -41,8 +40,6 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
     public void setNavigationDrawerSize() {
         this.navigationDrawerSize = navigationView.getMenu().size();
     }
-
-    private int navigationDrawerSize;
 
     public void uncheckAllNavigationItems() {
         setNavigationDrawerSize();
@@ -56,6 +53,11 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
         currentFragment = "maps";
         uncheckAllNavigationItems();
         getSupportFragmentManager().popBackStack();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -84,12 +86,7 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation_drawer);
-/*
-        client = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addApi(LocationServices.API)
-                .build();
-*/
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -159,6 +156,7 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
                 if (!currentFragment.equals("maps")) {
                     getSupportFragmentManager().popBackStack();
                 }
+
                 navigationView.getMenu().getItem(5).setChecked(true);
 
                 getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new SettingsFragment()).addToBackStack("stack1").commit();
@@ -179,36 +177,6 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
                 returnToMap();
             else
                 super.onBackPressed();
-        }
-    }
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("ciao", "Sono nell'on activity result");
-        MapsFragment m1 = new MapsFragment();
-
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == 1) {
-                m1.setGPSActive(true); // flag maintain before get location
-
-                getSupportFragmentManager().beginTransaction().detach(new MapsFragment()).attach(new MapsFragment()).commit();
-
-                m1.getDeviceLocation();
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                        ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    Activity#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for Activity#requestPermissions for more details.
-                    return;
-                }
-                m1.mMap.setMyLocationEnabled(true);
-            }
         }
     }
 }
