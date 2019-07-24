@@ -16,8 +16,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.room.Room;
 
-import com.example.lifelocator360.MapManagement.MapsActivity;
+import com.example.lifelocator360.DataBaseManagement.AppDataBase;
 import com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity;
 import com.example.lifelocator360.R;
 import com.google.android.gms.common.ConnectionResult;
@@ -39,6 +40,10 @@ public class SplashActivity extends AppCompatActivity {
 
     //Servono per gestire i permessi
     final private int ALL_PERMISSION_CODE = 1;
+
+    //Variabili per la gestione del Data Base
+    public static AppDataBase appDataBase;
+    public static String DBName = "APP_DB";
 
     private boolean isConnectionAvailable() {
         return connectionAvailable;
@@ -111,16 +116,13 @@ public class SplashActivity extends AppCompatActivity {
             return false;
     }
 
-    public void checkPermissions() {
-        final Intent intentNavigationDrawer = new Intent(SplashActivity.this, NavigationDrawerActivity.class);
-
+    public void checkPermissionsSetUpDatabaseAndLauchMainActivity() {
         if (!storagePermissionGranted() || !locationPermissionGranted()) {
             Log.d(TAG, "Requesting permissions");
             ActivityCompat.requestPermissions(SplashActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION}, ALL_PERMISSION_CODE);
         } else {
             Log.d(TAG, "Permission already granted");
-            startActivity(intentNavigationDrawer);
-            finish();
+            setUpDatabaseAndLaunchMainActivity();
         }
     }
 
@@ -129,11 +131,11 @@ public class SplashActivity extends AppCompatActivity {
 
         AlertDialog.Builder builder;
         builder = new AlertDialog.Builder(this);
-        builder.setTitle("No internet Connection");
-        builder.setMessage("Please turn on internet connection to continue");
+        builder.setTitle("Rete non disponibile");
+        builder.setMessage("Verifica la tua connessione Internet e riprova");
         builder.setCancelable(false);
 
-        builder.setPositiveButton("TRY AGAIN", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -147,6 +149,41 @@ public class SplashActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
+    private void setUpDatabaseAndLaunchMainActivity() {
+        final Intent intentNavigationDrawer = new Intent(this, NavigationDrawerActivity.class);
+
+        //A questo punto posso creare il db (spostare in una funzione!)
+        appDataBase = Room.databaseBuilder(getApplicationContext(), AppDataBase.class, DBName).allowMainThreadQueries().build();
+
+        startActivity(intentNavigationDrawer);
+        finish();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+
+
+        if (requestCode == ALL_PERMISSION_CODE) {
+            /*
+            //Probabilmente questi controlli non servono e possono essere fatti successivamente
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                setUpDatabaseAndLaunchMainActivity();
+            } else if (grantResults[0] == PackageManager.PERMISSION_DENIED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                setUpDatabaseAndLaunchMainActivity();
+
+            } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_DENIED) {
+                setUpDatabaseAndLaunchMainActivity();
+
+            } else if (grantResults[0] == PackageManager.PERMISSION_DENIED && grantResults[1] == PackageManager.PERMISSION_DENIED) {
+                setUpDatabaseAndLaunchMainActivity();
+            }
+            */
+
+            //Avvio il caricamento del database, e successivamente avvio la Main Activity
+            setUpDatabaseAndLaunchMainActivity();
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 
     /**
      * @param savedInstanceState The method calls the MapsActivity if connection is available, else shows an alert dialog.
@@ -156,37 +193,12 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setConnectionAvailable(connectionAvailable);
 
+        //Il primo if controlla che ci siano la connessione e i google play services (NECESSARI), se questi ci sono,
+        // avvio il check delle permissions e il set up del database. Infine vado alla main activity
         if (isConnectionAvailable() && isServicesOK()) {
-            checkPermissions();
-        } else if (!isConnectionAvailable()) {
+            checkPermissionsSetUpDatabaseAndLauchMainActivity();
+        } else if (!isConnectionAvailable()) { //Controllo solo questo caso alternativo, perche !isServicesOK è controllato direttamente dalla funzione isServicesOK
             createAlertDialogNoConnection();
         }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        final Intent intentMaps = new Intent(this, NavigationDrawerActivity.class);
-
-        if (requestCode == ALL_PERMISSION_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                startActivity(intentMaps);
-                finish();
-            } else if (grantResults[0] == PackageManager.PERMISSION_DENIED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Foto disabilitate", Toast.LENGTH_SHORT).show();
-                startActivity(intentMaps);
-                finish();
-
-            } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_DENIED) {
-                Toast.makeText(this, "Posizione disabilitata", Toast.LENGTH_SHORT).show();
-                startActivity(intentMaps);
-                finish();
-
-            } else if (grantResults[0] == PackageManager.PERMISSION_DENIED && grantResults[1] == PackageManager.PERMISSION_DENIED) {
-                Toast.makeText(this, "Posizione e foto disabilitata", Toast.LENGTH_SHORT).show();
-                startActivity(intentMaps);
-                finish();
-            }
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }
