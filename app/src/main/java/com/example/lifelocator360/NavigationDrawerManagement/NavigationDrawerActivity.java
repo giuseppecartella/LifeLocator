@@ -1,9 +1,9 @@
 package com.example.lifelocator360.NavigationDrawerManagement;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -25,15 +25,25 @@ import com.example.lifelocator360.FragmentManagement.PhotoFragment;
 import com.example.lifelocator360.FragmentManagement.SettingsFragment;
 import com.example.lifelocator360.MapManagement.MapsFragment;
 import com.example.lifelocator360.R;
-import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
-import com.example.lifelocator360.MapManagement.MapsFragment;
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 public class NavigationDrawerActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private String currentFragment = "maps";
     private int navigationDrawerSize;
+    private static float DEF_ZOOM = 15.0f;
+    private Timer timer;
+    private TimerTask timerTask;
+    private FusedLocationProviderClient fusedLocationProviderClient;
 
     public int getNavigationDrawerSize() {
         return navigationDrawerSize;
@@ -60,28 +70,15 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         MapsFragment mapsFragment = new MapsFragment();
-
-        Log.d("tag", "chiamato!!!!!!!!");
-        //setGPSActive(true); // flag maintain before get location
+        mapsFragment.setGPSActive(true); // flag maintain before get location
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    Activity#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for Activity#requestPermissions for more details.
             return;
         }
 
-        GoogleMap mMap = MapsFragment.mMap;
-
-        mapsFragment.mMap.setMyLocationEnabled(true);
-
+        MapsFragment.mMap.setMyLocationEnabled(true);
     }
 
     @Override
@@ -100,14 +97,55 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
                 }
                 return true;
             }
-
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+    public void getDeviceLocationScheduled() {
+        Log.d("Timer", "il timer sta andando...");
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(NavigationDrawerActivity.this);
+
+        try {
+            Task location = fusedLocationProviderClient.getLastLocation();
+            location.addOnCompleteListener(new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    if (task.isSuccessful()) {
+                        Location currentLocation = (Location) task.getResult();
+                        if (currentLocation != null) {
+                            Log.d("timer", "location vale " + currentLocation);
+                            LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                            MapsFragment.moveCamera(latLng, DEF_ZOOM);
+
+                            timer.cancel();
+                            timer.purge();
+                        }
+
+                    } else {
+                        Log.d("timer", "current location is null!");
+                    }
+                }
+            });
+        } catch (SecurityException e) {
+            Log.e("timer", "Security Exception " + e.getMessage());
+        }
+    }
+
+    private void waitForAvailableLocation() {
+        timer = new Timer();
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                getDeviceLocationScheduled();
+            }
+        };
+        timer.scheduleAtFixedRate(timerTask, 20, 20);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation_drawer);
 
@@ -126,6 +164,8 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new MapsFragment()).commit();
         }
+
+        waitForAvailableLocation();
     }
 
     @Override

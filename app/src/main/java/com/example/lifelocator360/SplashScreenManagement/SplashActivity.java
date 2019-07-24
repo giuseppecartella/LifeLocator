@@ -112,14 +112,14 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     public void checkPermissions() {
-        final Intent intentMaps = new Intent(SplashActivity.this, NavigationDrawerActivity.class);
+        final Intent intentNavigationDrawer = new Intent(SplashActivity.this, NavigationDrawerActivity.class);
 
         if (!storagePermissionGranted() || !locationPermissionGranted()) {
             Log.d(TAG, "Requesting permissions");
             ActivityCompat.requestPermissions(SplashActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION}, ALL_PERMISSION_CODE);
         } else {
             Log.d(TAG, "Permission already granted");
-            startActivity(intentMaps);
+            startActivity(intentNavigationDrawer);
             finish();
         }
     }
