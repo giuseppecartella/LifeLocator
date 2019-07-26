@@ -49,6 +49,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         colors = getResources().getIntArray(R.array.materialColors);
         view = inflater.inflate(R.layout.fragment_contacts, container, false);
 
+
         editTextName = view.findViewById(R.id.edit_name);
         editTextSurname = view.findViewById(R.id.edit_surname);
         editTextPhone = view.findViewById(R.id.edit_phone);
@@ -91,12 +92,19 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
     }
 
     private void onSaveClicked() {
-        name = editTextName.getText().toString();
-        surname = editTextSurname.getText().toString();
-        phone = editTextPhone.getText().toString();
-        address = editTextAddress.getText().toString();
 
-        Log.d("prva", "name vale " + name);
+
+        Log.d("tag", "ARRIVATO QUA 0");
+        name = editTextName.getText().toString();
+        Log.d("tag", "ARRIVATO QUA 1");
+        surname = editTextSurname.getText().toString();
+        Log.d("tag", "ARRIVATO QUA 2");
+        phone = editTextPhone.getText().toString();
+        Log.d("tag", "ARRIVATO QUA 3");
+        address = editTextAddress.getText().toString();
+        Log.d("tag", "ARRIVATO QUA 4");
+
+        Log.d("prova", "name vale " + name);
         if (name.isEmpty() && surname.isEmpty() && phone.isEmpty() && address.isEmpty()) {
             Toast.makeText(getActivity(), "Contatto non salvato!", Toast.LENGTH_SHORT).show();
         } else {
@@ -108,6 +116,8 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
             Toast.makeText(getActivity(), "Contatto salvato!", Toast.LENGTH_SHORT).show();
         }
     }
+
+
 
 
     public void addContact() {
@@ -131,13 +141,19 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
                     }
                 });
         builder.create().show();
+
+        editTextName = view.findViewById(R.id.edit_name);
+        editTextSurname = view.findViewById(R.id.edit_surname);
+        editTextPhone = view.findViewById(R.id.edit_phone);
+        editTextAddress = view.findViewById(R.id.edit_address);
+        floatingActionButton = view.findViewById(R.id.addContact);
     }
+
 
     /*
     public void addContactDialog() {
         ContactDialogFragment contactDialogFragment = new ContactDialogFragment();
         contactDialogFragment.show(getFragmentManager(), "addContactDialog");
     }*/
-
 
 }
