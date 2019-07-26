@@ -4,7 +4,9 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -243,4 +245,18 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
                 super.onBackPressed();
         }
     }
+
+    /*
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        final LocationManager manager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        outState.putBoolean("gps_state",manager.isProviderEnabled(manager.GPS_PROVIDER));
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        MapsFragment.GPSActive = savedInstanceState.getBoolean("gps_state");
+    }*/
 }

@@ -34,7 +34,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     private String TAG = "MapsActivity";
     private FusedLocationProviderClient fusedLocationProviderClient;
     private final float DEF_ZOOM = 15f;
-    boolean GPSActive;
+    public static boolean GPSActive;
 
     public boolean isGPSActive() {
         return GPSActive;

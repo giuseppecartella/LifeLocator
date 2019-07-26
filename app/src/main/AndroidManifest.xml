@@ -30,7 +30,8 @@
 
         <activity
             android:name=".SplashScreenManagement.SplashActivity"
-            android:theme="@style/SplashTheme">
+            android:theme="@style/SplashTheme"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -38,7 +39,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MapManagement.MapsActivity"></activity>
-        <activity android:name=".NavigationDrawerManagement.NavigationDrawerActivity"></activity>
+        <activity android:name=".MapManagement.MapsActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".NavigationDrawerManagement.NavigationDrawerActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 </manifest>

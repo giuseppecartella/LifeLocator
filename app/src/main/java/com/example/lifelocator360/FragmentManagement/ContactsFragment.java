@@ -5,14 +5,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity;
 import com.example.lifelocator360.R;
 
 public class ContactsFragment extends Fragment implements View.OnClickListener {
 
-    private Button buttonAddContact;
+    private Button buttonAddContact, buttonViewContact, buttonDeleteContact;
 
 
     public ContactsFragment() {
@@ -26,6 +29,12 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         buttonAddContact = view.findViewById(R.id.addContact);
         buttonAddContact.setOnClickListener(this);
 
+        buttonViewContact = view.findViewById(R.id.ShowContacts);
+        buttonViewContact.setOnClickListener(this);
+
+        buttonDeleteContact = view.findViewById(R.id.removeContact);
+        buttonDeleteContact.setOnClickListener(this);
+
         return view;
     }
 
@@ -33,13 +42,26 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.addContact: {
-                openDialog();
+                addContactDialog();
+                break;
+            }
+
+            case R.id.ShowContacts: {
+                getFragmentManager().beginTransaction().replace(R.id.fragment_container, new viewcontactfragment()).addToBackStack("stack").commit();
+                break;
+            }
+
+            case R.id.removeContact: {
+                getFragmentManager().beginTransaction().replace(R.id.fragment_container, new deletecontactfragment()).addToBackStack("stack2").commit();
+                break;
             }
         }
     }
 
-    public void openDialog() {
+    public void addContactDialog() {
         AddContactDialogFragment addContactDialogFragment = new AddContactDialogFragment();
         addContactDialogFragment.show(getFragmentManager(), "addContactDialog");
     }
+
+
 }

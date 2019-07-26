@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LifeLocator360</string>
+    <string name="app_name">Life Locator</string>
     <string name="google_maps_API_key">AIzaSyAiXFSLVOos-O6YZKUq3b_Qih6qeHwUb70</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -15,5 +15,8 @@
     <string name="menu_notes">Le tue note</string>
     <string name="menu_instagram">Foto Instagram</string>
     <string name="menu_settings">Impostazioni</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

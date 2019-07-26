@@ -23,6 +23,10 @@ public class Contact {
     @ColumnInfo(name = "contact_adress")
     private String address;
 
+    public Contact(){
+
+    }
+
     public Contact(String name, String surname, String phone, String address) {
         this.name = name;
         this.surname = surname;
