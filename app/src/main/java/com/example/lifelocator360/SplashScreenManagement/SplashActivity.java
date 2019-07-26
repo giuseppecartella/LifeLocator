@@ -10,14 +10,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.room.Room;
-
 import com.example.lifelocator360.DataBaseManagement.AppDataBase;
 import com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity;
 import com.example.lifelocator360.R;
@@ -191,8 +188,8 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setConnectionAvailable(connectionAvailable);
 
+        setConnectionAvailable(connectionAvailable);
         //Il primo if controlla che ci siano la connessione e i google play services (NECESSARI), se questi ci sono,
         // avvio il check delle permissions e il set up del database. Infine vado alla main activity
         if (isConnectionAvailable() && isServicesOK()) {
@@ -201,4 +198,5 @@ public class SplashActivity extends AppCompatActivity {
             createAlertDialogNoConnection();
         }
     }
+
 }

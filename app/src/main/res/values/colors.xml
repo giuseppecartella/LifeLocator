@@ -6,5 +6,6 @@
     <color name="colorCenter">#009688</color>
     <color name="colorEnd">#00695C</color>
     <color name="colorStart">#4DB6AC</color>
+    <color name="ic_launcher_background">#FFFFFF</color>
 
 </resources>
