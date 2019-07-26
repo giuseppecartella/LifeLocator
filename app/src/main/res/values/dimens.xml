@@ -14,6 +14,6 @@
     <dimen name="contact_photo_padding">2dp</dimen>
     <dimen name="card_view_text_size_name">20dp</dimen>
     <dimen name="card_view_text_size_surname">20dp</dimen>
-    <dimen name="margin_from_contact_photo">15dp</dimen>
-    <dimen name="margin_from_contact_name">8dp</dimen>
+    <dimen name="margin_from_contact_initials">15dp</dimen>
+
 </resources>

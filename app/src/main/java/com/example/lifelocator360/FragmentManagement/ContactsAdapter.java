@@ -11,7 +11,6 @@ import com.example.lifelocator360.DataBaseManagement.Contact;
 import com.example.lifelocator360.R;
 import java.util.List;
 import java.util.Random;
-
 import static com.example.lifelocator360.FragmentManagement.ContactsFragment.colors;
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ContactsViewHolder> {
@@ -20,21 +19,16 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
 
 
     public static class ContactsViewHolder extends RecyclerView.ViewHolder {
-
         public ImageView imageView;
-        public TextView contactName;
-        public TextView contactSurname;
+        public TextView contactInformation;
         public TextView contactInitials;
 
 
         public ContactsViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.contactInitials);
-            contactName = itemView.findViewById(R.id.contactName);
-            contactSurname = itemView.findViewById(R.id.contactSurname);
+            contactInformation = itemView.findViewById(R.id.informations);
             contactInitials = itemView.findViewById(R.id.initials);
-
-
         }
     }
 
@@ -47,7 +41,6 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
     public ContactsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_card_layout, parent, false);
         ContactsViewHolder contactsViewHolder = new ContactsViewHolder(view);
-
         return contactsViewHolder;
     }
 
@@ -57,9 +50,26 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
 
         randomColor = colors[new Random().nextInt(colors.length)];
         holder.imageView.setBackgroundColor(randomColor);
-        holder.contactName.setText(currentContact.getName());
-        holder.contactSurname.setText(currentContact.getSurname());
-        holder.contactInitials.setText(currentContact.getName().charAt(0) + currentContact.getSurname().charAt(0));
+
+        if(!currentContact.getName().isEmpty() && !currentContact.getSurname().isEmpty())
+            holder.contactInformation.setText(currentContact.getName() + " " + currentContact.getSurname());
+        else if(currentContact.getName().isEmpty() && !currentContact.getSurname().isEmpty())
+            holder.contactInformation.setText(currentContact.getSurname());
+        else if(!currentContact.getName().isEmpty() && currentContact.getSurname().isEmpty())
+            holder.contactInformation.setText(currentContact.getName());
+        else if(currentContact.getName().isEmpty() && currentContact.getSurname().isEmpty() && !currentContact.getPhone().isEmpty())
+            holder.contactInformation.setText(currentContact.getPhone());
+        else
+            holder.contactInformation.setText(currentContact.getAddress());
+
+        if (!currentContact.getName().isEmpty() && !currentContact.getSurname().isEmpty())
+            holder.contactInitials.setText(currentContact.getName().substring(0, 1) + currentContact.getSurname().substring(0, 1));
+        else if (currentContact.getName().isEmpty() && !currentContact.getSurname().isEmpty())
+            holder.contactInitials.setText(currentContact.getSurname().substring(0, 1));
+        else if (!currentContact.getName().isEmpty() && currentContact.getSurname().isEmpty())
+            holder.contactInitials.setText(currentContact.getName().substring(0, 1));
+        else if (currentContact.getName().isEmpty() && currentContact.getSurname().isEmpty())
+            holder.contactInitials.setText("");
 
     }
 

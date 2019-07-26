@@ -18,8 +18,9 @@ import com.example.lifelocator360.DataBaseManagement.Contact;
 import com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity;
 import com.example.lifelocator360.R;
 import com.example.lifelocator360.SplashScreenManagement.SplashActivity;
+import com.example.lifelocator360.FragmentManagement.ContactsFragment;
 
-public class AddContactDialogFragment extends AppCompatDialogFragment {
+public class ContactDialogFragment extends AppCompatDialogFragment {
 
     private EditText editTextName;
     private EditText editTextSurname;
@@ -38,9 +39,14 @@ public class AddContactDialogFragment extends AppCompatDialogFragment {
         phone = editTextPhone.getText().toString();
         address = editTextAddress.getText().toString();
 
-        Contact contact = new Contact(name, surname, phone, address);
-        SplashActivity.appDataBase.daoManager().addContact(contact);
-        Toast.makeText(getActivity(), "Contatto salvato!", Toast.LENGTH_SHORT).show();
+        Log.d("prva","name vale "+ name);
+        if (name.isEmpty() && surname.isEmpty() && phone.isEmpty() && address.isEmpty()) {
+            Toast.makeText(getActivity(), "Contatto non salvato!", Toast.LENGTH_SHORT).show();
+        } else {
+            Contact contact = new Contact(name, surname, phone, address);
+            SplashActivity.appDataBase.daoManager().addContact(contact);
+            Toast.makeText(getActivity(), "Contatto salvato!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @NonNull

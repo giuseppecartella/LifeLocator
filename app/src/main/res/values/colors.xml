@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
-    <color name="colorCenter">#009688</color>
-    <color name="colorEnd">#00695C</color>
-    <color name="colorStart">#4DB6AC</color>
-    <color name="ic_launcher_background">#FFFFFF</color>
-    <color name="colorBlack">#000000</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FFC107</color>
+    <color name="lightprimaryColor">#C5CAE9</color>
+    <color name="primarytext">#212121</color>
+    <color name="secondarytext">#757575</color>
+    <color name="dividerColor">#BDBDBD</color>
+    <color name="textAndIconsLightColor">#FFFFFF</color>
+
 
 
     <item name="materialRed" type="color">#c62828</item>

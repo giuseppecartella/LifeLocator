@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/tools"
     app:cardCornerRadius="@dimen/card_corner_radius">
 
     <RelativeLayout
@@ -31,32 +32,19 @@
             android:textSize="@dimen/card_view_text_size_name"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/contactName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Nome"
-            android:textStyle="bold"
-            android:textSize="@dimen/card_view_text_size_name"
-            android:layout_centerVertical="true"
-            android:layout_alignParentTop="true"
-            android:layout_toEndOf="@+id/contactInitials"
-            android:layout_toRightOf="@id/contactInitials"
-            android:layout_marginStart="@dimen/margin_from_contact_photo"
-            android:layout_marginLeft="@dimen/margin_from_contact_photo"/>
+
 
         <TextView
-            android:id="@+id/contactSurname"
+            android:id="@+id/informations"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cognome"
             android:textSize="@dimen/card_view_text_size_surname"
             android:textStyle="bold"
             android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/contactName"
-            android:layout_toRightOf="@id/contactName"
-            android:layout_marginStart="@dimen/margin_from_contact_name"
-            android:layout_marginLeft="@dimen/margin_from_contact_name"/>
+            android:layout_toEndOf="@+id/contactInitials"
+            android:layout_toRightOf="@id/contactInitials"
+            android:layout_marginStart="@dimen/margin_from_contact_initials"
+            android:layout_marginLeft="@dimen/margin_from_contact_initials"/>
 
     </RelativeLayout>
 

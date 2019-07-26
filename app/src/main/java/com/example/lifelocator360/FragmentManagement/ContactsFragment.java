@@ -1,11 +1,14 @@
 package com.example.lifelocator360.FragmentManagement;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.EditText;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -14,15 +17,26 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.lifelocator360.DataBaseManagement.Contact;
 import com.example.lifelocator360.R;
 import com.example.lifelocator360.SplashScreenManagement.SplashActivity;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.List;
 
 public class ContactsFragment extends Fragment implements View.OnClickListener {
-    List<Contact> contacts;
+    private List<Contact> contacts;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter recyclerAdapter;
     private RecyclerView.LayoutManager layoutManager;
-    public static int[] colors;
-    View view;
+    private static int[] colors;
+    private FloatingActionButton floatingActionButton;
+    private View view;
+    private EditText editTextName;
+    private EditText editTextSurname;
+    private EditText editTextPhone;
+    private EditText editTextAddress;
+    private String name;
+    private String surname;
+    private String phone;
+    private String address;
 
 
     public ContactsFragment() {
@@ -35,14 +49,26 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         colors = getResources().getIntArray(R.array.materialColors);
         view = inflater.inflate(R.layout.fragment_contacts, container, false);
 
-        showContacts();
+        editTextName = view.findViewById(R.id.edit_name);
+        editTextSurname = view.findViewById(R.id.edit_surname);
+        editTextPhone = view.findViewById(R.id.edit_phone);
+        editTextAddress = view.findViewById(R.id.edit_address);
+        floatingActionButton = view.findViewById(R.id.addContact);
 
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addContact();
+            }
+        });
+
+        showContacts();
         return view;
     }
 
 
-    public void showContacts(){
-        contacts =  SplashActivity.appDataBase.daoManager().getContacts();
+    public void showContacts() {
+        contacts = SplashActivity.appDataBase.daoManager().getContacts();
 
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
@@ -56,28 +82,62 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        /*switch (view.getId()) {
+        switch (view.getId()) {
             case R.id.addContact: {
-                addContactDialog();
+                addContact();
                 break;
             }
-
-            case R.id.ShowContacts: {
-                getFragmentManager().beginTransaction().replace(R.id.fragment_container, new viewcontactfragment()).addToBackStack("stack").commit();
-                break;
-            }
-
-            case R.id.removeContact: {
-                getFragmentManager().beginTransaction().replace(R.id.fragment_container, new deletecontactfragment()).addToBackStack("stack2").commit();
-                break;
-            }
-        }*/
+        }
     }
 
+    private void onSaveClicked() {
+        name = editTextName.getText().toString();
+        surname = editTextSurname.getText().toString();
+        phone = editTextPhone.getText().toString();
+        address = editTextAddress.getText().toString();
+
+        Log.d("prva", "name vale " + name);
+        if (name.isEmpty() && surname.isEmpty() && phone.isEmpty() && address.isEmpty()) {
+            Toast.makeText(getActivity(), "Contatto non salvato!", Toast.LENGTH_SHORT).show();
+        } else {
+            Contact contact = new Contact(name, surname, phone, address);
+            SplashActivity.appDataBase.daoManager().addContact(contact);
+            contacts.add(contact);
+            recyclerAdapter.notifyDataSetChanged();
+
+            Toast.makeText(getActivity(), "Contatto salvato!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    public void addContact() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.add_contact_dialog_layout, null);
+
+        builder.setView(view)
+                .setCancelable(false)
+                .setTitle("Nuovo contatto")
+                .setNegativeButton("ANNULLA", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton("SALVA", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onSaveClicked();
+                    }
+                });
+        builder.create().show();
+    }
+
+    /*
     public void addContactDialog() {
-        AddContactDialogFragment addContactDialogFragment = new AddContactDialogFragment();
-        addContactDialogFragment.show(getFragmentManager(), "addContactDialog");
-    }
+        ContactDialogFragment contactDialogFragment = new ContactDialogFragment();
+        contactDialogFragment.show(getFragmentManager(), "addContactDialog");
+    }*/
 
 
 }
