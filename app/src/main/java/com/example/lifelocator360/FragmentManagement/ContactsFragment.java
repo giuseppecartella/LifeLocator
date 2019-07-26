@@ -26,7 +26,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter recyclerAdapter;
     private RecyclerView.LayoutManager layoutManager;
-    private static int[] colors;
+    public static int[] colors;
     private FloatingActionButton floatingActionButton;
     private View view;
     private EditText editTextName;

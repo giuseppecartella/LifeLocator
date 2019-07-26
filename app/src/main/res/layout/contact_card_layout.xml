@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:card_view="http://schemas.android.com/tools"
-    app:cardCornerRadius="@dimen/card_corner_radius">
+    app:cardCornerRadius="@dimen/card_corner_radius"
+    android:layout_marginBottom="@dimen/card_distance">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -17,6 +17,7 @@
             android:layout_height="@dimen/contact_photo_height"
             android:padding="@dimen/contact_photo_padding"
             android:background="@drawable/contact_circle"/>
+
 
         <TextView
             android:id="@+id/initials"
