@@ -6,4 +6,14 @@
     <dimen name="nav_header_height">176dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="elevation">0dp</dimen>
+    <dimen name="padding_recycler_view">20dp</dimen>
+    <dimen name="card_corner_radius">4dp</dimen>
+    <dimen name="card_distance">4dp</dimen>
+    <dimen name="contact_photo_width">50dp</dimen>
+    <dimen name="contact_photo_height">50dp</dimen>
+    <dimen name="contact_photo_padding">2dp</dimen>
+    <dimen name="card_view_text_size_name">20dp</dimen>
+    <dimen name="card_view_text_size_surname">20dp</dimen>
+    <dimen name="margin_from_contact_photo">15dp</dimen>
+    <dimen name="margin_from_contact_name">8dp</dimen>
 </resources>

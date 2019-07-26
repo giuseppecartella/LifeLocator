@@ -7,13 +7,15 @@
         android:id="@+id/edit_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nome"/>
+        android:hint="Nome"
+        android:inputType="textCapWords"/>
 
     <EditText
         android:id="@+id/edit_surname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Cognome"
+        android:inputType="textCapWords"
         android:layout_below="@id/edit_name"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"/>

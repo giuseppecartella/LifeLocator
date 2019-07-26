@@ -7,5 +7,35 @@
     <color name="colorEnd">#00695C</color>
     <color name="colorStart">#4DB6AC</color>
     <color name="ic_launcher_background">#FFFFFF</color>
+    <color name="colorBlack">#000000</color>
+
+
+    <item name="materialRed" type="color">#c62828</item>
+    <item name="materialPurple" type="color">#6A1B9A</item>
+    <item name="materialBlue" type="color">#283593</item>
+    <item name="materialLightBlue" type="color">#0277BD</item>
+    <item name="materialGreen" type="color">#00695C</item>
+    <item name="materialLightGreen" type="color">#558B2F</item>
+    <item name="materialYellow" type="color">#F9A825</item>
+    <item name="materialOrange" type="color">#EF6C00</item>
+    <item name="materialLightRed" type="color">#D84315</item>
+    <item name="materialBrown" type="color">#4E342E</item>
+    <item name="materialMetallic" type="color">#37474F</item>
+
+    <integer-array name="materialColors">
+        <item>@color/materialRed</item>
+        <item>@color/materialPurple</item>
+        <item>@color/materialBlue</item>
+        <item>@color/materialLightBlue</item>
+        <item>@color/materialGreen</item>
+        <item>@color/materialLightGreen</item>
+        <item>@color/materialYellow</item>
+        <item>@color/materialOrange</item>
+        <item>@color/materialLightRed</item>
+        <item>@color/materialBrown</item>
+        <item>@color/materialMetallic</item>
+    </integer-array>
+
+
 
 </resources>

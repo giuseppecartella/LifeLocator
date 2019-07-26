@@ -33,16 +33,14 @@ public class AddContactDialogFragment extends AppCompatDialogFragment {
 
 
     private void onSaveClicked() {
-        //Prendo le stringhe dal dialog
         name = editTextName.getText().toString();
         surname = editTextSurname.getText().toString();
         phone = editTextPhone.getText().toString();
         address = editTextAddress.getText().toString();
 
-            //Salvo il contatto nel database
-            Contact contact = new Contact(name, surname, phone, address);
-            SplashActivity.appDataBase.daoManager().addContact(contact);
-            Toast.makeText(getActivity(), "Contatto salvato!", Toast.LENGTH_SHORT).show();
+        Contact contact = new Contact(name, surname, phone, address);
+        SplashActivity.appDataBase.daoManager().addContact(contact);
+        Toast.makeText(getActivity(), "Contatto salvato!", Toast.LENGTH_SHORT).show();
     }
 
     @NonNull
