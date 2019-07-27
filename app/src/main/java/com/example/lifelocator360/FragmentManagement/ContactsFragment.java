@@ -49,7 +49,6 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         colors = getResources().getIntArray(R.array.materialColors);
         view = inflater.inflate(R.layout.fragment_contacts, container, false);
 
-
         editTextName = view.findViewById(R.id.edit_name);
         editTextSurname = view.findViewById(R.id.edit_surname);
         editTextPhone = view.findViewById(R.id.edit_phone);
@@ -70,6 +69,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
 
     public void showContacts() {
         contacts = SplashActivity.appDataBase.daoManager().getContacts();
+
 
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);

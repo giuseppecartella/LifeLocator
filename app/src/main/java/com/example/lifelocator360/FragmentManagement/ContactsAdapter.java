@@ -51,25 +51,26 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
         randomColor = colors[new Random().nextInt(colors.length)];
         holder.imageView.setBackgroundColor(randomColor);
 
-        if(!currentContact.getName().isEmpty() && !currentContact.getSurname().isEmpty())
+        if(!currentContact.getName().isEmpty() && !currentContact.getSurname().isEmpty()) {
             holder.contactInformation.setText(currentContact.getName() + " " + currentContact.getSurname());
-        else if(currentContact.getName().isEmpty() && !currentContact.getSurname().isEmpty())
-            holder.contactInformation.setText(currentContact.getSurname());
-        else if(!currentContact.getName().isEmpty() && currentContact.getSurname().isEmpty())
-            holder.contactInformation.setText(currentContact.getName());
-        else if(currentContact.getName().isEmpty() && currentContact.getSurname().isEmpty() && !currentContact.getPhone().isEmpty())
-            holder.contactInformation.setText(currentContact.getPhone());
-        else
-            holder.contactInformation.setText(currentContact.getAddress());
-
-        if (!currentContact.getName().isEmpty() && !currentContact.getSurname().isEmpty())
             holder.contactInitials.setText(currentContact.getName().substring(0, 1) + currentContact.getSurname().substring(0, 1));
-        else if (currentContact.getName().isEmpty() && !currentContact.getSurname().isEmpty())
+        }
+        else if(currentContact.getName().isEmpty() && !currentContact.getSurname().isEmpty()) {
+            holder.contactInformation.setText(currentContact.getSurname());
             holder.contactInitials.setText(currentContact.getSurname().substring(0, 1));
-        else if (!currentContact.getName().isEmpty() && currentContact.getSurname().isEmpty())
+        }
+        else if(!currentContact.getName().isEmpty() && currentContact.getSurname().isEmpty()) {
+            holder.contactInformation.setText(currentContact.getName());
             holder.contactInitials.setText(currentContact.getName().substring(0, 1));
-        else if (currentContact.getName().isEmpty() && currentContact.getSurname().isEmpty())
+        }
+        else if(currentContact.getName().isEmpty() && currentContact.getSurname().isEmpty() && !currentContact.getPhone().isEmpty()) {
+            holder.contactInformation.setText(currentContact.getPhone());
             holder.contactInitials.setText("");
+        }
+        else {
+            holder.contactInformation.setText(currentContact.getAddress());
+            holder.contactInitials.setText("");
+        }
 
     }
 
