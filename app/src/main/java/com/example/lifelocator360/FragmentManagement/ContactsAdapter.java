@@ -5,17 +5,30 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.lifelocator360.DataBaseManagement.Contact;
 import com.example.lifelocator360.R;
+
 import java.util.List;
 import java.util.Random;
+
 import static com.example.lifelocator360.FragmentManagement.ContactsFragment.colors;
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ContactsViewHolder> {
     private List<Contact> contacts;
+    private static OnItemClickListener onItemClickListener;
     private int randomColor;
+
+    public interface OnItemClickListener {
+        void onDeleteClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        onItemClickListener = listener;
+    }
 
 
     public static class ContactsViewHolder extends RecyclerView.ViewHolder {
@@ -24,11 +37,27 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
         public TextView contactInitials;
 
 
-        public ContactsViewHolder(@NonNull View itemView) {
+        public ContactsViewHolder(@NonNull View itemView, OnItemClickListener listener) {
             super(itemView);
             imageView = itemView.findViewById(R.id.contactInitials);
             contactInformation = itemView.findViewById(R.id.informations);
             contactInitials = itemView.findViewById(R.id.initials);
+
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if(position != RecyclerView.NO_POSITION){
+                            listener.onDeleteClick(position);
+                        }
+
+                    }
+                }
+            });
+
+
         }
     }
 
@@ -40,7 +69,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
     @Override
     public ContactsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_card_layout, parent, false);
-        ContactsViewHolder contactsViewHolder = new ContactsViewHolder(view);
+        ContactsViewHolder contactsViewHolder = new ContactsViewHolder(view,onItemClickListener);
         return contactsViewHolder;
     }
 
@@ -51,28 +80,24 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
         randomColor = colors[new Random().nextInt(colors.length)];
         holder.imageView.setBackgroundColor(randomColor);
 
-        if(!currentContact.getName().isEmpty() && !currentContact.getSurname().isEmpty()) {
+        if (!currentContact.getName().isEmpty() && !currentContact.getSurname().isEmpty()) {
             holder.contactInformation.setText(currentContact.getName() + " " + currentContact.getSurname());
             holder.contactInitials.setText(currentContact.getName().substring(0, 1) + currentContact.getSurname().substring(0, 1));
-        }
-        else if(currentContact.getName().isEmpty() && !currentContact.getSurname().isEmpty()) {
+        } else if (currentContact.getName().isEmpty() && !currentContact.getSurname().isEmpty()) {
             holder.contactInformation.setText(currentContact.getSurname());
             holder.contactInitials.setText(currentContact.getSurname().substring(0, 1));
-        }
-        else if(!currentContact.getName().isEmpty() && currentContact.getSurname().isEmpty()) {
+        } else if (!currentContact.getName().isEmpty() && currentContact.getSurname().isEmpty()) {
             holder.contactInformation.setText(currentContact.getName());
             holder.contactInitials.setText(currentContact.getName().substring(0, 1));
-        }
-        else if(currentContact.getName().isEmpty() && currentContact.getSurname().isEmpty() && !currentContact.getPhone().isEmpty()) {
+        } else if (currentContact.getName().isEmpty() && currentContact.getSurname().isEmpty() && !currentContact.getPhone().isEmpty()) {
             holder.contactInformation.setText(currentContact.getPhone());
-            if(currentContact.getPhone().length() >= 2)
+            if (currentContact.getPhone().length() >= 2)
                 holder.contactInitials.setText(currentContact.getPhone().substring(0, 2));
             else
                 holder.contactInitials.setText(currentContact.getPhone().substring(0, 1));
-        }
-        else {
+        } else {
             holder.contactInformation.setText(currentContact.getAddress());
-            if(currentContact.getAddress().length() >= 2)
+            if (currentContact.getAddress().length() >= 2)
                 holder.contactInitials.setText(currentContact.getAddress().substring(0, 2));
             else
                 holder.contactInitials.setText(currentContact.getAddress().substring(0, 1));

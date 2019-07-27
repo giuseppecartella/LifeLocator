@@ -47,6 +47,7 @@
             android:layout_marginStart="@dimen/margin_from_contact_initials"
             android:layout_marginLeft="@dimen/margin_from_contact_initials"/>
 
+
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

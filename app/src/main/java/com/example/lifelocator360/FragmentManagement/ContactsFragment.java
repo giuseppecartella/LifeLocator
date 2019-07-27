@@ -24,7 +24,7 @@ import java.util.List;
 public class ContactsFragment extends Fragment implements View.OnClickListener {
     private List<Contact> contacts;
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter recyclerAdapter;
+    private ContactsAdapter recyclerAdapter;
     private RecyclerView.LayoutManager layoutManager;
     public static int[] colors;
     private FloatingActionButton floatingActionButton;
@@ -66,11 +66,21 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
+    public void onDeleteClick(int position){
+        int id = contacts.get(position).getId();
+        Contact contact = new Contact();
+        contact.setId(id);
+        SplashActivity.appDataBase.daoManager().deleteContact(contact);
+        contacts.remove(position);
+        recyclerAdapter.notifyDataSetChanged();
+    }
+
 
     public void showContacts() {
+        //prendo i contatti dal database e li metto nella lista
         contacts = SplashActivity.appDataBase.daoManager().getContacts();
 
-
+        //setto il recycler view
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getContext());
@@ -78,6 +88,19 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(recyclerAdapter);
+
+
+        recyclerAdapter.setOnItemClickListener(new ContactsAdapter.OnItemClickListener() {
+            @Override
+            public void onDeleteClick(int position) {
+                int id = contacts.get(position).getId();
+                Contact contact = new Contact();
+                contact.setId(id);
+                SplashActivity.appDataBase.daoManager().deleteContact(contact);
+                contacts.remove(position);
+                recyclerAdapter.notifyDataSetChanged();
+            }
+        });
 
     }
 
@@ -92,7 +115,6 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
     }
 
     private void onSaveClicked() {
-
 
         Log.d("tag", "ARRIVATO QUA 0");
         name = editTextName.getText().toString();
@@ -116,8 +138,6 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
             Toast.makeText(getActivity(), "Contatto salvato!", Toast.LENGTH_SHORT).show();
         }
     }
-
-
 
 
     public void addContact() {
