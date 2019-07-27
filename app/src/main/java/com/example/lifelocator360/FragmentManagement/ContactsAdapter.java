@@ -65,11 +65,17 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
         }
         else if(currentContact.getName().isEmpty() && currentContact.getSurname().isEmpty() && !currentContact.getPhone().isEmpty()) {
             holder.contactInformation.setText(currentContact.getPhone());
-            holder.contactInitials.setText("");
+            if(currentContact.getPhone().length() >= 2)
+                holder.contactInitials.setText(currentContact.getPhone().substring(0, 2));
+            else
+                holder.contactInitials.setText(currentContact.getPhone().substring(0, 1));
         }
         else {
             holder.contactInformation.setText(currentContact.getAddress());
-            holder.contactInitials.setText("");
+            if(currentContact.getAddress().length() >= 2)
+                holder.contactInitials.setText(currentContact.getAddress().substring(0, 2));
+            else
+                holder.contactInitials.setText(currentContact.getAddress().substring(0, 1));
         }
 
     }
