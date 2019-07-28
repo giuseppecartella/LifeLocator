@@ -47,6 +47,8 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
     private TimerTask timerTask;
     private FusedLocationProviderClient fusedLocationProviderClient;
 
+
+
     public int getNavigationDrawerSize() {
         return navigationDrawerSize;
     }
@@ -67,6 +69,9 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
         currentFragment = "maps";
         uncheckAllNavigationItems();
         getSupportFragmentManager().popBackStack();
+
+        //Hide return to map button
+        this.invalidateOptionsMenu();
     }
 
     @Override
@@ -85,8 +90,17 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
+        MenuInflater inflater;
+        inflater = getMenuInflater();
         inflater.inflate(R.menu.actionbar_menu, menu);
+
+        //Show/Hide return to map button
+        MenuItem returnToMap = menu.findItem(R.id.home);
+        if(currentFragment.equals("maps"))
+            returnToMap.setVisible(false);
+        else
+            returnToMap.setVisible(true);
+
         return true;
     }
 
@@ -180,6 +194,9 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
 
                 getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new PhotoFragment()).addToBackStack("stack1").commit();
                 currentFragment = "photo";
+                //Show return to map button
+                this.invalidateOptionsMenu();
+
                 break;
 
             case R.id.nav_calendar:
@@ -189,6 +206,9 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
 
                 getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new CalendarFragment()).addToBackStack("stack1").commit();
                 currentFragment = "calendar";
+                //Show return to map button
+                this.invalidateOptionsMenu();
+
                 break;
 
             case R.id.nav_contacts:
@@ -198,6 +218,9 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
 
                 getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new ContactsFragment()).addToBackStack("stack1").commit();
                 currentFragment = "contacts";
+                //Show return to map button
+                this.invalidateOptionsMenu();
+
                 break;
 
             case R.id.nav_notes:
@@ -207,6 +230,9 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
 
                 getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new NotesFragment()).addToBackStack("stack1").commit();
                 currentFragment = "notes";
+                //Show return to map button
+                this.invalidateOptionsMenu();
+
                 break;
 
             case R.id.nav_instagram:
@@ -216,6 +242,9 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
 
                 getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new InstagramFragment()).addToBackStack("stack1").commit();
                 currentFragment = "instagram";
+                //Show return to map button
+                this.invalidateOptionsMenu();
+
                 break;
 
             case R.id.nav_settings:
@@ -227,6 +256,9 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
 
                 getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new SettingsFragment()).addToBackStack("stack1").commit();
                 currentFragment = "settings";
+                //Show return to map button
+                this.invalidateOptionsMenu();
+
                 break;
         }
 
