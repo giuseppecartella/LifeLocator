@@ -94,12 +94,10 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
         inflater = getMenuInflater();
         inflater.inflate(R.menu.actionbar_menu, menu);
 
-
-
         //Show/Hide return to map button
         MenuItem returnToMap = menu.findItem(R.id.home);
         if(currentFragment.equals("Mappa")) {
-            setTitle("Life Locator");
+            setTitle(R.string.app_name);
             returnToMap.setVisible(false);
         }
         else {
