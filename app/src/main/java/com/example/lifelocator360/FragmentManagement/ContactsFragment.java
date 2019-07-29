@@ -6,23 +6,19 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.lifelocator360.DataBaseManagement.Contact;
 import com.example.lifelocator360.R;
 import com.example.lifelocator360.SplashScreenManagement.SplashActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -51,6 +47,11 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
     private EditText updateTextSurname;
     private EditText updateTextPhone;
     private EditText updateTextAddress;
+    private TextView textName;
+    private TextView textSurname;
+    private TextView textPhone;
+    private TextView textAddress;
+
 
     public ContactsFragment() {
 
@@ -197,6 +198,16 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.show_contact_info_dialog_layout, null);
 
+        textName = view.findViewById(R.id.text_name);
+        textSurname = view.findViewById(R.id.text_surname);
+        textPhone = view.findViewById(R.id.text_phone);
+        textAddress = view.findViewById(R.id.text_address);
+
+        textName.setText(contacts.get(position).getName());
+        textSurname.setText(contacts.get(position).getSurname());
+        textPhone.setText(contacts.get(position).getPhone());
+        textAddress.setText(contacts.get(position).getAddress());
+
         builder.setView(view)
                 .setCancelable(true)
                 .setTitle("Scheda contatto")
@@ -282,7 +293,6 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         editTextAddress = view.findViewById(R.id.edit_address);
         floatingActionButton = view.findViewById(R.id.addContact);
     }
-
 
     public void safeDeleteDialog(int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

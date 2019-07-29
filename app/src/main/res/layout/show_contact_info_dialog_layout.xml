@@ -11,8 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="15dp"
-        android:hint="Nome"
-        android:inputType="textCapWords" />
+        android:hint="Nessun nome" />
 
     <TextView
         android:id="@+id/text_surname"
@@ -23,8 +22,7 @@
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="15dp"
-        android:hint="Cognome"
-        android:inputType="textCapWords" />
+        android:hint="Nessun cognome" />
 
     <TextView
         android:id="@+id/text_phone"
@@ -35,8 +33,7 @@
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="15dp"
-        android:hint="Cellulare"
-        android:inputType="phone" />
+        android:hint="Nessun cellulare" />
 
     <TextView
         android:id="@+id/text_address"
@@ -47,5 +44,5 @@
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="15dp"
-        android:hint="Indirizzo" />
+        android:hint="Nessun indrizzo" />
 </RelativeLayout>
