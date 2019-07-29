@@ -161,21 +161,6 @@ public class SplashActivity extends AppCompatActivity {
 
 
         if (requestCode == ALL_PERMISSION_CODE) {
-            /*
-            //Probabilmente questi controlli non servono e possono essere fatti successivamente
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                setUpDatabaseAndLaunchMainActivity();
-            } else if (grantResults[0] == PackageManager.PERMISSION_DENIED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                setUpDatabaseAndLaunchMainActivity();
-
-            } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_DENIED) {
-                setUpDatabaseAndLaunchMainActivity();
-
-            } else if (grantResults[0] == PackageManager.PERMISSION_DENIED && grantResults[1] == PackageManager.PERMISSION_DENIED) {
-                setUpDatabaseAndLaunchMainActivity();
-            }
-            */
-
             //Avvio il caricamento del database, e successivamente avvio la Main Activity
             setUpDatabaseAndLaunchMainActivity();
         }

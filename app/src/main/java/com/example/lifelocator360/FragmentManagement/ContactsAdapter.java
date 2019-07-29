@@ -18,9 +18,11 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
     private static OnItemClickListener onItemClickListener;
     private int randomColor;
 
+
     public interface OnItemClickListener {
         void onItemClick(int position);
     }
+
 
     public void setOnItemClickListener(OnItemClickListener listener) {
         onItemClickListener = listener;

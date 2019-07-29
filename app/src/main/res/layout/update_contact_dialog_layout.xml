@@ -5,8 +5,8 @@
     android:layout_height="match_parent">
 
 
-    <TextView
-        android:id="@+id/text_name"
+    <EditText
+        android:id="@+id/update_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
@@ -14,11 +14,11 @@
         android:hint="Nome"
         android:inputType="textCapWords" />
 
-    <TextView
-        android:id="@+id/text_surname"
+    <EditText
+        android:id="@+id/update_surname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/text_name"
+        android:layout_below="@id/update_name"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="15dp"
@@ -26,11 +26,11 @@
         android:hint="Cognome"
         android:inputType="textCapWords" />
 
-    <TextView
-        android:id="@+id/text_phone"
+    <EditText
+        android:id="@+id/update_phone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/text_surname"
+        android:layout_below="@id/update_surname"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="15dp"
@@ -38,11 +38,11 @@
         android:hint="Cellulare"
         android:inputType="phone" />
 
-    <TextView
-        android:id="@+id/text_address"
+    <EditText
+        android:id="@+id/update_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/text_phone"
+        android:layout_below="@id/update_phone"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="15dp"
