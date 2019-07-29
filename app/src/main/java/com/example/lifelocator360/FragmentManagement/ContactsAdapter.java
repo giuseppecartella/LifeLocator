@@ -5,16 +5,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.lifelocator360.DataBaseManagement.Contact;
 import com.example.lifelocator360.R;
-
 import java.util.List;
 import java.util.Random;
-
 import static com.example.lifelocator360.FragmentManagement.ContactsFragment.colors;
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ContactsViewHolder> {
@@ -23,7 +19,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
     private int randomColor;
 
     public interface OnItemClickListener {
-        void onDeleteClick(int position);
+        void onItemClick(int position);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -43,23 +39,22 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
             contactInformation = itemView.findViewById(R.id.informations);
             contactInitials = itemView.findViewById(R.id.initials);
 
-
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
                         int position = getAdapterPosition();
-                        if(position != RecyclerView.NO_POSITION){
-                            listener.onDeleteClick(position);
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onItemClick(position);
                         }
 
                     }
                 }
             });
-
-
         }
     }
+
+
 
     public ContactsAdapter(List<Contact> contacts) {
         this.contacts = contacts;
@@ -69,7 +64,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
     @Override
     public ContactsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_card_layout, parent, false);
-        ContactsViewHolder contactsViewHolder = new ContactsViewHolder(view,onItemClickListener);
+        ContactsViewHolder contactsViewHolder = new ContactsViewHolder(view, onItemClickListener);
         return contactsViewHolder;
     }
 
@@ -89,21 +84,21 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
         } else if (!currentContact.getName().isEmpty() && currentContact.getSurname().isEmpty()) {
             holder.contactInformation.setText(currentContact.getName());
             holder.contactInitials.setText(currentContact.getName().substring(0, 1));
-        } else if (currentContact.getName().isEmpty() && currentContact.getSurname().isEmpty() && !currentContact.getPhone().isEmpty()) {
-            holder.contactInformation.setText(currentContact.getPhone());
-            if (currentContact.getPhone().length() >= 2)
-                holder.contactInitials.setText(currentContact.getPhone().substring(0, 2));
-            else
-                holder.contactInitials.setText(currentContact.getPhone().substring(0, 1));
-        } else {
+        } else if (currentContact.getName().isEmpty() && currentContact.getSurname().isEmpty() && !currentContact.getAddress().isEmpty()) {
             holder.contactInformation.setText(currentContact.getAddress());
             if (currentContact.getAddress().length() >= 2)
                 holder.contactInitials.setText(currentContact.getAddress().substring(0, 2));
             else
                 holder.contactInitials.setText(currentContact.getAddress().substring(0, 1));
+        } else {
+            holder.contactInformation.setText(currentContact.getPhone());
+            if (currentContact.getPhone().length() >= 2)
+                holder.contactInitials.setText(currentContact.getPhone().substring(0, 2));
+            else
+                holder.contactInitials.setText(currentContact.getPhone().substring(0, 1));
         }
-
     }
+
 
     @Override
     public int getItemCount() {

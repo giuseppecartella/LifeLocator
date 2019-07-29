@@ -4,9 +4,13 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.util.Comparator;
+
 @Entity(tableName = "contact")
 
 public class Contact {
+    String allInformationO1;
+    String allInformationO2;
 
     @PrimaryKey(autoGenerate = true)
     private Integer id ;
@@ -72,5 +76,9 @@ public class Contact {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getAllInformation(Contact contact){
+        return getName() + getSurname() + getAddress() + getPhone();
     }
 }
