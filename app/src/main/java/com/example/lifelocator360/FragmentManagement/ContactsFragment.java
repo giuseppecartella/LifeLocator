@@ -95,15 +95,14 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         recyclerAdapter.setOnItemClickListener(new ContactsAdapter.OnItemClickListener() {
             @Override
             public void onDeleteClick(int position) {
-                int id = contacts.get(position).getId();
+                Integer id = contacts.get(position).getId();
                 Contact contact = new Contact();
                 contact.setId(id);
-                SplashActivity.appDataBase.daoManager().deleteContact(contact);
                 contacts.remove(position);
+                SplashActivity.appDataBase.daoManager().deleteContact(contact);
 
                 //recyclerAdapter.notifyDataSetChanged();
                 recyclerAdapter.notifyItemRemoved(position);
-
             }
         });
 
@@ -130,15 +129,13 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
             Toast.makeText(getActivity(), "Contatto non salvato!", Toast.LENGTH_SHORT).show();
         } else {
             Contact contact = new Contact(name, surname, phone, address);
-            SplashActivity.appDataBase.daoManager().addContact(contact);
             contacts.add(contact);
+            SplashActivity.appDataBase.daoManager().addContact(contact);
 
             //recyclerAdapter.notifyDataSetChanged();
             recyclerAdapter.notifyItemInserted(contacts.size() - 1);
 
             Log.d("prova", "PROVA: " + contacts.size());
-
-
             Toast.makeText(getActivity(), "Contatto salvato!", Toast.LENGTH_SHORT).show();
         }
     }
