@@ -4,7 +4,8 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="@dimen/card_corner_radius"
-    android:layout_marginBottom="@dimen/card_distance">
+    android:layout_marginBottom="@dimen/card_distance"
+    app:cardBackgroundColor="@color/colorAccent">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -21,32 +22,32 @@
 
         <TextView
             android:id="@+id/initials"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_alignTop="@id/contactInitials"
-            android:layout_alignBottom="@id/contactInitials"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
             android:layout_alignLeft="@id/contactInitials"
+            android:layout_alignTop="@id/contactInitials"
             android:layout_alignRight="@id/contactInitials"
+            android:layout_alignBottom="@id/contactInitials"
+            android:layout_marginLeft="0dp"
+            android:layout_marginBottom="0dp"
+            android:gravity="center"
             android:text="FM"
             android:textColor="@android:color/white"
             android:textSize="@dimen/card_view_text_size_name"
             android:textStyle="bold" />
 
 
-
         <TextView
             android:id="@+id/informations"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/card_view_text_size_surname"
-            android:textStyle="bold"
             android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/contactInitials"
-            android:layout_toRightOf="@id/contactInitials"
-            android:layout_marginStart="@dimen/margin_from_contact_initials"
-            android:layout_marginLeft="@dimen/margin_from_contact_initials"/>
-
+            android:layout_marginStart="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_toEndOf="@+id/initials"
+            android:layout_toRightOf="@+id/initials"
+            android:textSize="@dimen/card_view_text_size_surname"
+            android:textStyle="bold" />
 
     </RelativeLayout>
 

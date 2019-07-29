@@ -207,7 +207,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         textSurname.setText(contacts.get(position).getSurname());
         textPhone.setText(contacts.get(position).getPhone());
         textAddress.setText(contacts.get(position).getAddress());
-        
+
 
         builder.setView(view)
                 .setCancelable(true)

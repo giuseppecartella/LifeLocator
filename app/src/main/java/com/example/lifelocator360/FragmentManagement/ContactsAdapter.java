@@ -12,7 +12,6 @@ import com.example.lifelocator360.R;
 import java.util.List;
 import java.util.Random;
 import static com.example.lifelocator360.FragmentManagement.ContactsFragment.colors;
-
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ContactsViewHolder> {
     private List<Contact> contacts;
     private static OnItemClickListener onItemClickListener;
