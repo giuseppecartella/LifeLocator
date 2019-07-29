@@ -66,6 +66,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
+    /*
     public void onDeleteClick(int position){
         int id = contacts.get(position).getId();
         Contact contact = new Contact();
@@ -73,7 +74,8 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         SplashActivity.appDataBase.daoManager().deleteContact(contact);
         contacts.remove(position);
         recyclerAdapter.notifyDataSetChanged();
-    }
+    }*/
+
 
 
     public void showContacts() {
@@ -98,7 +100,10 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
                 contact.setId(id);
                 SplashActivity.appDataBase.daoManager().deleteContact(contact);
                 contacts.remove(position);
-                recyclerAdapter.notifyDataSetChanged();
+
+                //recyclerAdapter.notifyDataSetChanged();
+                recyclerAdapter.notifyItemRemoved(position);
+
             }
         });
 
@@ -116,24 +121,23 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
 
     private void onSaveClicked() {
 
-        Log.d("tag", "ARRIVATO QUA 0");
         name = editTextName.getText().toString();
-        Log.d("tag", "ARRIVATO QUA 1");
         surname = editTextSurname.getText().toString();
-        Log.d("tag", "ARRIVATO QUA 2");
         phone = editTextPhone.getText().toString();
-        Log.d("tag", "ARRIVATO QUA 3");
         address = editTextAddress.getText().toString();
-        Log.d("tag", "ARRIVATO QUA 4");
 
-        Log.d("prova", "name vale " + name);
         if (name.isEmpty() && surname.isEmpty() && phone.isEmpty() && address.isEmpty()) {
             Toast.makeText(getActivity(), "Contatto non salvato!", Toast.LENGTH_SHORT).show();
         } else {
             Contact contact = new Contact(name, surname, phone, address);
             SplashActivity.appDataBase.daoManager().addContact(contact);
             contacts.add(contact);
-            recyclerAdapter.notifyDataSetChanged();
+
+            //recyclerAdapter.notifyDataSetChanged();
+            recyclerAdapter.notifyItemInserted(contacts.size() - 1);
+
+            Log.d("prova", "PROVA: " + contacts.size());
+
 
             Toast.makeText(getActivity(), "Contatto salvato!", Toast.LENGTH_SHORT).show();
         }

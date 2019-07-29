@@ -24,10 +24,13 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             android:elevation="@dimen/elevation"/>
 
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/fragment_container"/>
+
+
     </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView
@@ -37,6 +40,8 @@
         android:layout_gravity="start"
         app:headerLayout="@layout/navigation_header"
         app:menu="@menu/drawer_menu">
+
+
     </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>

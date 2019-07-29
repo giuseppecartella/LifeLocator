@@ -40,7 +40,7 @@ import java.util.TimerTask;
 public class NavigationDrawerActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
-    private String currentFragment = "maps";
+    private String currentFragment = "Mappa";
     private int navigationDrawerSize;
     private static float DEF_ZOOM = 15.0f;
     private Timer timer;
@@ -66,7 +66,7 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
     }
 
     private void returnToMap() {
-        currentFragment = "maps";
+        currentFragment = "Mappa";
         uncheckAllNavigationItems();
         getSupportFragmentManager().popBackStack();
 
@@ -94,12 +94,18 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
         inflater = getMenuInflater();
         inflater.inflate(R.menu.actionbar_menu, menu);
 
+
+
         //Show/Hide return to map button
         MenuItem returnToMap = menu.findItem(R.id.home);
-        if(currentFragment.equals("maps"))
+        if(currentFragment.equals("Mappa")) {
+            setTitle("Life Locator");
             returnToMap.setVisible(false);
-        else
+        }
+        else {
+            setTitle(currentFragment);
             returnToMap.setVisible(true);
+        }
 
         return true;
     }
@@ -108,7 +114,7 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.home: {
-                if (!currentFragment.equals("maps")) {
+                if (!currentFragment.equals("Mappa")) {
                     returnToMap();
                 }
                 return true;
@@ -188,74 +194,74 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.nav_photo:
-                if (!currentFragment.equals("maps")) {
+                if (!currentFragment.equals("Mappa")) {
                     getSupportFragmentManager().popBackStack();
                 }
 
                 getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new PhotoFragment()).addToBackStack("stack1").commit();
-                currentFragment = "photo";
+                currentFragment = "Foto";
                 //Show return to map button
                 this.invalidateOptionsMenu();
 
                 break;
 
             case R.id.nav_calendar:
-                if (!currentFragment.equals("maps")) {
+                if (!currentFragment.equals("Mappa")) {
                     getSupportFragmentManager().popBackStack();
                 }
 
                 getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new CalendarFragment()).addToBackStack("stack1").commit();
-                currentFragment = "calendar";
+                currentFragment = "Calendario";
                 //Show return to map button
                 this.invalidateOptionsMenu();
 
                 break;
 
             case R.id.nav_contacts:
-                if (!currentFragment.equals("maps")) {
+                if (!currentFragment.equals("Mappa")) {
                     getSupportFragmentManager().popBackStack();
                 }
 
                 getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new ContactsFragment()).addToBackStack("stack1").commit();
-                currentFragment = "contacts";
+                currentFragment = "Contatti";
                 //Show return to map button
                 this.invalidateOptionsMenu();
 
                 break;
 
             case R.id.nav_notes:
-                if (!currentFragment.equals("maps")) {
+                if (!currentFragment.equals("Mappa")) {
                     getSupportFragmentManager().popBackStack();
                 }
 
                 getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new NotesFragment()).addToBackStack("stack1").commit();
-                currentFragment = "notes";
+                currentFragment = "Note";
                 //Show return to map button
                 this.invalidateOptionsMenu();
 
                 break;
 
             case R.id.nav_instagram:
-                if (!currentFragment.equals("maps")) {
+                if (!currentFragment.equals("Mappa")) {
                     getSupportFragmentManager().popBackStack();
                 }
 
                 getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new InstagramFragment()).addToBackStack("stack1").commit();
-                currentFragment = "instagram";
+                currentFragment = "Instagram";
                 //Show return to map button
                 this.invalidateOptionsMenu();
 
                 break;
 
             case R.id.nav_settings:
-                if (!currentFragment.equals("maps")) {
+                if (!currentFragment.equals("Mappa")) {
                     getSupportFragmentManager().popBackStack();
                 }
 
                 navigationView.getMenu().getItem(5).setChecked(true);
 
                 getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new SettingsFragment()).addToBackStack("stack1").commit();
-                currentFragment = "settings";
+                currentFragment = "Impostazioni";
                 //Show return to map button
                 this.invalidateOptionsMenu();
 
@@ -271,7 +277,7 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            if (!currentFragment.equals("maps"))
+            if (!currentFragment.equals("Mappa"))
                 returnToMap();
             else
                 super.onBackPressed();

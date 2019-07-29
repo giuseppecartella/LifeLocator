@@ -22,8 +22,8 @@
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:src="@drawable/ic_no_contacts"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="90dp"/>
+        android:layout_gravity="center"
+        android:layout_marginBottom="90dp"/>
 
     <TextView
         android:id="@+id/text_missing_contacts"
@@ -32,9 +32,9 @@
         android:text="Nessun contatto da visualizzare"
         android:textSize="20dp"
         android:textStyle="italic"
-        android:textColor="@color/primarytext"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="330dp"/>
+        android:textColor="@color/grayColor"
+        android:layout_gravity="center"
+        android:layout_marginTop="120dp"/>
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
