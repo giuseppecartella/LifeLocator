@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,10 +46,23 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
     private EditText updateTextNoteText;
 
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        super.onCreateOptionsMenu(menu, inflater);
+
+    }
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+
+
         view = inflater.inflate(R.layout.fragment_notes,container,false);
 
         editTextName = view.findViewById(R.id.edit_note_name);
@@ -69,23 +84,6 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
     }
 
 
-/*
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.deleteAll: {
-                notes.clear();
-                SplashActivity.appDataBase.daoManager().deleteAllNotes();
-                notesAdapter.notifyDataSetChanged();
-                updateMissingNotesBackground();
-                return true;
-            }
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }*/
 
 
     public void updateMissingNotesBackground() {
@@ -99,9 +97,7 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
     }
 
     public void showNotes() {
-        //prendo le note dal database e le metto nella lista
         notes = NavigationDrawerActivity.notes;
-        Toast.makeText(getContext(),"la lunghezza vale"+ notes.size(),Toast.LENGTH_SHORT).show();
 
         updateMissingNotesBackground();
 
@@ -189,6 +185,46 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
         builder.create().show();
     }
 
+
+    private void deleteAllNotes() {
+        notes.clear();
+        SplashActivity.appDataBase.daoManager().deleteAllNotes();
+        notesAdapter.notifyDataSetChanged();
+        updateMissingNotesBackground();
+    }
+
+
+    public void safeDeleteAllDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        builder.setMessage("Tutte le note verranno eliminate")
+                .setNegativeButton("ANNULLA", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton("ELIMINA", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteAllNotes();
+                    }
+                });
+        builder.create().show();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.deleteAll: {
+                safeDeleteAllDialog();
+                return true;
+            }
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     private void deleteNote(int position) {
         Integer id = notes.get(position).getId();
         Note note = new Note();
@@ -242,7 +278,6 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.add_note_dialog_layout, null);
 
         builder.setView(view)
-                .setCancelable(false)
                 .setTitle("Nuova nota")
                 .setNegativeButton("ANNULLA", new DialogInterface.OnClickListener() {
                     @Override
@@ -263,11 +298,5 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
         editTextNoteText = view.findViewById(R.id.edit_note_text);
     }
 
-    public void actionBarDeleteAllItems() {
-        notes.clear();
-        notesAdapter.notifyDataSetChanged();
-        updateMissingNotesBackground();
-        SplashActivity.appDataBase.daoManager().deleteAllNotes();
-    }
 
 }

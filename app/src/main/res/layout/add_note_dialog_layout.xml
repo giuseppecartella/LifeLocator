@@ -8,6 +8,9 @@
         android:id="@+id/edit_note_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="10dp"
         android:inputType="textCapCharacters"
         android:hint="Nome" />
 
@@ -18,7 +21,9 @@
         android:hint="Luogo"
         android:layout_below="@id/edit_note_name"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"/>
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="15dp" />
 
     <EditText
         android:id="@+id/edit_note_text"
@@ -27,6 +32,8 @@
         android:hint="Testo della nota..."
         android:layout_below="@id/edit_note_position"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"/>
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="15dp"/>
 
 </RelativeLayout>

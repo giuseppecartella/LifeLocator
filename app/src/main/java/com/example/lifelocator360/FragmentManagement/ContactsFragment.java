@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,34 +73,25 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
 
     }
 
-/*
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.deleteAll: {
-                contacts.clear();
-                SplashActivity.appDataBase.daoManager().deleteAllContacts();
-                contactsAdapter.notifyDataSetChanged();
-                updateMissingContactsBackground();
-                return true;
-            }
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        super.onCreateOptionsMenu(menu, inflater);
+
     }
-*/
-
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+
         colors = getResources().getIntArray(R.array.materialColors);
         view = inflater.inflate(R.layout.fragment_contacts, container, false);
         contacts = NavigationDrawerActivity.contacts;
-
-        Toast.makeText(getContext(),"la lunghezza vale"+ contacts.size(),Toast.LENGTH_SHORT).show();
 
         editTextName = view.findViewById(R.id.edit_name);
         editTextSurname = view.findViewById(R.id.edit_surname);
@@ -117,6 +110,19 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
 
         showContacts();
         return view;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.deleteAll: {
+                safeDeleteAllDialog();
+                return true;
+            }
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     public int contactsCompare(Contact contact1, Contact contact2) {
@@ -262,6 +268,32 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         updateMissingContactsBackground();
     }
 
+    private void deleteAllContacts() {
+        contacts.clear();
+        SplashActivity.appDataBase.daoManager().deleteAllContacts();
+        contactsAdapter.notifyDataSetChanged();
+        updateMissingContactsBackground();
+    }
+
+    public void safeDeleteAllDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        builder.setMessage("Tutti i contatti verranno eliminati")
+                .setNegativeButton("ANNULLA", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton("ELIMINA", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteAllContacts();
+                    }
+                });
+        builder.create().show();
+    }
+
     private void updateContact(int position, EditText name, EditText surname, EditText phone, EditText address) {
         Contact contact = new Contact();
         contact.setId(contacts.get(position).getId());
@@ -364,13 +396,11 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
     }
 
     private class GetCoordinates extends AsyncTask<String,Void,String> {
-        ProgressBar progressBar = new ProgressBar(getActivity());
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             Log.d("prova","sono nel preexecute");
-            //MOSTRARE LA PROGRESS BARRR
 
         }
 
@@ -404,6 +434,8 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
                 Log.d("prova","latlng: "+lat+lng);
 
                 Toast.makeText(getActivity(),lat + lng,Toast.LENGTH_SHORT).show();
+
+
 
             } catch(JSONException e){
                 e.printStackTrace();

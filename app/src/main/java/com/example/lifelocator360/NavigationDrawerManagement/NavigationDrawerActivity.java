@@ -20,6 +20,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.lifelocator360.DataBaseManagement.Contact;
+import com.example.lifelocator360.DataBaseManagement.DaoManager;
 import com.example.lifelocator360.DataBaseManagement.Note;
 import com.example.lifelocator360.FragmentManagement.CalendarFragment;
 import com.example.lifelocator360.FragmentManagement.ContactsFragment;
@@ -127,6 +128,10 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
                 }
                 return true;
             }
+            case R.id.deleteAll: {
+                super.onOptionsItemSelected(item);
+                return false;
+            }
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -180,9 +185,7 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
         setContentView(R.layout.activity_navigation_drawer);
 
         contacts = (ArrayList<Contact>) getIntent().getSerializableExtra("lista_contatti");
-        Toast.makeText(this,"la lunghezza e "+ contacts.size(),Toast.LENGTH_SHORT).show();
         notes = (ArrayList<Note>) getIntent().getSerializableExtra("lista_note");
-        Toast.makeText(this,"la lunghezza e "+ notes.size(),Toast.LENGTH_SHORT).show();
 
 
         Toolbar toolbar = findViewById(R.id.toolbar);
