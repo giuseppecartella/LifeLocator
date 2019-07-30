@@ -233,7 +233,8 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
                 .setNegativeButton("MAPPA", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        new GetCoordinates().execute("via+campi+modena");
+                        Log.d("prova ", "cerco la posizione " + contacts.get(position).getAddress().replace(" ", "+"));
+                        new GetCoordinates().execute(contacts.get(position).getAddress().replace(" ", "+"));
                     }
                 })
                 .setPositiveButton("MODIFICA", new DialogInterface.OnClickListener() {
@@ -374,7 +375,8 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
             try{
                 String address = strings[0];
                 HttpDataHandler httpDataHandler =new HttpDataHandler();
-                String url = String.format("https://maps.googleapis.com/maps/api/geocode/json?address=modena&key=AIzaSyAV3-Tn-8X4CjWVDTrVhSGDQrbAdEsdjuc");
+                String url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&key=AIzaSyAV3-Tn-8X4CjWVDTrVhSGDQrbAdEsdjuc";
+                Log.d("tag", "url vale " + url);
                 Log.d("prova","sto per fare il gethttpdata");
                 response = httpDataHandler.getHTTPData(url);
                 return response;
