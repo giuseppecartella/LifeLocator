@@ -4,10 +4,11 @@ package com.example.lifelocator360.DataBaseManagement;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import java.io.Serializable;
 
 @Entity(tableName = "note")
 
-public class Note {
+public class Note implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private Integer id ;
@@ -21,6 +22,11 @@ public class Note {
     @ColumnInfo(name = "note_text")
     private String text;
 
+    @ColumnInfo(name = "latitude")
+    private String latitude;
+
+    @ColumnInfo(name = "longitude")
+    private String longitude;
 
     public Note(){
 
@@ -64,5 +70,19 @@ public class Note {
         this.text = text;
     }
 
+    public String getLatitude() {
+        return latitude;
+    }
 
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
 }

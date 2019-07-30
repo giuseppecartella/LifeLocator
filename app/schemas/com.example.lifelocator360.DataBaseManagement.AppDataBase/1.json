@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "2ee208b2482efe94ac7c1e4c5d97bf60",
+    "identityHash": "acf04af49b2a118c7230e40ca4721033",
     "entities": [
       {
         "tableName": "contact",
@@ -74,7 +74,7 @@
       },
       {
         "tableName": "note",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `note_name` TEXT, `note_position` TEXT, `note_text` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `note_name` TEXT, `note_position` TEXT, `note_text` TEXT, `latitude` TEXT, `longitude` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -99,6 +99,18 @@
             "columnName": "note_text",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "longitude",
+            "columnName": "longitude",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -114,7 +126,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2ee208b2482efe94ac7c1e4c5d97bf60')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'acf04af49b2a118c7230e40ca4721033')"
     ]
   }
 }

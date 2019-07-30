@@ -21,6 +21,9 @@ public interface DaoManager {
     @Delete
     public void deleteContact(Contact contact);
 
+    @Query("delete from note")
+    public void deleteAllContacts();
+
     @Update
     public void updateContact(Contact contact);
 
@@ -35,10 +38,12 @@ public interface DaoManager {
     @Delete
     public void deleteNote(Note note);
 
+    @Query("delete from note")
+    public void deleteAllNotes();
+
     @Update
     public void updateNote(Note note);
 
-    @Query("delete from note")
-    public void deleteAllNotes();
+
 
 }

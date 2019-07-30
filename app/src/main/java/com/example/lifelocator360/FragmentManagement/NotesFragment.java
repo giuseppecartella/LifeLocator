@@ -12,20 +12,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.lifelocator360.DataBaseManagement.Note;
+import com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity;
 import com.example.lifelocator360.R;
 import com.example.lifelocator360.SplashScreenManagement.SplashActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.navigation.NavigationView;
-
 import java.util.List;
 
 public class NotesFragment extends Fragment implements View.OnClickListener {
@@ -72,7 +68,27 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
-    public void updateMissingNoteBackground() {
+
+/*
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.deleteAll: {
+                notes.clear();
+                SplashActivity.appDataBase.daoManager().deleteAllNotes();
+                notesAdapter.notifyDataSetChanged();
+                updateMissingNotesBackground();
+                return true;
+            }
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }*/
+
+
+    public void updateMissingNotesBackground() {
         if (notes.isEmpty()) {
             imageMissingNote.setVisibility(View.VISIBLE);
             textMissingNote.setVisibility(View.VISIBLE);
@@ -84,23 +100,19 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
 
     public void showNotes() {
         //prendo le note dal database e le metto nella lista
-        notes = SplashActivity.appDataBase.daoManager().getNote();
+        notes = NavigationDrawerActivity.notes;
+        Toast.makeText(getContext(),"la lunghezza vale"+ notes.size(),Toast.LENGTH_SHORT).show();
 
-        updateMissingNoteBackground();
+        updateMissingNotesBackground();
 
         //setto il recycler view
         recyclerView = view.findViewById(R.id.recyclerViewNotes);
 
         recyclerView.setHasFixedSize(true);
-
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 2);
-
         notesAdapter = new NotesAdapter(notes);
-
         recyclerView.setLayoutManager(mLayoutManager);
-
         recyclerView.setAdapter(notesAdapter);
-
         notesAdapter.setOnItemClickListener(new NotesAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
@@ -128,33 +140,17 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
         textNote = editTextNoteText.getText().toString();
 
 
-
         if (name.isEmpty() && position.isEmpty() && textNote.isEmpty()) {
             Toast.makeText(getActivity(), "Nota non salvata!", Toast.LENGTH_SHORT).show();
         } else {
             Note note = new Note(name, position, textNote);
-
-            Log.d("prova", "arrivato 1");
-
             int index = notes.size();
-
-            Log.d("prova", "arrivato 2" + index);
-
             notes.add(index,note);
-
-            Log.d("prova", "arrivato 3");
-
             SplashActivity.appDataBase.daoManager().addNote(note);
-            Log.d("prova", "arrivato 4");
             notesAdapter.notifyItemInserted(index);
-            Log.d("prova", "arrivato 5");
-            updateMissingNoteBackground();
-
-            Log.d("prova", "arrivato 6");
+            updateMissingNotesBackground();
 
             Toast.makeText(getActivity(), "Nota salvata!", Toast.LENGTH_SHORT).show();
-
-            Log.d("prova", "arrivato 7");
         }
     }
 
@@ -173,7 +169,6 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
 
         SplashActivity.appDataBase.daoManager().updateNote(note);
     }
-
 
     public void safeDeleteDialog(int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -201,10 +196,8 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
         notes.remove(position);
         SplashActivity.appDataBase.daoManager().deleteNote(note);
         notesAdapter.notifyItemRemoved(position);
-        updateMissingNoteBackground();
+        updateMissingNotesBackground();
     }
-
-
 
     public void updateNoteInfoDialog(int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -243,7 +236,6 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
         builder.create().show();
     }
 
-
     public void showAddNoteDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -271,11 +263,10 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
         editTextNoteText = view.findViewById(R.id.edit_note_text);
     }
 
-
     public void actionBarDeleteAllItems() {
         notes.clear();
         notesAdapter.notifyDataSetChanged();
-        updateMissingNoteBackground();
+        updateMissingNotesBackground();
         SplashActivity.appDataBase.daoManager().deleteAllNotes();
     }
 

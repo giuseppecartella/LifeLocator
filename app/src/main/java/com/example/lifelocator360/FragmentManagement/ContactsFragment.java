@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -21,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.lifelocator360.DataBaseManagement.Contact;
 import com.example.lifelocator360.MapManagement.HttpDataHandler;
+import com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity;
 import com.example.lifelocator360.R;
 import com.example.lifelocator360.SplashScreenManagement.SplashActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -30,12 +32,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 public class ContactsFragment extends Fragment implements View.OnClickListener {
-    private List<Contact> contacts;
+    private ArrayList<Contact> contacts;
     private RecyclerView recyclerView;
     private ContactsAdapter contactsAdapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -68,6 +71,24 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
 
     }
 
+/*
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.deleteAll: {
+                contacts.clear();
+                SplashActivity.appDataBase.daoManager().deleteAllContacts();
+                contactsAdapter.notifyDataSetChanged();
+                updateMissingContactsBackground();
+                return true;
+            }
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+*/
 
 
     @Nullable
@@ -75,6 +96,9 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         colors = getResources().getIntArray(R.array.materialColors);
         view = inflater.inflate(R.layout.fragment_contacts, container, false);
+        contacts = NavigationDrawerActivity.contacts;
+
+        Toast.makeText(getContext(),"la lunghezza vale"+ contacts.size(),Toast.LENGTH_SHORT).show();
 
         editTextName = view.findViewById(R.id.edit_name);
         editTextSurname = view.findViewById(R.id.edit_surname);
@@ -133,25 +157,6 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
     }
 
     public void showContacts() {
-        //prendo i contatti dal database e li metto nella lista
-        contacts = SplashActivity.appDataBase.daoManager().getContacts();
-
-        Collections.sort(contacts, new Comparator<Contact>() {
-            @Override
-            public int compare(Contact o1, Contact o2) {
-
-                allInformationO1 = o1.getAllInformation(o1);
-                allInformationO2 = o2.getAllInformation(o2);
-
-                if (allInformationO1.compareToIgnoreCase(allInformationO2) < 0) {
-                    return -1;
-                } else if (allInformationO1.compareToIgnoreCase(allInformationO2) == 0) {
-                    return 0;
-                } else {
-                    return 1;
-                }
-            }
-        });
         updateMissingContactsBackground();
 
         //setto il recycler view

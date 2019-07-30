@@ -4,11 +4,11 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import java.util.Comparator;
+import java.io.Serializable;
 
 @Entity(tableName = "contact")
 
-public class Contact {
+public class Contact implements Serializable {
     String allInformationO1;
     String allInformationO2;
 
@@ -32,22 +32,6 @@ public class Contact {
 
     @ColumnInfo(name = "longitude")
     private String longitude;
-
-    public String getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
-    }
-
-    public String getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
-    }
 
     public Contact(){
 
@@ -100,7 +84,24 @@ public class Contact {
         this.address = address;
     }
 
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
     public String getAllInformation(Contact contact){
         return getName() + getSurname() + getAddress() + getPhone();
     }
+
 }

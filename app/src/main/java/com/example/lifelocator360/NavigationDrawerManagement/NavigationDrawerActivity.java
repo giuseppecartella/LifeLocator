@@ -1,16 +1,16 @@
 package com.example.lifelocator360.NavigationDrawerManagement;
 
 import android.Manifest;
+import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -19,6 +19,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import com.example.lifelocator360.DataBaseManagement.Contact;
+import com.example.lifelocator360.DataBaseManagement.Note;
 import com.example.lifelocator360.FragmentManagement.CalendarFragment;
 import com.example.lifelocator360.FragmentManagement.ContactsFragment;
 import com.example.lifelocator360.FragmentManagement.InstagramFragment;
@@ -33,6 +35,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -46,8 +49,8 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
     private Timer timer;
     private TimerTask timerTask;
     private FusedLocationProviderClient fusedLocationProviderClient;
-
-
+    public static ArrayList<Contact> contacts;
+    public static ArrayList<Note> notes;
 
     public int getNavigationDrawerSize() {
         return navigationDrawerSize;
@@ -94,6 +97,7 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
         inflater = getMenuInflater();
         inflater.inflate(R.menu.actionbar_menu, menu);
 
+
         //Show/Hide return to map button
         MenuItem returnToMap = menu.findItem(R.id.home);
         if(currentFragment.equals("Mappa")) {
@@ -110,6 +114,7 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
             deleteAll.setVisible(true);
         else
             deleteAll.setVisible(false);
+
         return true;
     }
 
@@ -122,6 +127,7 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
                 }
                 return true;
             }
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -170,9 +176,14 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation_drawer);
+
+        contacts = (ArrayList<Contact>) getIntent().getSerializableExtra("lista_contatti");
+        Toast.makeText(this,"la lunghezza e "+ contacts.size(),Toast.LENGTH_SHORT).show();
+        notes = (ArrayList<Note>) getIntent().getSerializableExtra("lista_note");
+        Toast.makeText(this,"la lunghezza e "+ notes.size(),Toast.LENGTH_SHORT).show();
+
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -286,18 +297,4 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
                 super.onBackPressed();
         }
     }
-
-    /*
-    @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
-        final LocationManager manager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
-        outState.putBoolean("gps_state",manager.isProviderEnabled(manager.GPS_PROVIDER));
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        MapsFragment.GPSActive = savedInstanceState.getBoolean("gps_state");
-    }*/
 }

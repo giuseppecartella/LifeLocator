@@ -22,6 +22,9 @@ import com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerAct
 import com.example.lifelocator360.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * The class shows a SplashScreen during the app loading.
@@ -43,6 +46,10 @@ public class SplashActivity extends AppCompatActivity {
     //Variabili per la gestione del Data Base
     public static AppDataBase appDataBase;
     public static String DBName = "APP_DB";
+    private ArrayList<Contact> contacts;
+    private ArrayList<Note> notes;
+    private String allInformationO1;
+    private String allInformationO2;
 
     private boolean isConnectionAvailable() {
         return connectionAvailable;
@@ -153,6 +160,33 @@ public class SplashActivity extends AppCompatActivity {
 
         //A questo punto posso creare il db (spostare in una funzione!)
         appDataBase = Room.databaseBuilder(getApplicationContext(), AppDataBase.class, DBName).allowMainThreadQueries().build();
+
+        //prendo dal database i dati necessari
+        contacts = (ArrayList<Contact>)SplashActivity.appDataBase.daoManager().getContacts();
+        intentNavigationDrawer.putExtra("lista_contatti", contacts);
+
+        Collections.sort(contacts, new Comparator<Contact>() {
+            @Override
+            public int compare(Contact o1, Contact o2) {
+
+                allInformationO1 = o1.getAllInformation(o1);
+                allInformationO2 = o2.getAllInformation(o2);
+
+                if (allInformationO1.compareToIgnoreCase(allInformationO2) < 0) {
+                    return -1;
+                } else if (allInformationO1.compareToIgnoreCase(allInformationO2) == 0) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            }
+        });
+
+        notes = (ArrayList<Note>) SplashActivity.appDataBase.daoManager().getNote();
+        intentNavigationDrawer.putExtra("lista_note", notes);
+
+        //a questo punto ho preso i dati da database e ho la lista pronta
+        //devo solo trovare un modo per passare questa lista al fragment
 
         startActivity(intentNavigationDrawer);
         finish();
