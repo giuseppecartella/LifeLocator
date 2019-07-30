@@ -27,6 +27,28 @@ public class Contact {
     @ColumnInfo(name = "contact_adress")
     private String address;
 
+    @ColumnInfo(name = "latitude")
+    private String latitude;
+
+    @ColumnInfo(name = "longitude")
+    private String longitude;
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
     public Contact(){
 
     }

@@ -16,6 +16,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.room.Room;
 import com.example.lifelocator360.DataBaseManagement.AppDataBase;
+import com.example.lifelocator360.DataBaseManagement.Contact;
+import com.example.lifelocator360.DataBaseManagement.Note;
 import com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity;
 import com.example.lifelocator360.R;
 import com.google.android.gms.common.ConnectionResult;
