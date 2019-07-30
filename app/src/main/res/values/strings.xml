@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Life Locator</string>
     <string name="google_maps_API_key">AIzaSyAiXFSLVOos-O6YZKUq3b_Qih6qeHwUb70</string>
+    <string name="geocoding_API_key">AIzaSyAV3-Tn-8X4CjWVDTrVhSGDQrbAdEsdjuc</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

@@ -6,4 +6,9 @@
         android:title="Torna alla mappa"
         android:icon="@drawable/ic_home_map"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/deleteAll"
+        android:title="Elimina tutti"
+        />
 </menu>

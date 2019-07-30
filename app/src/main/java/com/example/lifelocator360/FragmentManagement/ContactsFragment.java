@@ -1,13 +1,17 @@
 package com.example.lifelocator360.FragmentManagement;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -16,9 +20,16 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.lifelocator360.DataBaseManagement.Contact;
+import com.example.lifelocator360.MapManagement.HttpDataHandler;
 import com.example.lifelocator360.R;
 import com.example.lifelocator360.SplashScreenManagement.SplashActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -58,7 +69,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
     }
 
 
-    
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -212,7 +223,6 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
 
 
         builder.setView(view)
-                .setCancelable(true)
                 .setTitle("Scheda contatto")
                 .setNeutralButton("ELIMINA", new DialogInterface.OnClickListener() {
                     @Override
@@ -220,13 +230,13 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
                         safeDeleteDialog(position);
                     }
                 })
-                .setPositiveButton("MAPPA", new DialogInterface.OnClickListener() {
+                .setNegativeButton("MAPPA", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //dialog.dismiss();
+                        new GetCoordinates().execute("via+campi+modena");
                     }
                 })
-                .setNegativeButton("MODIFICA", new DialogInterface.OnClickListener() {
+                .setPositiveButton("MODIFICA", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         updateContactDialog(position);
@@ -274,7 +284,6 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.add_contact_dialog_layout, null);
 
         builder.setView(view)
-                .setCancelable(false)
                 .setTitle("Nuovo contatto")
                 .setNegativeButton("ANNULLA", new DialogInterface.OnClickListener() {
                     @Override
@@ -346,5 +355,52 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
                     }
                 });
         builder.create().show();
+    }
+
+    private class GetCoordinates extends AsyncTask<String,Void,String> {
+        ProgressBar progressBar = new ProgressBar(getActivity());
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.d("prova","sono nel preexecute");
+            //MOSTRARE LA PROGRESS BARRR
+
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String response;
+            try{
+                String address = strings[0];
+                HttpDataHandler httpDataHandler =new HttpDataHandler();
+                String url = String.format("https://maps.googleapis.com/maps/api/geocode/json?address=modena&key=AIzaSyAV3-Tn-8X4CjWVDTrVhSGDQrbAdEsdjuc");
+                Log.d("prova","sto per fare il gethttpdata");
+                response = httpDataHandler.getHTTPData(url);
+                return response;
+            } catch(Exception e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            try{
+                Log.d("prova","dati arrivati: gestisco il json");
+                JSONObject jsonObject = new JSONObject(s);
+                String lat = ((JSONArray)jsonObject.get("results")).getJSONObject(0).getJSONObject("geometry")
+                        .getJSONObject("location").get("lat").toString();
+
+                String lng = ((JSONArray)jsonObject.get("results")).getJSONObject(0).getJSONObject("geometry")
+                        .getJSONObject("location").get("lng").toString();
+                Log.d("prova","latlng: "+lat+lng);
+
+                Toast.makeText(getActivity(),lat + lng,Toast.LENGTH_SHORT).show();
+
+            } catch(JSONException e){
+                e.printStackTrace();
+            }
+        }
     }
 }

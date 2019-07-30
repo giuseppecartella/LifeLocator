@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="@dimen/card_corner_radius"
+    android:layout_marginBottom="@dimen/card_distance"
+    android:layout_marginLeft="4dp"
+    android:layout_marginStart="4dp"
+    app:cardBackgroundColor="@color/noteBackground">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/card_distance"
+        >
+
+
+        <ImageView
+            android:id="@+id/placeNoteIcon"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_below="@id/noteName"
+            android:background="@drawable/ic_place"
+            android:padding="@dimen/contact_photo_padding" />
+
+        <TextView
+            android:id="@+id/noteName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Titolo"
+            android:textAllCaps="true"
+            android:textColor="@color/primarytext"
+            android:textSize="@dimen/note_name"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/notePosition"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Posizione"
+            android:layout_marginLeft="23dp"
+            android:layout_marginStart="23dp"
+            android:textColor="@color/primarytext"
+            android:layout_below="@id/noteName"
+            android:textSize="@dimen/note_position"
+            android:textStyle="italic" />
+
+
+        <TextView
+            android:id="@+id/noteText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="39dp"
+            android:layout_marginRight="39dp"
+            android:textSize="@dimen/note_text"
+            android:layout_below="@id/notePosition"
+            android:text="Testo della nota"
+            android:textColor="@color/primarytext"/>
+
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

@@ -9,6 +9,7 @@
     <color name="dividerColor">#BDBDBD</color>
     <color name="textAndIconsLightColor">#FFFFFF</color>
     <color name="grayColor">#9C9C9C</color>
+    <color name="noteBackground">#fffde7</color>
 
 
 
@@ -37,6 +38,5 @@
         <item>@color/materialBrown</item>
         <item>@color/materialMetallic</item>
     </integer-array>
-
 
 </resources>

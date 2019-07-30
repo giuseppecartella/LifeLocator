@@ -105,6 +105,11 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
             returnToMap.setVisible(true);
         }
 
+        MenuItem deleteAll = menu.findItem(R.id.deleteAll);
+        if (currentFragment.equals("Contatti") || currentFragment.equals("Note") || currentFragment.equals("Calendario"))
+            deleteAll.setVisible(true);
+        else
+            deleteAll.setVisible(false);
         return true;
     }
 

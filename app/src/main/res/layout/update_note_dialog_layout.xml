@@ -6,47 +6,33 @@
 
 
     <EditText
-        android:id="@+id/update_name"
+        android:id="@+id/update_note_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="15dp"
-        android:hint="Nome"
-        android:inputType="textCapWords" />
+        android:hint="Titolo"
+        android:inputType="textCapCharacters" />
 
     <EditText
-        android:id="@+id/update_surname"
+        android:id="@+id/update_note_position"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/update_name"
+        android:layout_below="@id/update_note_name"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="15dp"
-        android:hint="Cognome"
-        android:inputType="textCapWords" />
+        android:hint="Posizione" />
 
     <EditText
-        android:id="@+id/update_phone"
+        android:id="@+id/update_note_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/update_surname"
+        android:layout_below="@id/update_note_position"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="15dp"
-        android:hint="Cellulare"
-        android:inputType="phone" />
-
-    <EditText
-        android:id="@+id/update_address"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/update_phone"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="15dp"
-        android:hint="Indirizzo" />
-   
+        android:hint="Testo" />
 </RelativeLayout>

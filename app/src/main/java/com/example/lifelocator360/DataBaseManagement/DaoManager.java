@@ -5,13 +5,13 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Dao
 public interface DaoManager {
 
+
+    //Contatti
     @Insert
     public void addContact(Contact contact);
 
@@ -23,5 +23,22 @@ public interface DaoManager {
 
     @Update
     public void updateContact(Contact contact);
+
+
+    //Note
+    @Insert
+    public void addNote(Note note);
+
+    @Query("select * from note")
+    public List<Note> getNote();
+
+    @Delete
+    public void deleteNote(Note note);
+
+    @Update
+    public void updateNote(Note note);
+
+    @Query("delete from note")
+    public void deleteAllNotes();
 
 }

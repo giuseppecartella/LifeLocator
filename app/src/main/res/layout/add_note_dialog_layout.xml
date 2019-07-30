@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/edit_note_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textCapCharacters"
+        android:hint="Nome" />
+
+    <EditText
+        android:id="@+id/edit_note_position"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Luogo"
+        android:layout_below="@id/edit_note_name"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"/>
+
+    <EditText
+        android:id="@+id/edit_note_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Testo della nota..."
+        android:layout_below="@id/edit_note_position"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"/>
+
+</RelativeLayout>
