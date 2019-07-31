@@ -43,6 +43,4 @@ public interface DaoManager {
     @Update
     public void updateNote(Note note);
 
-
-
 }

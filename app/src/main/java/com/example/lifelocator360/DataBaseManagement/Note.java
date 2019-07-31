@@ -9,7 +9,6 @@ import java.io.Serializable;
 @Entity(tableName = "note")
 
 public class Note implements Serializable {
-
     @PrimaryKey(autoGenerate = true)
     private Integer id ;
 

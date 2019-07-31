@@ -24,10 +24,12 @@ import com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerAct
 import com.example.lifelocator360.R;
 import com.example.lifelocator360.SplashScreenManagement.SplashActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class NotesFragment extends Fragment implements View.OnClickListener {
-    private List<Note> notes;
+    private ArrayList<Note> notes;
     private RecyclerView recyclerView;
     private NotesAdapter notesAdapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -45,25 +47,23 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
     private EditText updateTextPosition;
     private EditText updateTextNoteText;
 
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
-        super.onCreateOptionsMenu(menu, inflater);
+    public NotesFragment(){
 
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
-
         view = inflater.inflate(R.layout.fragment_notes,container,false);
+        notes = NavigationDrawerActivity.notes;
 
         editTextName = view.findViewById(R.id.edit_note_name);
         editTextPosition = view.findViewById(R.id.edit_note_position);
@@ -83,9 +83,6 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
-
-
-
     public void updateMissingNotesBackground() {
         if (notes.isEmpty()) {
             imageMissingNote.setVisibility(View.VISIBLE);
@@ -97,17 +94,15 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
     }
 
     public void showNotes() {
-        notes = NavigationDrawerActivity.notes;
-
         updateMissingNotesBackground();
 
         //setto il recycler view
         recyclerView = view.findViewById(R.id.recyclerViewNotes);
 
         recyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 2);
+        layoutManager = new GridLayoutManager(getContext(), 2);
         notesAdapter = new NotesAdapter(notes);
-        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(notesAdapter);
         notesAdapter.setOnItemClickListener(new NotesAdapter.OnItemClickListener() {
             @Override
@@ -117,7 +112,6 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
         });
 
     }
-
 
     @Override
     public void onClick(View view) {
@@ -130,7 +124,6 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
     }
 
     private void onSaveClicked() {
-
         name = editTextName.getText().toString();
         position = editTextPosition.getText().toString();
         textNote = editTextNoteText.getText().toString();
@@ -185,14 +178,12 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
         builder.create().show();
     }
 
-
     private void deleteAllNotes() {
         notes.clear();
         SplashActivity.appDataBase.daoManager().deleteAllNotes();
         notesAdapter.notifyDataSetChanged();
         updateMissingNotesBackground();
     }
-
 
     public void safeDeleteAllDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -297,6 +288,5 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
         editTextPosition = view.findViewById(R.id.edit_note_position);
         editTextNoteText = view.findViewById(R.id.edit_note_text);
     }
-
 
 }
