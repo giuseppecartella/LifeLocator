@@ -290,7 +290,7 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
                     public void onClick(DialogInterface dialog, int which) {
                         onSaveClicked();
                     }
-                });
+                }) ;
         builder.create().show();
 
         editTextName = view.findViewById(R.id.edit_note_name);
