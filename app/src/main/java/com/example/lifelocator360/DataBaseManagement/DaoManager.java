@@ -5,6 +5,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
+
 import java.util.List;
 
 @Dao
@@ -25,7 +26,6 @@ public interface DaoManager {
     public void deleteAllContacts();
     @Update
     public void updateContact(Contact contact);
-
 
     //Note
     @Insert

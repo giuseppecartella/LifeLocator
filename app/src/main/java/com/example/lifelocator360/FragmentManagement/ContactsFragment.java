@@ -40,7 +40,6 @@ import java.util.Comparator;
 import java.util.List;
 
 public class ContactsFragment extends Fragment implements View.OnClickListener {
-    private ArrayList<Contact> contacts;
     private RecyclerView recyclerView;
     private ContactsAdapter contactsAdapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -69,6 +68,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
     private TextView textAddress;
 
 
+
     public ContactsFragment() {
 
     }
@@ -76,9 +76,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
         super.onCreateOptionsMenu(menu, inflater);
-
     }
 
     @Nullable
@@ -91,7 +89,6 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
 
         colors = getResources().getIntArray(R.array.materialColors);
         view = inflater.inflate(R.layout.fragment_contacts, container, false);
-        contacts = NavigationDrawerActivity.contacts;
 
         editTextName = view.findViewById(R.id.edit_name);
         editTextSurname = view.findViewById(R.id.edit_surname);
@@ -153,7 +150,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
 
 
     public void updateMissingContactsBackground() {
-        if (contacts.isEmpty()) {
+        if (NavigationDrawerActivity.contacts.isEmpty()) {
             imageMissingContacts.setVisibility(View.VISIBLE);
             textMissingContacts.setVisibility(View.VISIBLE);
         } else {
@@ -169,7 +166,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getContext());
-        contactsAdapter = new ContactsAdapter(contacts);
+        contactsAdapter = new ContactsAdapter(NavigationDrawerActivity.contacts);
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(contactsAdapter);
@@ -180,7 +177,6 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
                 showContactInfoDialog(position);
             }
         });
-
     }
 
 
@@ -206,8 +202,8 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
             Toast.makeText(getActivity(), "Contatto non salvato!", Toast.LENGTH_SHORT).show();
         } else {
             Contact contact = new Contact(name, surname, phone, address);
-            int index = getNewContactIndex(contacts, contact);
-            contacts.add(index, contact);
+            int index = getNewContactIndex(NavigationDrawerActivity.contacts, contact);
+            NavigationDrawerActivity.contacts.add(index, contact);
             SplashActivity.appDataBase.daoManager().addContact(contact);
 
             contactsAdapter.notifyItemInserted(index);
@@ -227,10 +223,10 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         textPhone = view.findViewById(R.id.text_phone);
         textAddress = view.findViewById(R.id.text_address);
 
-        textName.setText(contacts.get(position).getName());
-        textSurname.setText(contacts.get(position).getSurname());
-        textPhone.setText(contacts.get(position).getPhone());
-        textAddress.setText(contacts.get(position).getAddress());
+        textName.setText(NavigationDrawerActivity.contacts.get(position).getName());
+        textSurname.setText(NavigationDrawerActivity.contacts.get(position).getSurname());
+        textPhone.setText(NavigationDrawerActivity.contacts.get(position).getPhone());
+        textAddress.setText(NavigationDrawerActivity.contacts.get(position).getAddress());
 
 
         builder.setView(view)
@@ -244,8 +240,8 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
                 .setNegativeButton("MAPPA", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Log.d("prova ", "cerco la posizione " + contacts.get(position).getAddress().replace(" ", "+"));
-                        new GetCoordinates().execute(contacts.get(position).getAddress().replace(" ", "+"));
+                        Log.d("prova ", "cerco la posizione " + NavigationDrawerActivity.contacts.get(position).getAddress().replace(" ", "+"));
+                        new GetCoordinates().execute(NavigationDrawerActivity.contacts.get(position).getAddress().replace(" ", "+"));
                     }
                 })
                 .setPositiveButton("MODIFICA", new DialogInterface.OnClickListener() {
@@ -259,17 +255,17 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
 
 
     private void deleteContact(int position) {
-        Integer id = contacts.get(position).getId();
+        Integer id = NavigationDrawerActivity.contacts.get(position).getId();
         Contact contact = new Contact();
         contact.setId(id);
-        contacts.remove(position);
+        NavigationDrawerActivity.contacts.remove(position);
         SplashActivity.appDataBase.daoManager().deleteContact(contact);
         contactsAdapter.notifyItemRemoved(position);
         updateMissingContactsBackground();
     }
 
     private void deleteAllContacts() {
-        contacts.clear();
+        NavigationDrawerActivity.contacts.clear();
         SplashActivity.appDataBase.daoManager().deleteAllContacts();
         contactsAdapter.notifyDataSetChanged();
         updateMissingContactsBackground();
@@ -296,17 +292,17 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
 
     private void updateContact(int position, EditText name, EditText surname, EditText phone, EditText address) {
         Contact contact = new Contact();
-        contact.setId(contacts.get(position).getId());
+        contact.setId(NavigationDrawerActivity.contacts.get(position).getId());
         contact.setName(name.getText().toString());
         contact.setSurname(surname.getText().toString());
         contact.setPhone(phone.getText().toString());
         contact.setAddress(address.getText().toString());
 
-        contacts.remove(position);
+        NavigationDrawerActivity.contacts.remove(position);
         contactsAdapter.notifyItemRemoved(position);
 
-        position = getNewContactIndex(contacts, contact);
-        contacts.add(position, contact);
+        position = getNewContactIndex(NavigationDrawerActivity.contacts, contact);
+        NavigationDrawerActivity.contacts.add(position, contact);
         contactsAdapter.notifyItemInserted(position);
 
         SplashActivity.appDataBase.daoManager().updateContact(contact);
@@ -373,10 +369,10 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         updateTextPhone = view.findViewById(R.id.update_phone);
         updateTextAddress = view.findViewById(R.id.update_address);
 
-        updateTextName.setText(contacts.get(position).getName());
-        updateTextSurname.setText(contacts.get(position).getSurname());
-        updateTextPhone.setText(contacts.get(position).getPhone());
-        updateTextAddress.setText(contacts.get(position).getAddress());
+        updateTextName.setText(NavigationDrawerActivity.contacts.get(position).getName());
+        updateTextSurname.setText(NavigationDrawerActivity.contacts.get(position).getSurname());
+        updateTextPhone.setText(NavigationDrawerActivity.contacts.get(position).getPhone());
+        updateTextAddress.setText(NavigationDrawerActivity.contacts.get(position).getAddress());
 
         builder.setView(view)
                 .setTitle("Modifica contatto")

@@ -31,10 +31,12 @@ public class Note implements Serializable {
 
     }
 
-    public Note(String name, String position, String text) {
+    public Note(String name, String position, String text, String latitude, String longitude) {
         this.name = name;
         this.position = position;
         this.text = text;
+        this.latitude = latitude;
+        this. longitude = longitude;
     }
 
     public Integer getId() {

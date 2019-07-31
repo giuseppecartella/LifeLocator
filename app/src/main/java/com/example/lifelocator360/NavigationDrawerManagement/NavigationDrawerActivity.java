@@ -2,9 +2,14 @@ package com.example.lifelocator360.NavigationDrawerManagement;
 
 import android.Manifest;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -32,16 +37,20 @@ import com.example.lifelocator360.MapManagement.MapsFragment;
 import com.example.lifelocator360.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class NavigationDrawerActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class NavigationDrawerActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, NotesFragment.NoteFramentListener {
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private String currentFragment = "Mappa";
@@ -298,6 +307,63 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
                 returnToMap();
             else
                 super.onBackPressed();
+        }
+    }
+
+    private void addNoteMarker(String inputLatitude, String inputLongitude, String noteTitle, int index){
+        Double lat = Double.parseDouble(inputLatitude);
+        Double lng = Double.parseDouble(inputLongitude);
+        if(noteTitle.isEmpty())
+            noteTitle = "NESSUN TITOLO";
+
+        MapsFragment.newMarker = MapsFragment.mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng))
+                .title(noteTitle));
+
+        MapsFragment.newMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.note_icon_map));
+        MapsFragment.newMarker.setTag(index);
+        Toast.makeText(this, "Aggiunto index " + index, Toast.LENGTH_SHORT).show();
+
+        MapsFragment.noteMarkers.add(MapsFragment.newMarker);
+    }
+
+    private void updateNoteMarker(String inputLatitude, String inputLongitude, String noteTitle, Integer oldIndex) {
+        Double lat = Double.parseDouble(inputLatitude);
+        Double lng = Double.parseDouble(inputLongitude);
+        boolean found = false;
+        if(noteTitle.isEmpty())
+            noteTitle = "NESSUN TITOLO";
+
+        for(int i = 0; i < MapsFragment.noteMarkers.size(); ++i) {
+            if(MapsFragment.noteMarkers.get(i).getTag() == oldIndex) {
+                MapsFragment.noteMarkers.get(i).setPosition(new LatLng(lat, lng));
+                MapsFragment.noteMarkers.get(i).setTitle(noteTitle);
+                Toast.makeText(this, "Aggiornato index " + i, Toast.LENGTH_SHORT).show();
+                found = true;
+            }
+        }
+
+        if(!found) {
+            addNoteMarker(inputLatitude, inputLongitude, noteTitle, oldIndex);
+        }
+    }
+
+    private void deleteNoteMarker(Integer index) {
+        for(int i = 0; i < MapsFragment.noteMarkers.size(); ++i) {
+            if(MapsFragment.noteMarkers.get(i).getTag() == index) {
+                MapsFragment.noteMarkers.get(i).remove();
+                MapsFragment.noteMarkers.remove(i);
+            }
+        }
+    }
+
+    @Override
+    public void onInputNoteSent(String inputLatitude, String inputLongitude, String editType, String noteTitle, int index) {
+        if(editType.equals("ADD")) {
+            addNoteMarker(inputLatitude, inputLongitude, noteTitle, index);
+        } else if(editType.equals("UPDATE")) {
+            updateNoteMarker(inputLatitude, inputLongitude, noteTitle, index);
+        } else if(editType.equals("DELETE")) {
+            deleteNoteMarker(index);
         }
     }
 }
