@@ -10,6 +10,7 @@ import java.io.Serializable;
 
 public class Note implements Serializable {
     @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "note_id")
     private Integer id ;
 
     @ColumnInfo(name = "note_name")

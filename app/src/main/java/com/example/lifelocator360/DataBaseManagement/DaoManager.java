@@ -43,4 +43,11 @@ public interface DaoManager {
     @Update
     public void updateNote(Note note);
 
+
+    @Query ("select contact_id from contact")
+    public Integer[] reciveContactsIds();
+
+    @Query ("select note_id from note")
+    public Integer[] reciveNotesIds();
+
 }

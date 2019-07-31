@@ -9,11 +9,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.lifelocator360.DataBaseManagement.Contact;
 import com.example.lifelocator360.R;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import static com.example.lifelocator360.FragmentManagement.ContactsFragment.colors;
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ContactsViewHolder> {
-    private List<Contact> contacts;
+    private ArrayList<Contact> contacts;
     private static OnItemClickListener onItemClickListener;
     private int randomColor;
 
@@ -57,7 +59,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
 
 
 
-    public ContactsAdapter(List<Contact> contacts) {
+    public ContactsAdapter(ArrayList<Contact> contacts) {
         this.contacts = contacts;
     }
 

@@ -13,6 +13,7 @@ public class Contact implements Serializable {
     String allInformationO2;
 
     @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "contact_id")
     private Integer id ;
 
     @ColumnInfo(name = "contact_name")

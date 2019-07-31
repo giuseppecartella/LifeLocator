@@ -135,7 +135,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public int getNewContactIndex(List<Contact> contacts, Contact contact) {
+    public int getNewContactIndex(ArrayList<Contact> contacts, Contact contact) {
         if (contacts.size() == 0)
             return 0;
 
@@ -255,11 +255,12 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
 
 
     private void deleteContact(int position) {
-        Integer id = NavigationDrawerActivity.contacts.get(position).getId();
+        Integer idS[] = SplashActivity.appDataBase.daoManager().reciveContactsIds();
         Contact contact = new Contact();
-        contact.setId(id);
-        NavigationDrawerActivity.contacts.remove(position);
+        contact.setId(idS[position]);
         SplashActivity.appDataBase.daoManager().deleteContact(contact);
+        NavigationDrawerActivity.contacts.remove(position);
+
         contactsAdapter.notifyItemRemoved(position);
         updateMissingContactsBackground();
     }

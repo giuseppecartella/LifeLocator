@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "acf04af49b2a118c7230e40ca4721033",
+    "identityHash": "f2a204a74dd7c36d2885605004c3b672",
     "entities": [
       {
         "tableName": "contact",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`allInformationO1` TEXT, `allInformationO2` TEXT, `id` INTEGER PRIMARY KEY AUTOINCREMENT, `contact_name` TEXT, `contact_surname` TEXT, `contact_phone` TEXT, `contact_adress` TEXT, `latitude` TEXT, `longitude` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`allInformationO1` TEXT, `allInformationO2` TEXT, `contact_id` INTEGER PRIMARY KEY AUTOINCREMENT, `contact_name` TEXT, `contact_surname` TEXT, `contact_phone` TEXT, `contact_adress` TEXT, `latitude` TEXT, `longitude` TEXT)",
         "fields": [
           {
             "fieldPath": "allInformationO1",
@@ -22,7 +22,7 @@
           },
           {
             "fieldPath": "id",
-            "columnName": "id",
+            "columnName": "contact_id",
             "affinity": "INTEGER",
             "notNull": false
           },
@@ -65,7 +65,7 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "id"
+            "contact_id"
           ],
           "autoGenerate": true
         },
@@ -74,11 +74,11 @@
       },
       {
         "tableName": "note",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `note_name` TEXT, `note_position` TEXT, `note_text` TEXT, `latitude` TEXT, `longitude` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`note_id` INTEGER PRIMARY KEY AUTOINCREMENT, `note_name` TEXT, `note_position` TEXT, `note_text` TEXT, `latitude` TEXT, `longitude` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
-            "columnName": "id",
+            "columnName": "note_id",
             "affinity": "INTEGER",
             "notNull": false
           },
@@ -115,7 +115,7 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "id"
+            "note_id"
           ],
           "autoGenerate": true
         },
@@ -126,7 +126,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'acf04af49b2a118c7230e40ca4721033')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f2a204a74dd7c36d2885605004c3b672')"
     ]
   }
 }

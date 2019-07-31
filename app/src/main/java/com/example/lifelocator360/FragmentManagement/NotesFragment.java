@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.lifelocator360.DataBaseManagement.Contact;
 import com.example.lifelocator360.DataBaseManagement.Note;
 import com.example.lifelocator360.MapManagement.HttpDataHandler;
 import com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity;
@@ -345,9 +346,9 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
     }
 
     private void deleteNote(int index) {
-        Integer id = NavigationDrawerActivity.notes.get(index).getId();
+        Integer idS[] = SplashActivity.appDataBase.daoManager().reciveNotesIds();
         Note note = new Note();
-        note.setId(id);
+        note.setId(idS[index]);
         NavigationDrawerActivity.notes.remove(index);
         SplashActivity.appDataBase.daoManager().deleteNote(note);
         notesAdapter.notifyItemRemoved(index);
