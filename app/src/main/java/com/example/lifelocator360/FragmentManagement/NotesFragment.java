@@ -28,10 +28,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.lifelocator360.DataBaseManagement.Contact;
 import com.example.lifelocator360.DataBaseManagement.Note;
 import com.example.lifelocator360.MapManagement.HttpDataHandler;
+import com.example.lifelocator360.MapManagement.MapsFragment;
 import com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity;
 import com.example.lifelocator360.R;
 import com.example.lifelocator360.SplashScreenManagement.SplashActivity;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,6 +42,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.ZOOM_TO_MARKER;
 
 public class NotesFragment extends Fragment implements View.OnClickListener {
     private RecyclerView recyclerView;
@@ -58,7 +65,9 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
     private EditText updateTextPosition;
     private EditText updateTextNoteText;
     private static boolean isNewNote; //Serve per on post execute, per sapere se chiamare nuova nota o aggiornarla
+    private static boolean refreshGoToMapButton = false;
     private static int oldIndex;
+    private static AlertDialog noteInfoDialog;
 
 
     public NotesFragment() {
@@ -138,9 +147,13 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
 
     private void saveNote(String name, String position, String textNote, String latitude, String longitude) {
         Note note = new Note(name, position, textNote, latitude, longitude);
+
         int index = NavigationDrawerActivity.notes.size();
-        NavigationDrawerActivity.notes.add(index, note);
         SplashActivity.appDataBase.daoManager().addNote(note);
+        Integer noteIds[] = SplashActivity.appDataBase.daoManager().getNoteIds();
+        NavigationDrawerActivity.notes.add(index, note);
+        NavigationDrawerActivity.notes.get(index).setId(noteIds[noteIds.length - 1]);
+
         notesAdapter.notifyItemInserted(index);
         updateMissingNotesBackground();
 
@@ -157,11 +170,7 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
             String inputLongitude = note.getLongitude();
             noteFramentListener.onInputNoteSent(inputLatitude, inputLongitude, "ADD", name, index);
         }
-
-
-       // Toast.makeText(getActivity(), "Nota salvata!", Toast.LENGTH_SHORT).show();
     }
-
 
     //////////////////////////////////////////////////////GESTORE COMUNICAZIONE CON MAPPA///////////////////////////
     private NoteFramentListener noteFramentListener;
@@ -226,15 +235,16 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
 
 
     public void onUpdateClicked(int index, EditText noteName, EditText notePosition, EditText noteText) {
-
         String oldAddress = NavigationDrawerActivity.notes.get(index).getPosition();
         String newAddress = notePosition.getText().toString();
+
 
         name = noteName.getText().toString();
         position = notePosition.getText().toString();
         textNote = noteText.getText().toString();
 
         if (oldAddress.equals(newAddress)) {
+            oldIndex = index;
             updateNote(name, position, textNote, NavigationDrawerActivity.notes.get(oldIndex).getLatitude(), NavigationDrawerActivity.notes.get(oldIndex).getLongitude());
         } else {
             if (!checkNetworkConnectionStatus()) {
@@ -275,7 +285,7 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
 
         //Eventualmente sposto il marker
         if (note.getLatitude().equals("NO_INTERNET") || note.getLatitude().equals("NO_ADDRESS") || note.getLatitude().equals("NO_RESULT")) {
-           noteFramentListener.onInputNoteSent("NO_LATITUDE", "NO_LONGITUDE", "DELETE", name, oldIndex);
+            noteFramentListener.onInputNoteSent("REMOVE_MARKER", "REMOVE_MARKER", "DELETE", name, oldIndex);
             Log.d("richiesta", "aggiornata nota con errore: " + note.getLatitude());
         } else {
             Log.d("richiesta", "aggiornata nota con coordinate: " + note.getLatitude() + " " + note.getLongitude());
@@ -312,6 +322,8 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
         SplashActivity.appDataBase.daoManager().deleteAllNotes();
         notesAdapter.notifyDataSetChanged();
         updateMissingNotesBackground();
+
+        noteFramentListener.onInputNoteSent("DELETE_ALL", "DELETE_ALL", "DELETE_ALL", "DELETE_ALL", -1);
     }
 
     public void safeDeleteAllDialog() {
@@ -346,19 +358,35 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
     }
 
     private void deleteNote(int index) {
-        Integer idS[] = SplashActivity.appDataBase.daoManager().reciveNotesIds();
+        Integer id = NavigationDrawerActivity.notes.get(index).getId();
         Note note = new Note();
-
-        note.setId(idS[index]);
+        note.setId(id);
         NavigationDrawerActivity.notes.remove(index);
         SplashActivity.appDataBase.daoManager().deleteNote(note);
         notesAdapter.notifyItemRemoved(index);
         updateMissingNotesBackground();
-
         noteFramentListener.onInputNoteSent("DELETING", "DELETING", "DELETE", name, index);
     }
 
-    public void updateNoteInfoDialog(int position) {
+    private void returnToMap(){
+        NavigationDrawerActivity.currentFragment = "Mappa";
+        NavigationDrawerActivity.uncheckAllNavigationItems();
+        getActivity().getSupportFragmentManager().popBackStack();
+
+        //Hide return to map button
+        getActivity().invalidateOptionsMenu();
+    }
+
+    private void showNoteInMap(String latitude,String longitude){
+        Double lat = Double.parseDouble(latitude);
+        Double lng = Double.parseDouble(longitude);
+
+
+        MapsFragment.moveCamera(new LatLng(lat,lng),ZOOM_TO_MARKER);
+        returnToMap();
+    }
+
+    public void updateNoteInfoDialog(int index) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.update_note_dialog_layout, null);
@@ -367,32 +395,54 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
         updateTextPosition = view.findViewById(R.id.update_note_position);
         updateTextNoteText = view.findViewById(R.id.update_note_text);
 
-        updateTextName.setText(NavigationDrawerActivity.notes.get(position).getName());
-        updateTextPosition.setText(NavigationDrawerActivity.notes.get(position).getPosition());
-        updateTextNoteText.setText(NavigationDrawerActivity.notes.get(position).getText());
+        updateTextName.setText(NavigationDrawerActivity.notes.get(index).getName());
+        updateTextPosition.setText(NavigationDrawerActivity.notes.get(index).getPosition());
+        updateTextNoteText.setText(NavigationDrawerActivity.notes.get(index).getText());
 
         builder.setView(view)
                 .setTitle("Modifica nota")
                 .setPositiveButton("SALVA", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        onUpdateClicked(position, updateTextName, updateTextPosition, updateTextNoteText);
+                        onUpdateClicked(index, updateTextName, updateTextPosition, updateTextNoteText);
                     }
                 })
                 .setNegativeButton("MAPPA", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
+                            showNoteInMap(NavigationDrawerActivity.notes.get(index).getLatitude(),NavigationDrawerActivity.notes.get(index).getLongitude());
                     }
                 })
                 .setNeutralButton("ELIMINA", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        safeDeleteDialog(position);
+                        safeDeleteDialog(index);
                     }
                 });
-        builder.create().show();
+        noteInfoDialog = builder.create();
+        noteInfoDialog.show();
+        oldIndex = index;
+        isNewNote = false;
+
+        Log.d("OLDINDEX", "vale " + oldIndex);
+
+        String latStatus = NavigationDrawerActivity.notes.get(index).getLatitude();
+        Log.d("prova","latitude vale"+latStatus);
+
+        name = updateTextName.getText().toString();
+        position = updateTextPosition.getText().toString();
+        textNote = updateTextNoteText.getText().toString();
+
+        if (latStatus.equals("NO_ADDRESS") || latStatus.equals("NO_RESULT")) {
+            noteInfoDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
+        } else if (latStatus.equals("NO_INTERNET")) {
+            noteInfoDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
+            if (checkNetworkConnectionStatus()) {
+                refreshGoToMapButton = true;
+                new GetCoordinates().execute(NavigationDrawerActivity.notes.get(index).getPosition().replace(" ", "+"), "RETRY");
+            }
+        }
     }
 
     public void showAddNoteDialog() {
@@ -435,18 +485,22 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
             String response;
             try {
                 String address = strings[0];
-                Log.d("prova"," vale "+name);
+                Log.d("prova", " vale " + name);
                 HttpDataHandler httpDataHandler = new HttpDataHandler();
                 String url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&key=AIzaSyAV3-Tn-8X4CjWVDTrVhSGDQrbAdEsdjuc";
                 Log.d("tag", "url vale " + url);
                 Log.d("prova", "sto per fare il gethttpdata");
                 response = httpDataHandler.getHTTPData(url);
-                Log.d("valori",name+position+textNote);
+                Log.d("valori", name + position + textNote);
                 return response;
             } catch (Exception e) {
+
+                Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.nav_drawer_layout), "Errore nell'ottenimento della posizione.", Snackbar.LENGTH_LONG);
+                snackbar.show();
+
                 if (isNewNote) {
-                    saveNote(name, position, textNote, "NO_RESULT", "NO_RESULT");}
-                else {
+                    saveNote(name, position, textNote, "NO_RESULT", "NO_RESULT");
+                } else {
                     updateNote(name, position, textNote, "NO_RESULT", "NO_RESULT");
                 }
                 Log.d("richiesta", "Salvataggio con risultato assente");
@@ -472,10 +526,18 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
                 else {
                     Log.d("prima valgono: ", name + position + textNote);
                     updateNote(name, position, textNote, lat, lng);
+
+                    if(refreshGoToMapButton) {
+                        refreshGoToMapButton = false;
+                        noteInfoDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(true);
+                    }
                 }
 
 
             } catch (JSONException e) {
+
+                Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.nav_drawer_layout), "L'indirizzo non è valido, sii più preciso.", Snackbar.LENGTH_LONG);
+                snackbar.show();
 
                 if (isNewNote)
                     saveNote(name, position, textNote, "NO_RESULT", "NO_RESULT");

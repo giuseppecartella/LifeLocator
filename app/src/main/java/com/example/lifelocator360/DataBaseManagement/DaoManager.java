@@ -11,8 +11,7 @@ import java.util.List;
 @Dao
 public interface DaoManager {
 
-
-    //Contatti
+    //CONTATTI
     @Insert
     public void addContact(Contact contact);
 
@@ -27,7 +26,11 @@ public interface DaoManager {
     @Update
     public void updateContact(Contact contact);
 
-    //Note
+    //NB: nel database i contatti sono ordinati per id e quindi per ordine di inserimento
+    @Query("select contact_id from contact")
+    public Integer[] getContactIds();
+
+    //NOTE
     @Insert
     public void addNote(Note note);
 
@@ -44,10 +47,6 @@ public interface DaoManager {
     public void updateNote(Note note);
 
 
-    @Query ("select contact_id from contact")
-    public Integer[] reciveContactsIds();
-
-    @Query ("select note_id from note")
-    public Integer[] reciveNotesIds();
-
+    @Query("select note_id from note")
+    public Integer[] getNoteIds();
 }

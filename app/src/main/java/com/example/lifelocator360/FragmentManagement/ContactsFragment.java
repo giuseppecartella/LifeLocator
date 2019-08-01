@@ -201,15 +201,18 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         if (name.isEmpty() && surname.isEmpty() && phone.isEmpty() && address.isEmpty()) {
             Toast.makeText(getActivity(), "Contatto non salvato!", Toast.LENGTH_SHORT).show();
         } else {
+
             Contact contact = new Contact(name, surname, phone, address);
             int index = getNewContactIndex(NavigationDrawerActivity.contacts, contact);
-            NavigationDrawerActivity.contacts.add(index, contact);
+
             SplashActivity.appDataBase.daoManager().addContact(contact);
+            Integer contactIds[] = SplashActivity.appDataBase.daoManager().getContactIds();
+            NavigationDrawerActivity.contacts.add(index, contact);
+            NavigationDrawerActivity.contacts.get(index).setId(contactIds[contactIds.length - 1]);
+
 
             contactsAdapter.notifyItemInserted(index);
             updateMissingContactsBackground();
-
-            Toast.makeText(getActivity(), "Contatto salvato!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -255,12 +258,11 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
 
 
     private void deleteContact(int position) {
-        Integer idS[] = SplashActivity.appDataBase.daoManager().reciveContactsIds();
+        Integer id = NavigationDrawerActivity.contacts.get(position).getId();
         Contact contact = new Contact();
-        contact.setId(idS[position]);
+        contact.setId(id);
         SplashActivity.appDataBase.daoManager().deleteContact(contact);
         NavigationDrawerActivity.contacts.remove(position);
-
         contactsAdapter.notifyItemRemoved(position);
         updateMissingContactsBackground();
     }

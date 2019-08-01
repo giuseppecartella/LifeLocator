@@ -1,15 +1,9 @@
 package com.example.lifelocator360.NavigationDrawerManagement;
 
 import android.Manifest;
-import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Location;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -25,7 +19,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.lifelocator360.DataBaseManagement.Contact;
-import com.example.lifelocator360.DataBaseManagement.DaoManager;
 import com.example.lifelocator360.DataBaseManagement.Note;
 import com.example.lifelocator360.FragmentManagement.CalendarFragment;
 import com.example.lifelocator360.FragmentManagement.ContactsFragment;
@@ -45,32 +38,34 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
 
+
 public class NavigationDrawerActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, NotesFragment.NoteFramentListener {
     private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
-    private String currentFragment = "Mappa";
-    private int navigationDrawerSize;
-    private static float DEF_ZOOM = 15.0f;
+    public static NavigationView navigationView;
+    public static String currentFragment = "Mappa";
+    public static int navigationDrawerSize;
+    public static final float DEF_ZOOM = 11.0f;
+    public static final float ZOOM_TO_MARKER = 17.0f;
     private Timer timer;
     private TimerTask timerTask;
     private FusedLocationProviderClient fusedLocationProviderClient;
     public static ArrayList<Contact> contacts;
     public static ArrayList<Note> notes;
 
-    public int getNavigationDrawerSize() {
+
+    public static int getNavigationDrawerSize() {
         return navigationDrawerSize;
     }
 
-    public void setNavigationDrawerSize() {
-        this.navigationDrawerSize = navigationView.getMenu().size();
+    public static void setNavigationDrawerSize() {
+        navigationDrawerSize = navigationView.getMenu().size();
     }
 
-    public void uncheckAllNavigationItems() {
+    public static void uncheckAllNavigationItems() {
         setNavigationDrawerSize();
 
         for (int i = 0; i < getNavigationDrawerSize(); i++) {
@@ -78,7 +73,8 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
         }
     }
 
-    private void returnToMap() {
+    /////////////IN CASO DI MODIFICA,CAMBIARE IL RETURN TO MAP NEGLI ALTRI FRAGMENT
+    public void returnToMap() {
         currentFragment = "Mappa";
         uncheckAllNavigationItems();
         getSupportFragmentManager().popBackStack();
@@ -347,13 +343,31 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
         }
     }
 
-    private void deleteNoteMarker(Integer index) {
+    private void deleteNoteMarker(String inputLatitude, String inputLongitude, Integer index) {
         for(int i = 0; i < MapsFragment.noteMarkers.size(); ++i) {
             if(MapsFragment.noteMarkers.get(i).getTag() == index) {
-                MapsFragment.noteMarkers.get(i).remove();
-                MapsFragment.noteMarkers.remove(i);
+                MapsFragment.noteMarkers.get(i).remove(); //rimuovo da vettore di marker
+                MapsFragment.noteMarkers.remove(i);       //rimuovo dalla mappa
             }
         }
+
+        //Se devo eliminare anche la nota oltre al marker, aggiorno tutti i tag dei marker successivi, altrimenti se devo
+        //eliminare solo il marker non entro nell'if (caso di update)
+        if(!inputLatitude.equals("REMOVE_MARKER")) {
+            for (int i = 0; i < MapsFragment.noteMarkers.size(); ++i) {
+                if ((Integer) MapsFragment.noteMarkers.get(i).getTag() > index) {
+                    Log.d("FATTO", "sono entrato");
+                    MapsFragment.noteMarkers.get(i).setTag((Integer) MapsFragment.noteMarkers.get(i).getTag() - 1);
+                }
+            }
+        }
+    }
+
+    private void deleteAllNoteMarkers(){
+        for(Marker m : MapsFragment.noteMarkers){
+            m.remove();
+        }
+        MapsFragment.noteMarkers.clear();
     }
 
     @Override
@@ -363,7 +377,9 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
         } else if(editType.equals("UPDATE")) {
             updateNoteMarker(inputLatitude, inputLongitude, noteTitle, index);
         } else if(editType.equals("DELETE")) {
-            deleteNoteMarker(index);
+            deleteNoteMarker(inputLatitude, inputLongitude, index);
+        } else if(editType.equals("DELETE_ALL")){
+            deleteAllNoteMarkers();
         }
     }
 }

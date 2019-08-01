@@ -10,6 +10,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -162,7 +164,8 @@ public class SplashActivity extends AppCompatActivity {
         appDataBase = Room.databaseBuilder(getApplicationContext(), AppDataBase.class, DBName).allowMainThreadQueries().build();
 
         //prendo dal database i dati necessari
-        contacts = (ArrayList<Contact>)SplashActivity.appDataBase.daoManager().getContacts();
+        contacts = (ArrayList<Contact>) SplashActivity.appDataBase.daoManager().getContacts();
+        //Toast.makeText(this,"ci sono contatti "+ appDataBase.daoManager().count(),Toast.LENGTH_SHORT).show();
         intentNavigationDrawer.putExtra("lista_contatti", contacts);
 
         Collections.sort(contacts, new Comparator<Contact>() {

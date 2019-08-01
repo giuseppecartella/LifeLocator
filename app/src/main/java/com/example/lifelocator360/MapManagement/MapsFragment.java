@@ -34,12 +34,12 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 
 import static android.content.Context.LOCATION_SERVICE;
+import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.DEF_ZOOM;
 
 public class MapsFragment extends Fragment implements OnMapReadyCallback {
     public static GoogleMap mMap;
     private String TAG = "MapsActivity";
     private FusedLocationProviderClient fusedLocationProviderClient;
-    private final float DEF_ZOOM = 15f;
     public static boolean GPSActive;
     public static ArrayList<Marker> noteMarkers;
     public static Marker newMarker;
