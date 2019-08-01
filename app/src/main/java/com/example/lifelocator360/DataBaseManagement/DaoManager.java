@@ -49,4 +49,7 @@ public interface DaoManager {
 
     @Query("select note_id from note")
     public Integer[] getNoteIds();
+
+    @Query("update Note set latitude = :lat,longitude = :lng where note_id = :id")
+    public void updateLatLngNotes(String lat,String lng,String id);
 }

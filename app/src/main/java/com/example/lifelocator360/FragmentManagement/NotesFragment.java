@@ -219,6 +219,8 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
 
             if (!checkNetworkConnectionStatus()) {
                 saveNote(name, position, textNote, "NO_INTERNET", "NO_INTERNET");
+                Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.nav_drawer_layout), "Nessuna connessione, la posizione sulla mappa verrà aggiunta più tardi.", Snackbar.LENGTH_LONG);
+                snackbar.show();
                 Log.d("richiesta", "Salvataggio con connessione assente");
             } else if (position.isEmpty()) {
                 saveNote(name, position, textNote, "NO_ADDRESS", "NO_ADDRESS");
@@ -250,6 +252,8 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
             if (!checkNetworkConnectionStatus()) {
                 oldIndex = index;
                 updateNote(name, position, textNote, "NO_INTERNET", "NO_INTERNET");
+                Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.nav_drawer_layout), "Nessuna connessione, la posizione sulla mappa verrà aggiunta più tardi.", Snackbar.LENGTH_LONG);
+                snackbar.show();
                 Log.d("richiesta", "Modifica con connessione assente");
             } else if (notePosition.getText().toString().isEmpty()) {
                 oldIndex = index;

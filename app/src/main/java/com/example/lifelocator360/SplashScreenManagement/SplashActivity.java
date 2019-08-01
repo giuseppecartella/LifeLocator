@@ -8,25 +8,36 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.room.Room;
+
 import com.example.lifelocator360.DataBaseManagement.AppDataBase;
 import com.example.lifelocator360.DataBaseManagement.Contact;
 import com.example.lifelocator360.DataBaseManagement.Note;
+import com.example.lifelocator360.FragmentManagement.NotesFragment;
+import com.example.lifelocator360.MapManagement.HttpDataHandler;
 import com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity;
 import com.example.lifelocator360.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.material.snackbar.Snackbar;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * The class shows a SplashScreen during the app loading.
@@ -52,6 +63,11 @@ public class SplashActivity extends AppCompatActivity {
     private ArrayList<Note> notes;
     private String allInformationO1;
     private String allInformationO2;
+    private Timer timer;
+    private TimerTask timerTask;
+    private static int numNoInternetForNotes = 0;  //variabili che all inizio vale il num di nointernet
+    //e ad ogni richiesta fallita/eseguita decrementa di uno
+    //quando vale zero il timer si ferma e parte la  nav drawer.
 
     private boolean isConnectionAvailable() {
         return connectionAvailable;
@@ -158,15 +174,11 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void setUpDatabaseAndLaunchMainActivity() {
-        final Intent intentNavigationDrawer = new Intent(this, NavigationDrawerActivity.class);
-
         //A questo punto posso creare il db (spostare in una funzione!)
         appDataBase = Room.databaseBuilder(getApplicationContext(), AppDataBase.class, DBName).allowMainThreadQueries().build();
-
         //prendo dal database i dati necessari
         contacts = (ArrayList<Contact>) SplashActivity.appDataBase.daoManager().getContacts();
-        //Toast.makeText(this,"ci sono contatti "+ appDataBase.daoManager().count(),Toast.LENGTH_SHORT).show();
-        intentNavigationDrawer.putExtra("lista_contatti", contacts);
+        notes = (ArrayList<Note>) SplashActivity.appDataBase.daoManager().getNote();
 
         Collections.sort(contacts, new Comparator<Contact>() {
             @Override
@@ -185,12 +197,45 @@ public class SplashActivity extends AppCompatActivity {
             }
         });
 
-        notes = (ArrayList<Note>) SplashActivity.appDataBase.daoManager().getNote();
+
+        /////////////////////////////////////////
+        for (Note n : notes) {
+            if (n.getLatitude().equals("NO_INTERNET")) {
+                numNoInternetForNotes++;
+            }
+        }
+
+        Log.d("abc","vale"+numNoInternetForNotes);
+
+        //ATTENZIONE PASSIAMO L ID E NON INDEX COSI SONO SICURO CHE SIA PER LE NOTE CHE EPR I CONTATTI CE CORRISPONDENZA CON IL DATABASE
+        for (int i = 0; i < notes.size(); ++i) {
+            if (notes.get(i).getLatitude().equals("NO_INTERNET")) {
+                new GetCoordinates().execute(notes.get(i).getPosition().replace(" ", "+"), Integer.toString(notes.get(i).getId()),Integer.toString(i));
+            }
+        }
+
+
+        /////////////////////////////////////////
+        timer = new Timer();
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                if(numNoInternetForNotes == 0){
+                    launchMainActivity();
+                    timer.cancel();
+                    timer.purge();
+                }
+            }
+        };
+        timer.scheduleAtFixedRate(timerTask, 20, 20);
+
+    }
+
+    private void launchMainActivity(){
+        final Intent intentNavigationDrawer = new Intent(this, NavigationDrawerActivity.class);
+
+        intentNavigationDrawer.putExtra("lista_contatti", contacts); //passo i contatti al nav drawer
         intentNavigationDrawer.putExtra("lista_note", notes);
-
-        //a questo punto ho preso i dati da database e ho la lista pronta
-        //devo solo trovare un modo per passare questa lista al fragment
-
         startActivity(intentNavigationDrawer);
         finish();
     }
@@ -220,6 +265,76 @@ public class SplashActivity extends AppCompatActivity {
             checkPermissionsSetUpDatabaseAndLauchMainActivity();
         } else if (!isConnectionAvailable()) { //Controllo solo questo caso alternativo, perche !isServicesOK è controllato direttamente dalla funzione isServicesOK
             createAlertDialogNoConnection();
+        }
+    }
+
+    public class Wrapper {
+        public String response;
+        public Integer id;
+        public Integer index;
+    }
+
+    private class GetCoordinates extends AsyncTask<String, Void, SplashActivity.Wrapper> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.d("prova", "sono nel preexecute");
+
+        }
+
+        @Override
+        protected SplashActivity.Wrapper doInBackground(String... strings) {
+            try {
+                String address = strings[0];
+                Integer id = Integer.parseInt(strings[1]);
+                Integer index = Integer.parseInt(strings[2]);
+
+                Wrapper wrapper = new Wrapper();
+                HttpDataHandler httpDataHandler = new HttpDataHandler();
+                String url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&key=AIzaSyAV3-Tn-8X4CjWVDTrVhSGDQrbAdEsdjuc";
+                Log.d("tag", "url vale " + url);
+                Log.d("prova", "sto per fare il gethttpdata");
+                wrapper.response = httpDataHandler.getHTTPData(url);
+                wrapper.id = id;
+                wrapper.index = index;
+                return wrapper;
+            } catch (Exception e) {
+                SplashActivity.appDataBase.daoManager().updateLatLngNotes("NO_RESULT", "NO_RESULT", strings[1]);
+                notes.get(Integer.parseInt(strings[2])).setLatitude("NO_RESULT");
+                notes.get(Integer.parseInt(strings[2])).setLongitude("NO_RESULT");
+                numNoInternetForNotes--;
+                Log.d("richiesta", "Salvataggio con risultato assente");
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Wrapper wrapper) {
+            try {
+                Log.d("prova", "dati arrivati: gestisco il json");
+                JSONObject jsonObject = new JSONObject(wrapper.response);
+                String lat = ((JSONArray) jsonObject.get("results")).getJSONObject(0).getJSONObject("geometry")
+                        .getJSONObject("location").get("lat").toString();
+
+                String lng = ((JSONArray) jsonObject.get("results")).getJSONObject(0).getJSONObject("geometry")
+                        .getJSONObject("location").get("lng").toString();
+                Log.d("prova", "latlng: " + lat + lng);
+                Log.d("richiesta", "Salvataggio con coordinate");
+
+                SplashActivity.appDataBase.daoManager().updateLatLngNotes(lat, lng, Integer.toString(wrapper.id));
+                notes.get(wrapper.index).setLatitude(lat);
+                notes.get(wrapper.index).setLongitude(lng);
+                numNoInternetForNotes--;
+
+            } catch (JSONException e) {
+                SplashActivity.appDataBase.daoManager().updateLatLngNotes("NO_RESULT", "NO_RESULT", Integer.toString(wrapper.id));
+                notes.get(wrapper.index).setLatitude("NO_RESULT");
+                notes.get(wrapper.index).setLongitude("NO_RESULT");
+                numNoInternetForNotes--;
+                Log.d("richiesta", "Salvataggio con risultato assente");
+                e.printStackTrace();
+            }
         }
     }
 
