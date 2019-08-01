@@ -18,14 +18,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.lifelocator360.DataBaseManagement.Contact;
 import com.example.lifelocator360.DataBaseManagement.Note;
 import com.example.lifelocator360.MapManagement.HttpDataHandler;
 import com.example.lifelocator360.MapManagement.MapsFragment;
@@ -35,16 +32,9 @@ import com.example.lifelocator360.SplashScreenManagement.SplashActivity;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.ZOOM_TO_MARKER;
 
 public class NotesFragment extends Fragment implements View.OnClickListener {

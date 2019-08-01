@@ -9,10 +9,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.lifelocator360.DataBaseManagement.Note;
 import com.example.lifelocator360.R;
-import java.util.List;
+import java.util.ArrayList;
 
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHolder> {
-    private List<Note> notes;
+    private ArrayList<Note> notes;
     private static OnItemClickListener onItemClickListener;
 
     public interface OnItemClickListener {
@@ -56,7 +56,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
 
 
 
-    public NotesAdapter(List<Note> notes) {
+    public NotesAdapter(ArrayList<Note> notes) {
         this.notes = notes;
     }
 
