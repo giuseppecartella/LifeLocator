@@ -348,6 +348,7 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
     private void deleteNote(int index) {
         Integer idS[] = SplashActivity.appDataBase.daoManager().reciveNotesIds();
         Note note = new Note();
+
         note.setId(idS[index]);
         NavigationDrawerActivity.notes.remove(index);
         SplashActivity.appDataBase.daoManager().deleteNote(note);
