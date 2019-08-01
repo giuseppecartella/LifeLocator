@@ -30,6 +30,9 @@ public interface DaoManager {
     @Query("select contact_id from contact")
     public Integer[] getContactIds();
 
+    @Query("update Contact set latitude = :lat,longitude = :lng where contact_id = :id")
+    public void updateLatLngContacts(String lat,String lng,String id);
+
     //NOTE
     @Insert
     public void addNote(Note note);
