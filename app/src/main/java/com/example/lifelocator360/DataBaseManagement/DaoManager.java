@@ -56,4 +56,18 @@ public interface DaoManager {
 
     @Query("update Note set latitude = :lat,longitude = :lng where note_id = :id")
     public void updateLatLngNotes(String lat,String lng,String id);
+
+
+    //FOTO
+    @Insert
+    public void addPhoto(Photo photo);
+
+    @Query("select * from photo")
+    public List<Photo> getPhoto();
+
+    @Delete
+    public void deletePhoto(Photo photo);
+
+    @Query("delete from photo")
+    public void deleteAllPhotos();
 }
