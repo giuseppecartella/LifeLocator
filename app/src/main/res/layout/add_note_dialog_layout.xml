@@ -15,10 +15,10 @@
         android:hint="Nome" />
 
     <EditText
-        android:id="@+id/edit_note_position"
+        android:id="@+id/edit_note_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Luogo"
+        android:hint="Testo della nota..."
         android:layout_below="@id/edit_note_name"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
@@ -26,11 +26,11 @@
         android:layout_marginLeft="15dp" />
 
     <EditText
-        android:id="@+id/edit_note_text"
+        android:id="@+id/edit_note_position"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Testo della nota..."
-        android:layout_below="@id/edit_note_position"
+        android:hint="Luogo"
+        android:layout_below="@id/edit_note_text"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_marginRight="15dp"

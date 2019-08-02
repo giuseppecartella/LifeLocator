@@ -65,7 +65,7 @@ public class SplashActivity extends AppCompatActivity {
     private String allInformationO2;
     private Timer timer;
     private TimerTask timerTask;
-    private static int numNoInternetForNotes = 0;  //variabili che all inizio vale il num di nointernet
+    private static int numNoInternet = 0;  //variabili che all inizio vale il num di nointernet
     //e ad ogni richiesta fallita/eseguita decrementa di uno
     //quando vale zero il timer si ferma e parte la  nav drawer.
 
@@ -197,20 +197,29 @@ public class SplashActivity extends AppCompatActivity {
             }
         });
 
-
         /////////////////////////////////////////
         for (Note n : notes) {
             if (n.getLatitude().equals("NO_INTERNET")) {
-                numNoInternetForNotes++;
+                numNoInternet++;
             }
         }
 
-        Log.d("abc","vale"+numNoInternetForNotes);
+        for (Contact n : contacts) {
+            if (n.getLatitude().equals("NO_INTERNET")) {
+                numNoInternet++;
+            }
+        }
 
         //ATTENZIONE PASSIAMO L ID E NON INDEX COSI SONO SICURO CHE SIA PER LE NOTE CHE EPR I CONTATTI CE CORRISPONDENZA CON IL DATABASE
         for (int i = 0; i < notes.size(); ++i) {
             if (notes.get(i).getLatitude().equals("NO_INTERNET")) {
-                new GetCoordinates().execute(notes.get(i).getPosition().replace(" ", "+"), Integer.toString(notes.get(i).getId()),Integer.toString(i));
+                new GetCoordinates().execute(notes.get(i).getPosition().replace(" ", "+"), Integer.toString(notes.get(i).getId()), Integer.toString(i), "NOTE");
+            }
+        }
+
+        for (int i = 0; i < contacts.size(); ++i) {
+            if (contacts.get(i).getLatitude().equals("NO_INTERNET")) {
+                new GetCoordinates().execute(contacts.get(i).getAddress().replace(" ", "+"), Integer.toString(contacts.get(i).getId()), Integer.toString(i), "CONTACT");
             }
         }
 
@@ -220,10 +229,11 @@ public class SplashActivity extends AppCompatActivity {
         timerTask = new TimerTask() {
             @Override
             public void run() {
-                if(numNoInternetForNotes == 0){
-                    launchMainActivity();
+                if (numNoInternet == 0) {
                     timer.cancel();
                     timer.purge();
+                    launchMainActivity();
+
                 }
             }
         };
@@ -231,7 +241,7 @@ public class SplashActivity extends AppCompatActivity {
 
     }
 
-    private void launchMainActivity(){
+    private void launchMainActivity() {
         final Intent intentNavigationDrawer = new Intent(this, NavigationDrawerActivity.class);
 
         intentNavigationDrawer.putExtra("lista_contatti", contacts); //passo i contatti al nav drawer
@@ -269,6 +279,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     public class Wrapper {
+        public String dataType;
         public String response;
         public Integer id;
         public Integer index;
@@ -289,6 +300,7 @@ public class SplashActivity extends AppCompatActivity {
                 String address = strings[0];
                 Integer id = Integer.parseInt(strings[1]);
                 Integer index = Integer.parseInt(strings[2]);
+                String dataType = strings[3];
 
                 Wrapper wrapper = new Wrapper();
                 HttpDataHandler httpDataHandler = new HttpDataHandler();
@@ -298,12 +310,20 @@ public class SplashActivity extends AppCompatActivity {
                 wrapper.response = httpDataHandler.getHTTPData(url);
                 wrapper.id = id;
                 wrapper.index = index;
+                wrapper.dataType = dataType;
                 return wrapper;
             } catch (Exception e) {
-                SplashActivity.appDataBase.daoManager().updateLatLngNotes("NO_RESULT", "NO_RESULT", strings[1]);
-                notes.get(Integer.parseInt(strings[2])).setLatitude("NO_RESULT");
-                notes.get(Integer.parseInt(strings[2])).setLongitude("NO_RESULT");
-                numNoInternetForNotes--;
+                if (strings[3].equals("NOTE")) {
+                    SplashActivity.appDataBase.daoManager().updateLatLngNotes("NO_RESULT", "NO_RESULT", strings[1]);
+                    notes.get(Integer.parseInt(strings[2])).setLatitude("NO_RESULT");
+                    notes.get(Integer.parseInt(strings[2])).setLongitude("NO_RESULT");
+                } else if(strings[3].equals("CONTACT")){
+                    SplashActivity.appDataBase.daoManager().updateLatLngContacts("NO_RESULT", "NO_RESULT", strings[1]);
+                    contacts.get(Integer.parseInt(strings[2])).setLatitude("NO_RESULT");
+                    contacts.get(Integer.parseInt(strings[2])).setLongitude("NO_RESULT");
+                }
+
+                numNoInternet--;
                 Log.d("richiesta", "Salvataggio con risultato assente");
             }
             return null;
@@ -322,17 +342,51 @@ public class SplashActivity extends AppCompatActivity {
                 Log.d("prova", "latlng: " + lat + lng);
                 Log.d("richiesta", "Salvataggio con coordinate");
 
-                SplashActivity.appDataBase.daoManager().updateLatLngNotes(lat, lng, Integer.toString(wrapper.id));
-                notes.get(wrapper.index).setLatitude(lat);
-                notes.get(wrapper.index).setLongitude(lng);
-                numNoInternetForNotes--;
+                if(wrapper.dataType.equals("NOTE")) {
+                    SplashActivity.appDataBase.daoManager().updateLatLngNotes(lat, lng, Integer.toString(wrapper.id));
+                    notes.get(wrapper.index).setLatitude(lat);
+                    notes.get(wrapper.index).setLongitude(lng);
+                } else if(wrapper.dataType.equals("CONTACT")){
+                    SplashActivity.appDataBase.daoManager().updateLatLngContacts(lat, lng, Integer.toString(wrapper.id));
+                    contacts.get(wrapper.index).setLatitude(lat);
+                    contacts.get(wrapper.index).setLongitude(lng);
+                }
+                numNoInternet--;
 
             } catch (JSONException e) {
-                SplashActivity.appDataBase.daoManager().updateLatLngNotes("NO_RESULT", "NO_RESULT", Integer.toString(wrapper.id));
-                notes.get(wrapper.index).setLatitude("NO_RESULT");
-                notes.get(wrapper.index).setLongitude("NO_RESULT");
-                numNoInternetForNotes--;
-                Log.d("richiesta", "Salvataggio con risultato assente");
+
+                if(HttpDataHandler.timeOutException) { //ATTENZIONE: QUESTO RAGIONAMENTO CON UNA SOLA VARIABILE STATICA FUNZIONA SOLO SE LE RICHIESTE SONO SEQUENZIALI
+                    HttpDataHandler.timeOutException = false;
+
+                    Log.d("GESTISCO", "trovato uno con connessione lenta");
+
+                    if (wrapper.dataType.equals("NOTE")) {
+                        SplashActivity.appDataBase.daoManager().updateLatLngNotes("NO_INTERNET", "NO_INTERNET", Integer.toString(wrapper.id));
+                        notes.get(wrapper.index).setLatitude("NO_INTERNET");
+                        notes.get(wrapper.index).setLongitude("NO_INTERNET");
+                    } else if (wrapper.dataType.equals("CONTACT")) {
+                        SplashActivity.appDataBase.daoManager().updateLatLngContacts("NO_INTERNET", "NO_INTERNET", Integer.toString(wrapper.id));
+                        contacts.get(wrapper.index).setLatitude("NO_INTERNET");
+                        contacts.get(wrapper.index).setLongitude("NO_INTERNET");
+                    }
+
+                } else {
+
+                    Log.d("GESTISCO", "trovato uno con no resutl");
+
+                    if (wrapper.dataType.equals("NOTE")) {
+                        SplashActivity.appDataBase.daoManager().updateLatLngNotes("NO_RESULT", "NO_RESULT", Integer.toString(wrapper.id));
+                        notes.get(wrapper.index).setLatitude("NO_RESULT");
+                        notes.get(wrapper.index).setLongitude("NO_RESULT");
+                    } else if (wrapper.dataType.equals("CONTACT")) {
+                        SplashActivity.appDataBase.daoManager().updateLatLngContacts("NO_RESULT", "NO_RESULT", Integer.toString(wrapper.id));
+                        contacts.get(wrapper.index).setLatitude("NO_RESULT");
+                        contacts.get(wrapper.index).setLongitude("NO_RESULT");
+                    }
+
+                    Log.d("richiesta", "Salvataggio con risultato assente");
+                }
+                numNoInternet--;
                 e.printStackTrace();
             }
         }

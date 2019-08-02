@@ -54,10 +54,10 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
     private EditText updateTextName;
     private EditText updateTextPosition;
     private EditText updateTextNoteText;
-    private static boolean isNewNote; //Serve per on post execute, per sapere se chiamare nuova nota o aggiornarla
-    private static boolean refreshGoToMapButton = false;
-    private static int oldIndex;
-    private static AlertDialog noteInfoDialog;
+    private boolean isNewNote; //Serve per on post execute, per sapere se chiamare nuova nota o aggiornarla
+    private boolean refreshGoToMapButton = false;
+    private int oldIndex;
+    private AlertDialog noteInfoDialog;
 
 
     public NotesFragment() {
@@ -135,6 +135,35 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    private void onSaveClicked() {
+        name = editTextName.getText().toString();
+        position = editTextPosition.getText().toString();
+        textNote = editTextNoteText.getText().toString();
+
+
+        if (name.isEmpty() && position.isEmpty() && textNote.isEmpty()) {
+            Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.nav_drawer_layout), "Nota non salvata.", Snackbar.LENGTH_SHORT);
+            snackbar.show();
+        } else {
+
+            if (position.isEmpty()) {
+                saveNote(name, position, textNote, "NO_ADDRESS", "NO_ADDRESS");
+                Log.d("richiesta", "Salvataggio con indirizzo assente");
+            } else if (!checkNetworkConnectionStatus()) {
+                saveNote(name, position, textNote, "NO_INTERNET", "NO_INTERNET");
+                Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.nav_drawer_layout), "Nessuna connessione, la posizione sulla mappa verrà aggiunta più tardi.", Snackbar.LENGTH_LONG);
+                snackbar.show();
+                Log.d("richiesta", "Salvataggio con connessione assente");
+            } else {
+                Log.d("richiesta", "Provo il salvataggio con indirizzo");
+                isNewNote = true;
+                new GetCoordinates().execute(position.replace(" ", "+"), "ADD");
+            }
+
+
+        }
+    }
+
     private void saveNote(String name, String position, String textNote, String latitude, String longitude) {
         Note note = new Note(name, position, textNote, latitude, longitude);
 
@@ -158,22 +187,22 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
             //Invio i dati alla mappa tramite il navigation drawer
             String inputLatitude = note.getLatitude();
             String inputLongitude = note.getLongitude();
-            noteFramentListener.onInputNoteSent(inputLatitude, inputLongitude, "ADD", name, index);
+            noteFragmentListener.onInputNoteSent(inputLatitude, inputLongitude, "ADD", name, index);
         }
     }
 
     //////////////////////////////////////////////////////GESTORE COMUNICAZIONE CON MAPPA///////////////////////////
-    private NoteFramentListener noteFramentListener;
+    private NoteFragmentListener noteFragmentListener;
 
-    public interface NoteFramentListener {
+    public interface NoteFragmentListener {
         void onInputNoteSent(String inputLatitude, String inputLongitude, String editType, String noteTitle, int index);
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if (context instanceof NoteFramentListener) {
-            noteFramentListener = (NoteFramentListener) context;
+        if (context instanceof NoteFragmentListener) {
+            noteFragmentListener = (NoteFragmentListener) context;
         } else {
             throw new RuntimeException(context.toString() + " must implement NoteFragmentListener");
         }
@@ -182,7 +211,7 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onDetach() {
         super.onDetach();
-        noteFramentListener = null;
+        noteFragmentListener = null;
     }
 
     //////////////////////////////////////////////////////FINE GESTORE COMUNICAZIONE CON MAPPA///////////////////////////
@@ -195,34 +224,6 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
             return true;
         else
             return false;
-    }
-
-    private void onSaveClicked() {
-        name = editTextName.getText().toString();
-        position = editTextPosition.getText().toString();
-        textNote = editTextNoteText.getText().toString();
-
-
-        if (name.isEmpty() && position.isEmpty() && textNote.isEmpty()) {
-            Toast.makeText(getActivity(), "Nota non salvata!", Toast.LENGTH_SHORT).show();
-        } else {
-
-            if (position.isEmpty()) {
-                saveNote(name, position, textNote, "NO_ADDRESS", "NO_ADDRESS");
-                Log.d("richiesta", "Salvataggio con indirizzo assente");
-            } else if (!checkNetworkConnectionStatus()) {
-                saveNote(name, position, textNote, "NO_INTERNET", "NO_INTERNET");
-                Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.nav_drawer_layout), "Nessuna connessione, la posizione sulla mappa verrà aggiunta più tardi.", Snackbar.LENGTH_LONG);
-                snackbar.show();
-                Log.d("richiesta", "Salvataggio con connessione assente");
-            } else {
-                Log.d("richiesta", "Provo il salvataggio con indirizzo");
-                isNewNote = true;
-                new GetCoordinates().execute(position.replace(" ", "+"), "ADD");
-            }
-
-
-        }
     }
 
 
@@ -277,7 +278,7 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
 
         //Eventualmente sposto il marker
         if (note.getLatitude().equals("NO_INTERNET") || note.getLatitude().equals("NO_ADDRESS") || note.getLatitude().equals("NO_RESULT")) {
-            noteFramentListener.onInputNoteSent("REMOVE_MARKER", "REMOVE_MARKER", "DELETE", name, oldIndex);
+            noteFragmentListener.onInputNoteSent("REMOVE_MARKER", "REMOVE_MARKER", "DELETE", name, oldIndex);
             Log.d("richiesta", "aggiornata nota con errore: " + note.getLatitude());
         } else {
             Log.d("richiesta", "aggiornata nota con coordinate: " + note.getLatitude() + " " + note.getLongitude());
@@ -285,7 +286,7 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
             //Invio i dati alla mappa tramite il navigation drawer
             String inputLatitude = note.getLatitude();
             String inputLongitude = note.getLongitude();
-            noteFramentListener.onInputNoteSent(inputLatitude, inputLongitude, "UPDATE", name, oldIndex);
+            noteFragmentListener.onInputNoteSent(inputLatitude, inputLongitude, "UPDATE", name, oldIndex);
         }
 
     }
@@ -315,7 +316,7 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
         notesAdapter.notifyDataSetChanged();
         updateMissingNotesBackground();
 
-        noteFramentListener.onInputNoteSent("DELETE_ALL", "DELETE_ALL", "DELETE_ALL", "DELETE_ALL", -1);
+        noteFragmentListener.onInputNoteSent("DELETE_ALL", "DELETE_ALL", "DELETE_ALL", "DELETE_ALL", -1);
     }
 
     public void safeDeleteAllDialog() {
@@ -357,7 +358,7 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
         SplashActivity.appDataBase.daoManager().deleteNote(note);
         notesAdapter.notifyItemRemoved(index);
         updateMissingNotesBackground();
-        noteFramentListener.onInputNoteSent("DELETING", "DELETING", "DELETE", name, index);
+        noteFragmentListener.onInputNoteSent("DELETING", "DELETING", "DELETE", name, index);
     }
 
     private void returnToMap(){

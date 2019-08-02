@@ -15,7 +15,7 @@
         android:inputType="textCapCharacters" />
 
     <EditText
-        android:id="@+id/update_note_position"
+        android:id="@+id/update_note_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/update_note_name"
@@ -23,16 +23,16 @@
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="15dp"
-        android:hint="Posizione" />
+        android:hint="Testo" />
 
     <EditText
-        android:id="@+id/update_note_text"
+        android:id="@+id/update_note_position"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/update_note_position"
+        android:layout_below="@id/update_note_text"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="15dp"
-        android:hint="Testo" />
+        android:hint="Posizione" />
 </RelativeLayout>

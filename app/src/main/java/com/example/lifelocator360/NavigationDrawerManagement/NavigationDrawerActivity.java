@@ -43,7 +43,7 @@ import java.util.TimerTask;
 
 
 
-public class NavigationDrawerActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, NotesFragment.NoteFramentListener {
+public class NavigationDrawerActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, NotesFragment.NoteFragmentListener,ContactsFragment.ContactFragmentListener {
     private DrawerLayout drawerLayout;
     public static NavigationView navigationView;
     public static String currentFragment = "Mappa";
@@ -315,6 +315,7 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
         MapsFragment.newMarker = MapsFragment.mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng))
                 .title(noteTitle));
 
+        Log.d("QUAAAA", "arrivato qua");
         MapsFragment.newMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.note_icon_map));
         MapsFragment.newMarker.setTag(index);
         Toast.makeText(this, "Aggiunto index " + index, Toast.LENGTH_SHORT).show();
@@ -346,8 +347,8 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
     private void deleteNoteMarker(String inputLatitude, String inputLongitude, Integer index) {
         for(int i = 0; i < MapsFragment.noteMarkers.size(); ++i) {
             if(MapsFragment.noteMarkers.get(i).getTag() == index) {
-                MapsFragment.noteMarkers.get(i).remove(); //rimuovo da vettore di marker
-                MapsFragment.noteMarkers.remove(i);       //rimuovo dalla mappa
+                MapsFragment.noteMarkers.get(i).remove(); //rimuovo dalla mappa
+                MapsFragment.noteMarkers.remove(i);       //rimuovo da vettore di marker
             }
         }
 
@@ -375,11 +376,100 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
         if(editType.equals("ADD")) {
             addNoteMarker(inputLatitude, inputLongitude, noteTitle, index);
         } else if(editType.equals("UPDATE")) {
+            Log.d("sbagliato", "non ok");
             updateNoteMarker(inputLatitude, inputLongitude, noteTitle, index);
         } else if(editType.equals("DELETE")) {
             deleteNoteMarker(inputLatitude, inputLongitude, index);
         } else if(editType.equals("DELETE_ALL")){
             deleteAllNoteMarkers();
+        }
+    }
+
+
+
+
+    private void addContactMarker(String inputLatitude, String inputLongitude, String contactTitle, int index){
+        Double lat = Double.parseDouble(inputLatitude);
+        Double lng = Double.parseDouble(inputLongitude);
+        if(contactTitle.equals(" "))
+            contactTitle = "NESSUN NOME";
+
+        MapsFragment.newMarker = MapsFragment.mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng))
+                .title(contactTitle));
+
+        MapsFragment.newMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.contact_icon_map));
+        MapsFragment.newMarker.setTag(index);
+        Toast.makeText(this, "Aggiunto index " + index, Toast.LENGTH_SHORT).show();
+
+        MapsFragment.contactMarkers.add(MapsFragment.newMarker);
+    }
+
+    private void updateContactMarker(String inputLatitude, String inputLongitude, String contactTitle, Integer oldIndex) {
+        Double lat = Double.parseDouble(inputLatitude);
+        Double lng = Double.parseDouble(inputLongitude);
+        boolean found = false;
+        if(contactTitle.equals(" "))
+            contactTitle = "NESSUN NOME";
+
+        for(int i = 0; i < MapsFragment.contactMarkers.size(); ++i) {
+            if(MapsFragment.contactMarkers.get(i).getTag() == oldIndex) {
+                MapsFragment.contactMarkers.get(i).setPosition(new LatLng(lat, lng));
+                MapsFragment.contactMarkers.get(i).setTitle(contactTitle);
+                Toast.makeText(this, "Aggiornato index " + i, Toast.LENGTH_SHORT).show();
+                found = true;
+            }
+        }
+
+        if(!found) {
+            addContactMarker(inputLatitude, inputLongitude, contactTitle, oldIndex);
+        }
+    }
+
+    private void deleteContactMarker(String inputLatitude, String inputLongitude, Integer index) {
+        Log.d("test100", "index: " + index);
+        Toast.makeText(this, "index e' " + index, Toast.LENGTH_LONG).show();
+        for(int i = 0; i < MapsFragment.contactMarkers.size(); ++i) {
+
+            if((MapsFragment.contactMarkers.get(i).getTag()).equals(index)) {
+                Log.d("test100", "sono entratooo, il tag e' " + MapsFragment.contactMarkers.get(i).getTag());
+                //Toast.makeText(this, "il tag e' " + MapsFragment.contactMarkers.get(i).getTag(), Toast.LENGTH_LONG).show();
+                MapsFragment.contactMarkers.get(i).remove(); //rimuovo dalla mappa
+                MapsFragment.contactMarkers.remove(i);       //rimuovo da vettore di marker
+                Log.d("PROVAF", "rimosso il marker con index " + index);
+            }
+        }
+        /*
+        //Se devo eliminare anche la nota oltre al marker, aggiorno tutti i tag dei marker successivi, altrimenti se devo
+        //eliminare solo il marker non entro nell'if (caso di update)
+        if(!inputLatitude.equals("REMOVE_MARKER")) {
+            for (int i = 0; i < MapsFragment.contactMarkers.size(); ++i) {
+                if ((Integer) MapsFragment.contactMarkers.get(i).getTag() > index) {
+                    Log.d("FATTO", "sono entrato");
+                    MapsFragment.contactMarkers.get(i).setTag((Integer) MapsFragment.contactMarkers.get(i).getTag() - 1);
+                }
+            }
+        }*/
+    }
+
+    private void deleteAllContactMarkers(){
+        for(Marker m : MapsFragment.contactMarkers){
+            m.remove();
+        }
+        MapsFragment.contactMarkers.clear();
+    }
+
+
+    @Override
+    public void onInputContactSent(String inputLatitude, String inputLongitude, String editType, String contactTitle, int index) {
+        if(editType.equals("ADD")) {
+            addContactMarker(inputLatitude, inputLongitude, contactTitle, index);
+        } else if(editType.equals("UPDATE")) {
+            Log.d("giusto", "ok");
+            updateContactMarker(inputLatitude, inputLongitude, contactTitle, index);
+        } else if(editType.equals("DELETE")) {
+            deleteContactMarker(inputLatitude, inputLongitude, index);
+        } else if(editType.equals("DELETE_ALL")){
+            deleteAllContactMarkers();
         }
     }
 }

@@ -38,11 +38,13 @@ public class Contact implements Serializable {
 
     }
 
-    public Contact(String name, String surname, String phone, String address) {
+    public Contact(String name, String surname, String phone, String address, String latitude,String longitude) {
         this.name = name;
         this.surname = surname;
         this.phone = phone;
         this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public Integer getId() {

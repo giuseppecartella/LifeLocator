@@ -2,7 +2,10 @@ package com.example.lifelocator360.FragmentManagement;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,10 +27,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.lifelocator360.DataBaseManagement.Contact;
 import com.example.lifelocator360.MapManagement.HttpDataHandler;
+import com.example.lifelocator360.MapManagement.MapsFragment;
 import com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity;
 import com.example.lifelocator360.R;
 import com.example.lifelocator360.SplashScreenManagement.SplashActivity;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.internal.NavigationMenuItemView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONArray;
@@ -38,6 +45,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.ZOOM_TO_MARKER;
+import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.getNavigationDrawerSize;
 
 public class ContactsFragment extends Fragment implements View.OnClickListener {
     private RecyclerView recyclerView;
@@ -66,13 +76,15 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
     private TextView textSurname;
     private TextView textPhone;
     private TextView textAddress;
-
+    private int oldIndex;
+    private boolean refreshGoToMapButton = false;
+    private AlertDialog contactInfoDialog;
+    private boolean isNewContact; //Serve per on post execute, per sapere se chiamare un nuovo contatto o aggiornarlo
 
 
     public ContactsFragment() {
 
     }
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -82,8 +94,6 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
@@ -108,46 +118,6 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         showContacts();
         return view;
     }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.deleteAll: {
-                safeDeleteAllDialog();
-                return true;
-            }
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    public int contactsCompare(Contact contact1, Contact contact2) {
-        allInformationO1 = contact1.getAllInformation(contact1);
-        allInformationO2 = contact2.getAllInformation(contact2);
-
-        if (allInformationO1.compareToIgnoreCase(allInformationO2) < 0) {
-            return -1;
-        } else if (allInformationO1.compareToIgnoreCase(allInformationO2) == 0) {
-            return 0;
-        } else {
-            return 1;
-        }
-    }
-
-    public int getNewContactIndex(ArrayList<Contact> contacts, Contact contact) {
-        if (contacts.size() == 0)
-            return 0;
-
-
-        for (int i = 0; i < contacts.size(); ++i) {
-            if (contactsCompare(contact, contacts.get(i)) <= 0) {
-                return i;
-            }
-        }
-        return contacts.size();
-    }
-
 
     public void updateMissingContactsBackground() {
         if (NavigationDrawerActivity.contacts.isEmpty()) {
@@ -179,7 +149,6 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         });
     }
 
-
     //vedere bene come toglierla
     @Override
     public void onClick(View view) {
@@ -191,6 +160,46 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.deleteAll: {
+                safeDeleteAllDialog();
+                return true;
+            }
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+    public int contactsCompare(Contact contact1, Contact contact2) {
+        allInformationO1 = contact1.getAllInformation(contact1);
+        allInformationO2 = contact2.getAllInformation(contact2);
+
+        if (allInformationO1.compareToIgnoreCase(allInformationO2) < 0) {
+            return -1;
+        } else if (allInformationO1.compareToIgnoreCase(allInformationO2) == 0) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+
+
+    public int getNewContactIndex(ArrayList<Contact> contacts, Contact contact) {
+        if (contacts.size() == 0)
+            return 0;
+
+        for (int i = 0; i < contacts.size(); ++i) {
+            if (contactsCompare(contact, contacts.get(i)) <= 0) {
+                return i;
+            }
+        }
+        return contacts.size();
+    }
+
+
     private void onSaveClicked() {
 
         name = editTextName.getText().toString();
@@ -199,10 +208,29 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         address = editTextAddress.getText().toString();
 
         if (name.isEmpty() && surname.isEmpty() && phone.isEmpty() && address.isEmpty()) {
-            Toast.makeText(getActivity(), "Contatto non salvato!", Toast.LENGTH_SHORT).show();
+            Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.nav_drawer_layout), "Contatto non salvato.", Snackbar.LENGTH_SHORT);
+            snackbar.show();
         } else {
+            if (address.isEmpty()) {
+                saveContact(name, surname, phone, address, "NO_ADDRESS", "NO_ADDRESS");
+                Log.d("richiesta", "Salvataggio con indirizzo assente");
+            } else if (!checkNetworkConnectionStatus()) {
+                saveContact(name, surname, phone, address, "NO_INTERNET", "NO_INTERNET");
+                Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.nav_drawer_layout), "Nessuna connessione, la posizione sulla mappa verrà aggiunta più tardi.", Snackbar.LENGTH_LONG);
+                snackbar.show();
+                Log.d("richiesta", "Salvataggio con connessione assente");
+            } else {
+                Log.d("richiesta", "Provo il salvataggio con indirizzo");
+                isNewContact = true;
+                new GetCoordinates().execute(address.replace(" ", "+"), "ADD");
+            }
 
-            Contact contact = new Contact(name, surname, phone, address);
+        }
+    }
+
+    private void saveContact(String name, String surname, String phone,String address,String latitude,String longitude){
+
+            Contact contact = new Contact(name, surname, phone, address,latitude,longitude);
             int index = getNewContactIndex(NavigationDrawerActivity.contacts, contact);
 
             SplashActivity.appDataBase.daoManager().addContact(contact);
@@ -210,61 +238,161 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
             NavigationDrawerActivity.contacts.add(index, contact);
             NavigationDrawerActivity.contacts.get(index).setId(contactIds[contactIds.length - 1]);
 
-
             contactsAdapter.notifyItemInserted(index);
             updateMissingContactsBackground();
+
+        Log.d("richiesta", "Salvataggio con coordinate dal save contact");
+
+        //Imposto il marker
+        if (latitude.equals("NO_INTERNET") || latitude.equals("NO_ADDRESS") || latitude.equals("NO_RESULT")) {
+            Log.d("richiesta", "salvato contatto con errore: " + contact.getLatitude());
+        } else {
+            Log.d("richiesta", "salvato contatto con coordinate: " + contact.getLatitude() + " " + contact.getLongitude());
+
+            //Invio i dati alla mappa tramite il navigation drawer
+            String inputLatitude = contact.getLatitude();
+            String inputLongitude = contact.getLongitude();
+            contactFragmentListener.onInputContactSent(inputLatitude, inputLongitude, "ADD",  name + " " + surname, NavigationDrawerActivity.contacts.get(index).getId());
         }
     }
 
-    public void showContactInfoDialog(int position) {
+    //////////////////////////////////////////////////////GESTORE COMUNICAZIONE CON MAPPA///////////////////////////
+    private ContactFragmentListener contactFragmentListener;
+
+    public interface ContactFragmentListener {
+        void onInputContactSent(String inputLatitude, String inputLongitude, String editType, String contactTitle, int index);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof ContactFragmentListener) {
+            contactFragmentListener = (ContactFragmentListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement ContactFragmentListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        contactFragmentListener = null;
+    }
+
+    //////////////////////////////////////////////////////FINE GESTORE COMUNICAZIONE CON MAPPA///////////////////////////
+
+    public boolean checkNetworkConnectionStatus() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeInfo = connectivityManager.getActiveNetworkInfo();
+
+        if (activeInfo != null && activeInfo.isConnected())
+            return true;
+        else
+            return false;
+    }
+
+    public void onUpdateClicked(int index, EditText contactName, EditText contactSurname, EditText contactPhone,EditText contactAddress) {
+        String oldAddress = NavigationDrawerActivity.contacts.get(index).getAddress();
+        String newAddress = contactAddress.getText().toString();
+
+
+        name = contactName.getText().toString();
+        surname = contactSurname.getText().toString();
+        phone = contactPhone.getText().toString();
+        address = contactAddress.getText().toString();
+
+
+        if (oldAddress.equals(newAddress)) {
+            oldIndex = index;
+            updateContact(name,surname,phone,address, NavigationDrawerActivity.contacts.get(oldIndex).getLatitude(), NavigationDrawerActivity.contacts.get(oldIndex).getLongitude());
+        } else {
+            oldIndex = index;
+            if (contactAddress.getText().toString().isEmpty()) {
+                updateContact(name,surname,phone,address, "NO_ADDRESS", "NO_ADDRESS");
+                Log.d("richiesta", "Salvataggio con indirizzo assente");
+            } else if (!checkNetworkConnectionStatus()) {
+                updateContact(name,surname,phone,address, "NO_INTERNET", "NO_INTERNET");
+                Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.nav_drawer_layout), "Nessuna connessione, la posizione sulla mappa verrà aggiunta più tardi.", Snackbar.LENGTH_LONG);
+                snackbar.show();
+                Log.d("richiesta", "Modifica con connessione assente");
+            } else {
+                isNewContact = false;
+                Log.d("richiesta", "Provo il salvataggio con indirizzo");
+                new GetCoordinates().execute(newAddress.replace(" ", "+"));
+            }
+        }
+
+    }
+
+    private void updateContact(String name,String surname,String phone,String address,String lat,String lng) {
+       /* Contact contact = new Contact();
+        contact.setId(NavigationDrawerActivity.contacts.get(position).getId());
+        contact.setName(name.getText().toString());
+        contact.setSurname(surname.getText().toString());
+        contact.setPhone(phone.getText().toString());
+        contact.setAddress(address.getText().toString());
+
+        NavigationDrawerActivity.contacts.remove(position);
+        contactsAdapter.notifyItemRemoved(position);
+
+        position = getNewContactIndex(NavigationDrawerActivity.contacts, contact);
+        NavigationDrawerActivity.contacts.add(position, contact);
+        contactsAdapter.notifyItemInserted(position);
+
+        SplashActivity.appDataBase.daoManager().updateContact(contact);*/
+
+        Contact contact = new Contact();
+        contact.setId(NavigationDrawerActivity.contacts.get(oldIndex).getId());
+        contact.setName(name);
+        contact.setSurname(surname);
+        contact.setPhone(phone);
+        contact.setAddress(address);
+        contact.setLatitude(lat);
+        contact.setLongitude(lng);
+
+        NavigationDrawerActivity.contacts.remove(oldIndex);
+        contactsAdapter.notifyItemRemoved(oldIndex);
+
+        Integer newIndex = getNewContactIndex(NavigationDrawerActivity.contacts, contact);
+        NavigationDrawerActivity.contacts.add(newIndex, contact);
+
+        SplashActivity.appDataBase.daoManager().updateContact(contact);
+        contactsAdapter.notifyItemInserted(newIndex);
+
+        //Eventualmente sposto il marker
+        if (contact.getLatitude().equals("NO_INTERNET") || contact.getLatitude().equals("NO_ADDRESS") || contact.getLatitude().equals("NO_RESULT")) {
+            contactFragmentListener.onInputContactSent("REMOVE_MARKER", "REMOVE_MARKER", "DELETE",  name + " " + surname,contact.getId());
+            Log.d("richiesta", "aggiornato contatto con errore: " + contact.getLatitude());
+        } else {
+            Log.d("richiesta", "aggiornato contatto con coordinate: " + contact.getLatitude() + " " + contact.getLongitude());
+
+            //Invio i dati alla mappa tramite il navigation drawer
+            String inputLatitude = contact.getLatitude();
+            String inputLongitude = contact.getLongitude();
+            contactFragmentListener.onInputContactSent(inputLatitude, inputLongitude, "UPDATE", name + " " + surname, contact.getId());
+        }
+
+
+
+    }
+
+    public void safeDeleteDialog(int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.show_contact_info_dialog_layout, null);
 
-        textName = view.findViewById(R.id.text_name);
-        textSurname = view.findViewById(R.id.text_surname);
-        textPhone = view.findViewById(R.id.text_phone);
-        textAddress = view.findViewById(R.id.text_address);
-
-        textName.setText(NavigationDrawerActivity.contacts.get(position).getName());
-        textSurname.setText(NavigationDrawerActivity.contacts.get(position).getSurname());
-        textPhone.setText(NavigationDrawerActivity.contacts.get(position).getPhone());
-        textAddress.setText(NavigationDrawerActivity.contacts.get(position).getAddress());
-
-
-        builder.setView(view)
-                .setTitle("Scheda contatto")
-                .setNeutralButton("ELIMINA", new DialogInterface.OnClickListener() {
+        builder.setMessage("Questo contatto verrà eliminato")
+                .setNegativeButton("ANNULLA", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        safeDeleteDialog(position);
+                        dialog.dismiss();
                     }
                 })
-                .setNegativeButton("MAPPA", new DialogInterface.OnClickListener() {
+                .setPositiveButton("ELIMINA", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Log.d("prova ", "cerco la posizione " + NavigationDrawerActivity.contacts.get(position).getAddress().replace(" ", "+"));
-                        new GetCoordinates().execute(NavigationDrawerActivity.contacts.get(position).getAddress().replace(" ", "+"));
-                    }
-                })
-                .setPositiveButton("MODIFICA", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        updateContactDialog(position);
+                        deleteContact(position);
                     }
                 });
         builder.create().show();
-    }
-
-
-    private void deleteContact(int position) {
-        Integer id = NavigationDrawerActivity.contacts.get(position).getId();
-        Contact contact = new Contact();
-        contact.setId(id);
-        SplashActivity.appDataBase.daoManager().deleteContact(contact);
-        NavigationDrawerActivity.contacts.remove(position);
-        contactsAdapter.notifyItemRemoved(position);
-        updateMissingContactsBackground();
     }
 
     private void deleteAllContacts() {
@@ -272,6 +400,8 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         SplashActivity.appDataBase.daoManager().deleteAllContacts();
         contactsAdapter.notifyDataSetChanged();
         updateMissingContactsBackground();
+
+        contactFragmentListener.onInputContactSent("DELETE_ALL","DELETE_ALL","DELETE_ALL","DELETE_ALL",-1);
     }
 
     public void safeDeleteAllDialog() {
@@ -293,26 +423,133 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         builder.create().show();
     }
 
-    private void updateContact(int position, EditText name, EditText surname, EditText phone, EditText address) {
+    private void deleteContact(int index) {
+        Integer id = NavigationDrawerActivity.contacts.get(index).getId();
+        Log.d("PROVA3", "l'id vale "+ id);
         Contact contact = new Contact();
-        contact.setId(NavigationDrawerActivity.contacts.get(position).getId());
-        contact.setName(name.getText().toString());
-        contact.setSurname(surname.getText().toString());
-        contact.setPhone(phone.getText().toString());
-        contact.setAddress(address.getText().toString());
+        contact.setId(id);
+        NavigationDrawerActivity.contacts.remove(index);
+        SplashActivity.appDataBase.daoManager().deleteContact(contact);
+        contactsAdapter.notifyItemRemoved(index);
+        updateMissingContactsBackground();
 
-        NavigationDrawerActivity.contacts.remove(position);
-        contactsAdapter.notifyItemRemoved(position);
-
-        position = getNewContactIndex(NavigationDrawerActivity.contacts, contact);
-        NavigationDrawerActivity.contacts.add(position, contact);
-        contactsAdapter.notifyItemInserted(position);
-
-        SplashActivity.appDataBase.daoManager().updateContact(contact);
+        contactFragmentListener.onInputContactSent("DELETING", "DELETING", "DELETE", name + " " + surname, id);
     }
 
-    private void showContactInMap(int position) {
+    private void returnToMap(){
+        NavigationDrawerActivity.currentFragment = "Mappa";
+        NavigationDrawerActivity.uncheckAllNavigationItems();
+        getActivity().getSupportFragmentManager().popBackStack();
 
+        //Hide return to map button
+        getActivity().invalidateOptionsMenu();
+    }
+
+    private void showContactInMap(String latitude,String longitude) {
+        Double lat = Double.parseDouble(latitude);
+        Double lng = Double.parseDouble(longitude);
+
+        MapsFragment.moveCamera(new LatLng(lat,lng),ZOOM_TO_MARKER);
+        returnToMap();
+    }
+
+    public void updateContactDialog(int index) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.update_contact_dialog_layout, null);
+
+        updateTextName = view.findViewById(R.id.update_name);
+        updateTextSurname = view.findViewById(R.id.update_surname);
+        updateTextPhone = view.findViewById(R.id.update_phone);
+        updateTextAddress = view.findViewById(R.id.update_address);
+
+        updateTextName.setText(NavigationDrawerActivity.contacts.get(index).getName());
+        updateTextSurname.setText(NavigationDrawerActivity.contacts.get(index).getSurname());
+        updateTextPhone.setText(NavigationDrawerActivity.contacts.get(index).getPhone());
+        updateTextAddress.setText(NavigationDrawerActivity.contacts.get(index).getAddress());
+
+        builder.setView(view)
+                .setTitle("Modifica contatto")
+                .setNegativeButton("ANNULLA", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton("SALVA", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onUpdateClicked(index, updateTextName,updateTextSurname,updateTextPhone,updateTextAddress);
+                    }
+                });
+
+
+        builder.create().show();
+    }
+
+    public void showContactInfoDialog(int index) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.show_contact_info_dialog_layout, null);
+
+        textName = view.findViewById(R.id.text_name);
+        textSurname = view.findViewById(R.id.text_surname);
+        textPhone = view.findViewById(R.id.text_phone);
+        textAddress = view.findViewById(R.id.text_address);
+
+        textName.setText(NavigationDrawerActivity.contacts.get(index).getName());
+        textSurname.setText(NavigationDrawerActivity.contacts.get(index).getSurname());
+        textPhone.setText(NavigationDrawerActivity.contacts.get(index).getPhone());
+        textAddress.setText(NavigationDrawerActivity.contacts.get(index).getAddress());
+
+
+        builder.setView(view)
+                .setTitle("Scheda contatto")
+                .setNeutralButton("ELIMINA", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        safeDeleteDialog(index);
+                    }
+                })
+                .setNegativeButton("MAPPA", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                       showContactInMap(NavigationDrawerActivity.contacts.get(index).getLatitude(),NavigationDrawerActivity.contacts.get(index).getLongitude());
+                    }
+                })
+                .setPositiveButton("MODIFICA", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        updateContactDialog(index);
+                    }
+                });
+
+        contactInfoDialog = builder.create();
+        contactInfoDialog.show();
+        oldIndex = index;
+        isNewContact = false;
+
+        name = NavigationDrawerActivity.contacts.get(index).getName();
+        surname = NavigationDrawerActivity.contacts.get(index).getSurname();
+        phone = NavigationDrawerActivity.contacts.get(index).getPhone();
+        address = NavigationDrawerActivity.contacts.get(index).getAddress();
+
+
+        Log.d("OLDINDEX", "vale " + oldIndex);
+
+        String latStatus = NavigationDrawerActivity.contacts.get(index).getLatitude();
+        Log.d("prova","latitude vale"+latStatus);
+
+
+        if (latStatus.equals("NO_ADDRESS") || latStatus.equals("NO_RESULT")) {
+            contactInfoDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
+        } else if (latStatus.equals("NO_INTERNET")) {
+            contactInfoDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
+            if (checkNetworkConnectionStatus()) {
+                refreshGoToMapButton = true;
+                new GetCoordinates().execute(NavigationDrawerActivity.contacts.get(index).getAddress().replace(" ", "+"), "RETRY");
+            }
+        }
     }
 
     public void showAddContactDialog() {
@@ -343,56 +580,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         floatingActionButton = view.findViewById(R.id.addContact);
     }
 
-    public void safeDeleteDialog(int position) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        builder.setMessage("Questo contatto verrà eliminato")
-                .setNegativeButton("ANNULLA", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .setPositiveButton("ELIMINA", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        deleteContact(position);
-                    }
-                });
-        builder.create().show();
-    }
-
-    public void updateContactDialog(int position) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.update_contact_dialog_layout, null);
-
-        updateTextName = view.findViewById(R.id.update_name);
-        updateTextSurname = view.findViewById(R.id.update_surname);
-        updateTextPhone = view.findViewById(R.id.update_phone);
-        updateTextAddress = view.findViewById(R.id.update_address);
-
-        updateTextName.setText(NavigationDrawerActivity.contacts.get(position).getName());
-        updateTextSurname.setText(NavigationDrawerActivity.contacts.get(position).getSurname());
-        updateTextPhone.setText(NavigationDrawerActivity.contacts.get(position).getPhone());
-        updateTextAddress.setText(NavigationDrawerActivity.contacts.get(position).getAddress());
-
-        builder.setView(view)
-                .setTitle("Modifica contatto")
-                .setNegativeButton("ANNULLA", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .setPositiveButton("SALVA", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        updateContact(position, updateTextName, updateTextSurname, updateTextPhone, updateTextAddress);
-                    }
-                });
-        builder.create().show();
-    }
 
     private class GetCoordinates extends AsyncTask<String,Void,String> {
 
@@ -415,7 +603,15 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
                 response = httpDataHandler.getHTTPData(url);
                 return response;
             } catch(Exception e){
-                e.printStackTrace();
+                Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.nav_drawer_layout), "Errore nell'ottenimento della posizione.", Snackbar.LENGTH_LONG);
+                snackbar.show();
+
+                if (isNewContact) {
+                    saveContact(name,surname, phone,address, "NO_RESULT", "NO_RESULT");
+                } else {
+                    updateContact(name, surname,phone,address, "NO_RESULT", "NO_RESULT");
+                }
+                Log.d("richiesta", "Salvataggio con risultato assente");
             }
             return null;
         }
@@ -432,11 +628,41 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
                         .getJSONObject("location").get("lng").toString();
                 Log.d("prova","latlng: "+lat+lng);
 
-                Toast.makeText(getActivity(),lat + lng,Toast.LENGTH_SHORT).show();
+                if (isNewContact)
+                    saveContact(name, surname,phone,address, lat, lng);
+                else {
+                    updateContact(name, surname,phone,address, lat, lng);
 
-
+                    if(refreshGoToMapButton) {
+                        refreshGoToMapButton = false;
+                        contactInfoDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(true);
+                    }
+                }
 
             } catch(JSONException e){
+                if(HttpDataHandler.timeOutException) {
+                    HttpDataHandler.timeOutException = false;
+
+                    Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.nav_drawer_layout), "Connessione troppo lenta, la posizione sulla mappa verrà aggiunta più tardi.", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+
+                    if (isNewContact)
+                        saveContact(name, surname, phone, address, "NO_INTERNET", "NO_INTERNET");
+                    else
+                        updateContact(name, surname, phone,address, "NO_INTERNET", "NO_INTERNET");
+                    Log.d("richiesta", "Salvataggio con risultato assente");
+
+                } else {
+                    Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.nav_drawer_layout), "L'indirizzo non è valido, sii più preciso.", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+
+                    if (isNewContact)
+                        saveContact(name, surname, phone,address, "NO_RESULT", "NO_RESULT");
+                    else
+                        updateContact(name, surname, phone,address, "NO_RESULT", "NO_RESULT");
+                    Log.d("richiesta", "Salvataggio con risultato assente");
+                }
+
                 e.printStackTrace();
             }
         }

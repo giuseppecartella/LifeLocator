@@ -35,6 +35,7 @@ import java.util.ArrayList;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.DEF_ZOOM;
+import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.contacts;
 
 public class MapsFragment extends Fragment implements OnMapReadyCallback {
     public static GoogleMap mMap;
@@ -42,6 +43,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     private FusedLocationProviderClient fusedLocationProviderClient;
     public static boolean GPSActive;
     public static ArrayList<Marker> noteMarkers;
+    public static ArrayList<Marker> contactMarkers;
     public static Marker newMarker;
 
     public boolean isGPSActive() {
@@ -125,6 +127,30 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    private void setContactMarkers() {
+        for(int i = 0; i < NavigationDrawerActivity.contacts.size(); ++i) {
+            String validPosition = NavigationDrawerActivity.contacts.get(i).getLongitude();
+            String contactTitle;
+            if(!validPosition.equals("NO_INTERNET") && !validPosition.equals("NO_ADDRESS") && !validPosition.equals("NO_RESULT")) {
+                Double lat = Double.parseDouble(NavigationDrawerActivity.contacts.get(i).getLatitude());
+                Double lng =  Double.parseDouble(NavigationDrawerActivity.contacts.get(i).getLongitude());
+
+                if(NavigationDrawerActivity.contacts.get(i).getName().isEmpty() && NavigationDrawerActivity.contacts.get(i).getSurname().isEmpty())
+                    contactTitle = "NESSUN NOME";
+                else
+                    contactTitle = NavigationDrawerActivity.contacts.get(i).getName()+" "+NavigationDrawerActivity.contacts.get(i).getSurname();
+
+                MapsFragment.newMarker = MapsFragment.mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng))
+                        .title(contactTitle));
+
+                MapsFragment.newMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.contact_icon_map));
+                MapsFragment.newMarker.setTag(NavigationDrawerActivity.contacts.get(i).getId());
+
+                MapsFragment.contactMarkers.add(MapsFragment.newMarker);
+            }
+        }
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Log.d(TAG, "PARTITO L'ON MAP READY");
@@ -133,6 +159,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
         //Setto tutti i markers
         setNoteMarkers();
+        setContactMarkers();
 
 
         final LocationManager manager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
@@ -162,6 +189,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //Inizializzo il vettore per i markers
         noteMarkers = new ArrayList<Marker>();
+        contactMarkers = new ArrayList<Marker>();
 
         return inflater.inflate(R.layout.fragment_maps, container, false);
     }

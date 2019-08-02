@@ -23,6 +23,7 @@ public interface DaoManager {
 
     @Query("delete from contact")
     public void deleteAllContacts();
+
     @Update
     public void updateContact(Contact contact);
 
