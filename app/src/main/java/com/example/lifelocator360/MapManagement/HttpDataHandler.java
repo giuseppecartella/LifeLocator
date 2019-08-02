@@ -19,6 +19,7 @@ public class HttpDataHandler {
     private int responseCode;
     private String line;
     private BufferedReader bufferedReader;
+    public static boolean timeOutException = false;
 
 
     public HttpDataHandler() {
@@ -32,8 +33,8 @@ public class HttpDataHandler {
             url = new URL(requestURL);
             httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setRequestMethod("GET");
-            httpURLConnection.setReadTimeout(15000);
-            httpURLConnection.setConnectTimeout(15000);
+            httpURLConnection.setReadTimeout(5000);
+            httpURLConnection.setConnectTimeout(5000);
             httpURLConnection.setDoInput(true);
             httpURLConnection.setDoOutput(true);
             httpURLConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -56,6 +57,7 @@ public class HttpDataHandler {
             e.printStackTrace();
         } catch (IOException e) {
             Log.d("ERRORE", "errore 3");
+            timeOutException = true;
             e.printStackTrace();
         }
         return response;

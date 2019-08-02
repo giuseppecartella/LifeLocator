@@ -207,14 +207,14 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
             Toast.makeText(getActivity(), "Nota non salvata!", Toast.LENGTH_SHORT).show();
         } else {
 
-            if (!checkNetworkConnectionStatus()) {
+            if (position.isEmpty()) {
+                saveNote(name, position, textNote, "NO_ADDRESS", "NO_ADDRESS");
+                Log.d("richiesta", "Salvataggio con indirizzo assente");
+            } else if (!checkNetworkConnectionStatus()) {
                 saveNote(name, position, textNote, "NO_INTERNET", "NO_INTERNET");
                 Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.nav_drawer_layout), "Nessuna connessione, la posizione sulla mappa verrà aggiunta più tardi.", Snackbar.LENGTH_LONG);
                 snackbar.show();
                 Log.d("richiesta", "Salvataggio con connessione assente");
-            } else if (position.isEmpty()) {
-                saveNote(name, position, textNote, "NO_ADDRESS", "NO_ADDRESS");
-                Log.d("richiesta", "Salvataggio con indirizzo assente");
             } else {
                 Log.d("richiesta", "Provo il salvataggio con indirizzo");
                 isNewNote = true;
@@ -239,19 +239,17 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
             oldIndex = index;
             updateNote(name, position, textNote, NavigationDrawerActivity.notes.get(oldIndex).getLatitude(), NavigationDrawerActivity.notes.get(oldIndex).getLongitude());
         } else {
-            if (!checkNetworkConnectionStatus()) {
-                oldIndex = index;
+            oldIndex = index;
+            if (notePosition.getText().toString().isEmpty()) {
+                updateNote(name, position, textNote, "NO_ADDRESS", "NO_ADDRESS");
+                Log.d("richiesta", "Salvataggio con indirizzo assente");
+            } else if (!checkNetworkConnectionStatus()) {
                 updateNote(name, position, textNote, "NO_INTERNET", "NO_INTERNET");
                 Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.nav_drawer_layout), "Nessuna connessione, la posizione sulla mappa verrà aggiunta più tardi.", Snackbar.LENGTH_LONG);
                 snackbar.show();
                 Log.d("richiesta", "Modifica con connessione assente");
-            } else if (notePosition.getText().toString().isEmpty()) {
-                oldIndex = index;
-                updateNote(name, position, textNote, "NO_ADDRESS", "NO_ADDRESS");
-                Log.d("richiesta", "Salvataggio con indirizzo assente");
             } else {
                 isNewNote = false;
-                oldIndex = index;
                 Log.d("richiesta", "Provo il salvataggio con indirizzo");
                 new GetCoordinates().execute(newAddress.replace(" ", "+"));
             }
@@ -530,14 +528,29 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
 
             } catch (JSONException e) {
 
-                Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.nav_drawer_layout), "L'indirizzo non è valido, sii più preciso.", Snackbar.LENGTH_LONG);
-                snackbar.show();
+                if(HttpDataHandler.timeOutException) {
+                    HttpDataHandler.timeOutException = false;
 
-                if (isNewNote)
-                    saveNote(name, position, textNote, "NO_RESULT", "NO_RESULT");
-                else
-                    updateNote(name, position, textNote, "NO_RESULT", "NO_RESULT");
-                Log.d("richiesta", "Salvataggio con risultato assente");
+                    Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.nav_drawer_layout), "Connessione troppo lenta, la posizione sulla mappa verrà aggiunta più tardi.", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+
+                    if (isNewNote)
+                        saveNote(name, position, textNote, "NO_INTERNET", "NO_INTERNET");
+                    else
+                        updateNote(name, position, textNote, "NO_INTERNET", "NO_INTERNET");
+                    Log.d("richiesta", "Salvataggio con risultato assente");
+
+                } else {
+                    Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.nav_drawer_layout), "L'indirizzo non è valido, sii più preciso.", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+
+                    if (isNewNote)
+                        saveNote(name, position, textNote, "NO_RESULT", "NO_RESULT");
+                    else
+                        updateNote(name, position, textNote, "NO_RESULT", "NO_RESULT");
+                    Log.d("richiesta", "Salvataggio con risultato assente");
+                }
+
                 e.printStackTrace();
             }
         }
