@@ -151,6 +151,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Log.d(TAG, "PARTITO L'ON MAP READY");
