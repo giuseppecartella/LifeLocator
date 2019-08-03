@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "f2a204a74dd7c36d2885605004c3b672",
+    "identityHash": "c2a73b90d244e591e4504470dcf9d6e7",
     "entities": [
       {
         "tableName": "contact",
@@ -121,12 +121,44 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "photo",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`photo_path` TEXT NOT NULL, `latitude` TEXT, `longitude` TEXT, PRIMARY KEY(`photo_path`))",
+        "fields": [
+          {
+            "fieldPath": "path",
+            "columnName": "photo_path",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "longitude",
+            "columnName": "longitude",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "photo_path"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f2a204a74dd7c36d2885605004c3b672')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c2a73b90d244e591e4504470dcf9d6e7')"
     ]
   }
 }

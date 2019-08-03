@@ -1,6 +1,7 @@
 package com.example.lifelocator360.DataBaseManagement;
 
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -11,6 +12,7 @@ import java.io.Serializable;
 public class Photo implements Serializable {
 
     @PrimaryKey
+    @NonNull
     @ColumnInfo(name = "photo_path")
     private String path;
 
