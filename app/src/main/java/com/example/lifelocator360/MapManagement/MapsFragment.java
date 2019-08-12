@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.ExifInterface;
@@ -22,6 +24,7 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity;
@@ -171,10 +174,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
         Uri imageUri = Uri.fromFile(file);
 
-        Glide.with(getActivity()).asBitmap().load(imageUri).into(new SimpleTarget<Bitmap>() {
+        Glide.with(getActivity()).asBitmap().load(imageUri).apply(new RequestOptions().override(70, 70)).into(new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
-                //resource = Bitmap.createScaledBitmap(resource, 100, 100, false);
                 BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(resource);
                 marker.setIcon(icon);
                 tmp++;
@@ -204,12 +206,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                             .title("FOTO"));
 
 
-
-                    //BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-                   // Bitmap bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(), bmOptions);
-                    //bitmap = Bitmap.createScaledBitmap(bitmap, 120, 120, true);
-
-                    //MapsFragment.newMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
+                    MapsFragment.newMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.contact_icon_map));
 
                     loadMarkerIcon(MapsFragment.newMarker, f);
                }
