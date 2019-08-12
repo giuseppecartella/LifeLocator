@@ -6,10 +6,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
@@ -21,6 +25,7 @@ import androidx.room.Room;
 import com.example.lifelocator360.DataBaseManagement.AppDataBase;
 import com.example.lifelocator360.DataBaseManagement.Contact;
 import com.example.lifelocator360.DataBaseManagement.Note;
+import com.example.lifelocator360.DataBaseManagement.Photo;
 import com.example.lifelocator360.FragmentManagement.NotesFragment;
 import com.example.lifelocator360.MapManagement.HttpDataHandler;
 import com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity;
@@ -33,6 +38,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -61,6 +68,9 @@ public class SplashActivity extends AppCompatActivity {
     public static String DBName = "APP_DB";
     private ArrayList<Contact> contacts;
     private ArrayList<Note> notes;
+    private ArrayList<Photo> photos;
+    //Salvo in una lista tutti i nuovi pathfile
+    private File[] photosNewPaths;
     private String allInformationO1;
     private String allInformationO2;
     private Timer timer;
@@ -179,6 +189,8 @@ public class SplashActivity extends AppCompatActivity {
         //prendo dal database i dati necessari
         contacts = (ArrayList<Contact>) SplashActivity.appDataBase.daoManager().getContacts();
         notes = (ArrayList<Note>) SplashActivity.appDataBase.daoManager().getNote();
+        photos = (ArrayList<Photo>) SplashActivity.appDataBase.daoManager().getPhoto();
+
 
         Collections.sort(contacts, new Comparator<Contact>() {
             @Override
@@ -238,6 +250,41 @@ public class SplashActivity extends AppCompatActivity {
             }
         };
         timer.scheduleAtFixedRate(timerTask, 20, 20);
+
+        //Ora accedo all'archivio dell'utente, e aggiorno il DB delle foto se ce ne sono di nuove/cancellate
+        //Solo se l'utente mi ha dato il permesso
+        if(storagePermissionGranted()) {
+
+
+            //Ottengo il path delle foto scattate con la fotocamera
+            File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+
+            //Impongo un filtro solo per formati jpg, jpeg e png
+            FilenameFilter photoFilter = new FilenameFilter() {
+                File f;
+                public boolean accept(File dir, String name) {
+                    if(name.endsWith(".jpg") || name.endsWith(".JPG")|| name.endsWith(".png")|| name.endsWith(".PNG")|| name.endsWith(".jpeg")|| name.endsWith(".JPEG")) {
+                        return true;
+                    }
+                    f = new File(dir.getAbsolutePath()+"/"+name);
+
+                    return f.isDirectory();
+                }
+            };
+
+            //Ottengo effettivamente la lista dei path
+            photosNewPaths = path.listFiles(photoFilter);
+
+            Log.d("FATTO", "trovati " + photosNewPaths.length + " elementi");
+            for(int i = 0; i < photosNewPaths.length; i++) {
+                if(photosNewPaths[i].isDirectory() == false)
+                    Log.d("FATTO", "elemento " + i + " " + photosNewPaths[i]);
+            }
+
+
+
+        }
+
 
     }
 
