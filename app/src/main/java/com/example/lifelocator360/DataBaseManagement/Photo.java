@@ -11,6 +11,8 @@ import java.io.Serializable;
 
 public class Photo {
 
+    //Per ora inutile e non usato
+
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = "photo_path")

@@ -3,6 +3,8 @@ package com.example.lifelocator360.NavigationDrawerManagement;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -192,14 +194,6 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation_drawer);
 
-        if(!photos.isEmpty())
-            Log.e("ARRIVATI", "mi sono arrivate " + photos.size());
-
-        else
-            Log.e("ARRIVATI", "mi sono arrivate " + photos.size());
-
-
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -215,7 +209,6 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new MapsFragment()).commit();
         }
-
         waitForAvailableLocation();
     }
 

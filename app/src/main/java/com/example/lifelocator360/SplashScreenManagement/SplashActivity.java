@@ -49,6 +49,7 @@ import java.util.TimerTask;
 
 import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.contacts;
 import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.notes;
+import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.photos;
 
 /**
  * The class shows a SplashScreen during the app loading.
@@ -70,9 +71,6 @@ public class SplashActivity extends AppCompatActivity {
     //Variabili per la gestione del Data Base
     public static AppDataBase appDataBase;
     public static String DBName = "APP_DB";
-    private ArrayList<Photo> photos;
-    //Salvo in una lista tutti i nuovi pathfile
-    private ArrayList<File> photosNewPaths;
     private String allInformationO1;
     private String allInformationO2;
     private Timer timer;
@@ -200,7 +198,7 @@ public class SplashActivity extends AppCompatActivity {
             if(tmp[i].isDirectory() && !tmp[i].isHidden()){
                 getPhotoPaths(tmp[i],filenameFilter);
             }else{
-                    photosNewPaths.add(tmp[i]);
+                    photos.add(tmp[i]);
             }
         }
     }
@@ -278,13 +276,13 @@ public class SplashActivity extends AppCompatActivity {
 
             //Ottengo il path delle foto scattate con la fotocamera
             File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-            photosNewPaths = new ArrayList<File>();
+            photos = new ArrayList<File>();
 
             //Impongo un filtro solo per formati jpg, jpeg e png
             FilenameFilter photoFilter = new FilenameFilter() {
                 File f;
                 public boolean accept(File dir, String name) {
-                    if((name.endsWith(".jpg") || name.endsWith(".JPG")|| name.endsWith(".png")|| name.endsWith(".PNG")|| name.endsWith(".jpeg")|| name.endsWith(".JPEG")) && !name.startsWith(".") && !dir.isHidden()) {
+                    if((name.endsWith(".jpg") || name.endsWith(".JPG")|| name.endsWith(".jpeg")|| name.endsWith(".JPEG")) && !name.startsWith(".") && !dir.isHidden()) {
                        // Log.d("PROVA", "elemtno nome:  " + name + " " + " nome dir " + dir);
                         return true;
                     }
@@ -298,13 +296,13 @@ public class SplashActivity extends AppCompatActivity {
             };
 
             getPhotoPaths(path,photoFilter);
-            Log.d("FINITO", "finito, trovati " + photosNewPaths.size() + " elementi");
+            Log.d("FINITO", "finito, trovati " + photos.size() + " elementi");
 
             //Ora ho in photos tutti i path AGGIORNATI dalla libreria del telefono
 
         } else {
             //L'utente mi ha negato i permessi, il vettore è vuoto
-            photosNewPaths = new ArrayList<File>();
+            photos = new ArrayList<File>();
         }
 
     }
@@ -312,7 +310,6 @@ public class SplashActivity extends AppCompatActivity {
     private void launchMainActivity() {
         final Intent intentNavigationDrawer = new Intent(this, NavigationDrawerActivity.class);
 
-        intentNavigationDrawer.putExtra("lista_photo_path", photosNewPaths);
         startActivity(intentNavigationDrawer);
         finish();
     }

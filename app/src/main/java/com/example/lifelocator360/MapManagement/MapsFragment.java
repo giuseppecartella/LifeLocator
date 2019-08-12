@@ -2,8 +2,12 @@ package com.example.lifelocator360.MapManagement;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +20,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity;
 import com.example.lifelocator360.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -24,6 +32,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -31,11 +40,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.DEF_ZOOM;
 import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.contacts;
+import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.photos;
 
 public class MapsFragment extends Fragment implements OnMapReadyCallback {
     public static GoogleMap mMap;
@@ -45,6 +57,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     public static ArrayList<Marker> noteMarkers;
     public static ArrayList<Marker> contactMarkers;
     public static Marker newMarker;
+
+    public static int tmp = 0;
 
     public boolean isGPSActive() {
         return GPSActive;
@@ -152,6 +166,62 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+
+    private void loadMarkerIcon(final Marker marker, File file) {
+
+        Uri imageUri = Uri.fromFile(file);
+
+        Glide.with(getActivity()).asBitmap().load(imageUri).into(new SimpleTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                //resource = Bitmap.createScaledBitmap(resource, 100, 100, false);
+                BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(resource);
+                marker.setIcon(icon);
+                tmp++;
+                Log.d("TMP", "Vale: " + tmp);
+            }
+        });
+    }
+
+
+    private void setPhotoMarkers() {
+        for(File f : NavigationDrawerActivity.photos) {
+            String filePath = f.getAbsolutePath();
+
+            //Leggo i metadata del file
+            try {
+                ExifInterface exifInterface = new ExifInterface(filePath);
+
+                float[] latlng = new float[2];
+
+                exifInterface.getLatLong(latlng);
+
+                if(latlng[0] != 0 || latlng[1] != 0) {
+
+                    Log.e("LATLNG", "Latitudine: " + latlng[0] + " Longitudine: " + latlng[1]);
+
+                    MapsFragment.newMarker = MapsFragment.mMap.addMarker(new MarkerOptions().position(new LatLng(latlng[0], latlng[1]))
+                            .title("FOTO"));
+
+
+
+                    //BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+                   // Bitmap bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(), bmOptions);
+                    //bitmap = Bitmap.createScaledBitmap(bitmap, 120, 120, true);
+
+                    //MapsFragment.newMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
+
+                    loadMarkerIcon(MapsFragment.newMarker, f);
+               }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Log.d(TAG, "PARTITO L'ON MAP READY");
@@ -159,8 +229,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
 
         //Setto tutti i markers
+        setPhotoMarkers();
         setNoteMarkers();
         setContactMarkers();
+
 
 
         final LocationManager manager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
