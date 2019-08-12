@@ -211,8 +211,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
                 if(latlng[0] != 0 || latlng[1] != 0) {
                     Log.e("LATLNG", "Latitudine: " + latlng[0] + " Longitudine: " + latlng[1]);
-                    newMarker.setTag(--newTag);
                     MapsFragment.newMarker = MapsFragment.mMap.addMarker(new MarkerOptions().position(new LatLng(latlng[0], latlng[1])));
+                    MapsFragment.newMarker.setTag(--newTag);
                     Log.e("TAG", "il tag e'" + newTag);
                     loadMarkerIcon(MapsFragment.newMarker, f);
                }
@@ -229,7 +229,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     public void onMapReady(GoogleMap googleMap) {
         Log.d(TAG, "PARTITO L'ON MAP READY");
         mMap = googleMap;
-
 
         //Setto tutti i markers
         setPhotoMarkers();
