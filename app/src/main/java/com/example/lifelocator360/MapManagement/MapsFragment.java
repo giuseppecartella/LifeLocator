@@ -62,7 +62,6 @@ import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDr
 
 public class MapsFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     public static GoogleMap mMap;
-    private String TAG = "MapsActivity";
     private FusedLocationProviderClient fusedLocationProviderClient;
     public static boolean GPSActive;
     public static ArrayList<Marker> noteMarkers;
@@ -78,7 +77,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     }
 
     public void getDeviceLocation() {
-        Log.d(TAG, "getting the device current location!");
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
         try {
@@ -88,23 +86,21 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                     @Override
                     public void onComplete(@NonNull Task task) {
                         if (task.isSuccessful()) {
-                            Log.d(TAG, "location found!");
 
                             Location currentLocation = (Location) task.getResult();
 
                             if (currentLocation != null) {
-                                Log.d(TAG, "location vale " + currentLocation);
                                 moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEF_ZOOM);
                             }
 
                         } else {
-                            Log.d(TAG, "current location is null!");
+                           //current location is null
                         }
                     }
                 });
             }
         } catch (SecurityException e) {
-            Log.e(TAG, "Security Exception " + e.getMessage());
+           e.printStackTrace();
         }
     }
 
@@ -227,7 +223,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Log.d(TAG, "PARTITO L'ON MAP READY");
         mMap = googleMap;
 
         //Setto tutti i markers

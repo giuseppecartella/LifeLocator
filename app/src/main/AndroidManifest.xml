@@ -40,8 +40,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MapManagement.MapsActivity"
-            android:screenOrientation="portrait"></activity>
         <activity android:name=".NavigationDrawerManagement.NavigationDrawerActivity"
             android:screenOrientation="portrait"></activity>
     </application>

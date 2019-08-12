@@ -3,15 +3,12 @@ package com.example.lifelocator360.NavigationDrawerManagement;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -39,12 +36,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
-
 
 
 public class NavigationDrawerActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, NotesFragment.NoteFragmentListener,ContactsFragment.ContactFragmentListener {
@@ -318,7 +313,6 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
         Log.d("QUAAAA", "arrivato qua");
         MapsFragment.newMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.note_icon_map));
         MapsFragment.newMarker.setTag(index);
-        Toast.makeText(this, "Aggiunto index " + index, Toast.LENGTH_SHORT).show();
 
         MapsFragment.noteMarkers.add(MapsFragment.newMarker);
     }
@@ -334,7 +328,6 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
             if(MapsFragment.noteMarkers.get(i).getTag() == oldIndex) {
                 MapsFragment.noteMarkers.get(i).setPosition(new LatLng(lat, lng));
                 MapsFragment.noteMarkers.get(i).setTitle(noteTitle);
-                Toast.makeText(this, "Aggiornato index " + i, Toast.LENGTH_SHORT).show();
                 found = true;
             }
         }
@@ -399,7 +392,6 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
 
         MapsFragment.newMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.contact_icon_map));
         MapsFragment.newMarker.setTag(index);
-        Toast.makeText(this, "Aggiunto index " + index, Toast.LENGTH_SHORT).show();
 
         MapsFragment.contactMarkers.add(MapsFragment.newMarker);
     }
@@ -415,7 +407,6 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
             if(MapsFragment.contactMarkers.get(i).getTag() == oldIndex) {
                 MapsFragment.contactMarkers.get(i).setPosition(new LatLng(lat, lng));
                 MapsFragment.contactMarkers.get(i).setTitle(contactTitle);
-                Toast.makeText(this, "Aggiornato index " + i, Toast.LENGTH_SHORT).show();
                 found = true;
             }
         }
@@ -427,28 +418,15 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
 
     private void deleteContactMarker(String inputLatitude, String inputLongitude, Integer index) {
         Log.d("test100", "index: " + index);
-        Toast.makeText(this, "index e' " + index, Toast.LENGTH_LONG).show();
         for(int i = 0; i < MapsFragment.contactMarkers.size(); ++i) {
 
             if((MapsFragment.contactMarkers.get(i).getTag()).equals(index)) {
                 Log.d("test100", "sono entratooo, il tag e' " + MapsFragment.contactMarkers.get(i).getTag());
-                //Toast.makeText(this, "il tag e' " + MapsFragment.contactMarkers.get(i).getTag(), Toast.LENGTH_LONG).show();
                 MapsFragment.contactMarkers.get(i).remove(); //rimuovo dalla mappa
                 MapsFragment.contactMarkers.remove(i);       //rimuovo da vettore di marker
                 Log.d("PROVAF", "rimosso il marker con index " + index);
             }
         }
-        /*
-        //Se devo eliminare anche la nota oltre al marker, aggiorno tutti i tag dei marker successivi, altrimenti se devo
-        //eliminare solo il marker non entro nell'if (caso di update)
-        if(!inputLatitude.equals("REMOVE_MARKER")) {
-            for (int i = 0; i < MapsFragment.contactMarkers.size(); ++i) {
-                if ((Integer) MapsFragment.contactMarkers.get(i).getTag() > index) {
-                    Log.d("FATTO", "sono entrato");
-                    MapsFragment.contactMarkers.get(i).setTag((Integer) MapsFragment.contactMarkers.get(i).getTag() - 1);
-                }
-            }
-        }*/
     }
 
     private void deleteAllContactMarkers(){

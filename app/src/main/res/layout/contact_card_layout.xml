@@ -12,24 +12,12 @@
         android:layout_height="match_parent"
         android:layout_margin="@dimen/card_distance">
 
-        <ImageView
-            android:id="@+id/contactInitials"
-            android:layout_width="@dimen/contact_photo_width"
-            android:layout_height="@dimen/contact_photo_height"
-            android:padding="@dimen/contact_photo_padding"
-            android:background="@drawable/contact_circle"/>
-
 
         <TextView
             android:id="@+id/initials"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:layout_alignLeft="@id/contactInitials"
-            android:layout_alignTop="@id/contactInitials"
-            android:layout_alignRight="@id/contactInitials"
-            android:layout_alignBottom="@id/contactInitials"
-            android:layout_marginLeft="0dp"
-            android:layout_marginBottom="0dp"
+            android:layout_width="@dimen/contact_photo_width"
+            android:layout_height="@dimen/contact_photo_height"
+            android:background="@drawable/contact_circle"
             android:gravity="center"
             android:text="FM"
             android:textColor="@android:color/white"
@@ -48,8 +36,6 @@
             android:layout_toRightOf="@+id/initials"
             android:textSize="@dimen/card_view_text_size_surname"
             android:textStyle="bold" />
-
     </RelativeLayout>
-
 </androidx.cardview.widget.CardView>
 

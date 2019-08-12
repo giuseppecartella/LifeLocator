@@ -1,5 +1,7 @@
 package com.example.lifelocator360.FragmentManagement;
 
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,14 +37,12 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
 
 
     public static class ContactsViewHolder extends RecyclerView.ViewHolder {
-        public ImageView imageView;
         public TextView contactInformation;
         public TextView contactInitials;
 
 
         public ContactsViewHolder(@NonNull View itemView, OnItemClickListener listener) {
             super(itemView);
-            imageView = itemView.findViewById(R.id.contactInitials);
             contactInformation = itemView.findViewById(R.id.informations);
             contactInitials = itemView.findViewById(R.id.initials);
 
@@ -79,7 +79,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
         Contact currentContact = contacts.get(position);
 
         randomColor = colors[new Random().nextInt(colors.length)];
-        holder.imageView.setBackgroundColor(randomColor);
+        ((GradientDrawable)holder.contactInitials.getBackground()).setColor(randomColor);
 
         Log.d("prova 2 ", "position vale " + position);
 

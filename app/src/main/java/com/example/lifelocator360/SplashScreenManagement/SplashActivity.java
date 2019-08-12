@@ -325,9 +325,8 @@ public class SplashActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    /**
-     * @param savedInstanceState The method calls the MapsActivity if connection is available, else shows an alert dialog.
-     */
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
