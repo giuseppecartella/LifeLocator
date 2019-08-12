@@ -196,6 +196,13 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
         notes = (ArrayList<Note>) getIntent().getSerializableExtra("lista_note");
         photos = (ArrayList<File>) getIntent().getSerializableExtra("lista_photo_path");
 
+        if(!photos.isEmpty())
+            Log.e("ARRIVATI", "mi sono arrivate " + photos.size());
+
+        else
+            Log.e("ARRIVATI", "mi sono arrivate " + photos.size());
+
+
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

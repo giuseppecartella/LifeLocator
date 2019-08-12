@@ -199,7 +199,7 @@ public class SplashActivity extends AppCompatActivity {
             if(tmp[i].isDirectory() && !tmp[i].isHidden()){
                 getPhotoPaths(tmp[i],filenameFilter);
             }else{
-                photosNewPaths.add(tmp[i]);
+                    photosNewPaths.add(tmp[i]);
             }
         }
     }
