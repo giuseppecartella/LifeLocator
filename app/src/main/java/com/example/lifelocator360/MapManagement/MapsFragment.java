@@ -1,12 +1,15 @@
 package com.example.lifelocator360.MapManagement;
 
 import android.Manifest;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.ExifInterface;
@@ -16,6 +19,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -62,8 +68,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     public static ArrayList<Marker> noteMarkers;
     public static ArrayList<Marker> contactMarkers;
     public static Marker newMarker;
-
-    public static int tmp = 0;
 
     public boolean isGPSActive() {
         return GPSActive;
@@ -182,41 +186,34 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
 
     private void loadMarkerIcon(final Marker marker, File file) {
-
         Uri imageUri = Uri.fromFile(file);
-
         Glide.with(getActivity()).asBitmap().load(imageUri).apply(new RequestOptions().override(70, 70)).into(new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
                 resource =  addMarkerBorder(resource, 6);
                 BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(resource);
                 marker.setIcon(icon);
-                tmp++;
-                Log.d("TMP", "Vale: " + tmp);
             }
         });
     }
 
 
     private void setPhotoMarkers() {
+        int newTag = 0; //I marker delle foto, per essere riconosciuti al click, avranno tag negativi
         for(File f : NavigationDrawerActivity.photos) {
             String filePath = f.getAbsolutePath();
 
             //Leggo i metadata del file
             try {
                 ExifInterface exifInterface = new ExifInterface(filePath);
-
                 float[] latlng = new float[2];
-
                 exifInterface.getLatLong(latlng);
 
                 if(latlng[0] != 0 || latlng[1] != 0) {
-
                     Log.e("LATLNG", "Latitudine: " + latlng[0] + " Longitudine: " + latlng[1]);
-
-                    MapsFragment.newMarker = MapsFragment.mMap.addMarker(new MarkerOptions().position(new LatLng(latlng[0], latlng[1]))
-                            .title("FOTO"));
-
+                    newMarker.setTag(--newTag);
+                    MapsFragment.newMarker = MapsFragment.mMap.addMarker(new MarkerOptions().position(new LatLng(latlng[0], latlng[1])));
+                    Log.e("TAG", "il tag e'" + newTag);
                     loadMarkerIcon(MapsFragment.newMarker, f);
                }
 
@@ -239,7 +236,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         setNoteMarkers();
         setContactMarkers();
 
-
+        mMap.setOnMarkerClickListener((GoogleMap.OnMarkerClickListener) this);
 
         final LocationManager manager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
 
@@ -282,10 +279,38 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     }
 
+    public void showImage(Integer tag) {
+
+        tag = -tag - 1; //Il tag in posizione -2, si riferisce all'elemento 1 del vettore
+
+        Dialog builder = new Dialog(getContext());
+        builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        builder.setCancelable(true);
+        builder.getWindow().setBackgroundDrawable(
+                new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                //nothing;
+            }
+        });
+
+        ImageView imageView = new ImageView(getContext());
+        imageView.setImageURI(Uri.fromFile(photos.get(tag)));
+        builder.addContentView(imageView, new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        builder.show();
+    }
+
     @Override
     public boolean onMarkerClick(Marker marker) {
-        marker.remove();
+        Integer tag = (Integer) marker.getTag();
+        if (tag < 0)  { //Ho fatto il click su una foto, la gestisco separatamente
+           showImage(tag);
         return true;
+    } else
+        return false;
     }
 }
 
