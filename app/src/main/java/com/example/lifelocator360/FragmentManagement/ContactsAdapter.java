@@ -1,23 +1,18 @@
 package com.example.lifelocator360.FragmentManagement;
 
-import android.graphics.Color;
+
 import android.graphics.drawable.GradientDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.lifelocator360.DataBaseManagement.Contact;
 import com.example.lifelocator360.R;
-
 import java.util.ArrayList;
 import java.util.Random;
-
 import static com.example.lifelocator360.FragmentManagement.ContactsFragment.colors;
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ContactsViewHolder> {

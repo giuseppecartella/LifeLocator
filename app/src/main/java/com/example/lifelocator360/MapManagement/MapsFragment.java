@@ -5,10 +5,8 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationManager;
@@ -22,16 +20,12 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
@@ -50,14 +44,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-
 import static android.content.Context.LOCATION_SERVICE;
 import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.DEF_ZOOM;
-import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.contacts;
 import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.photos;
 
 public class MapsFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {

@@ -19,12 +19,9 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.lifelocator360.DataBaseManagement.Contact;
 import com.example.lifelocator360.DataBaseManagement.Note;
-import com.example.lifelocator360.FragmentManagement.CalendarFragment;
 import com.example.lifelocator360.FragmentManagement.ContactsFragment;
-import com.example.lifelocator360.FragmentManagement.InstagramFragment;
 import com.example.lifelocator360.FragmentManagement.NotesFragment;
 import com.example.lifelocator360.FragmentManagement.PhotoFragment;
-import com.example.lifelocator360.FragmentManagement.SettingsFragment;
 import com.example.lifelocator360.MapManagement.MapsFragment;
 import com.example.lifelocator360.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -222,6 +219,7 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
 
                 break;
 
+                /*
             case R.id.nav_calendar:
                 if (!currentFragment.equals("Mappa")) {
                     getSupportFragmentManager().popBackStack();
@@ -232,7 +230,7 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
                 //Show return to map button
                 this.invalidateOptionsMenu();
 
-                break;
+                break;*/
 
             case R.id.nav_contacts:
                 if (!currentFragment.equals("Mappa")) {
@@ -258,6 +256,7 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
 
                 break;
 
+                /*
             case R.id.nav_instagram:
                 if (!currentFragment.equals("Mappa")) {
                     getSupportFragmentManager().popBackStack();
@@ -268,8 +267,9 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
                 //Show return to map button
                 this.invalidateOptionsMenu();
 
-                break;
+                break;*/
 
+                /*
             case R.id.nav_settings:
                 if (!currentFragment.equals("Mappa")) {
                     getSupportFragmentManager().popBackStack();
@@ -282,7 +282,7 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
                 //Show return to map button
                 this.invalidateOptionsMenu();
 
-                break;
+                break;*/
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);

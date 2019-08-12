@@ -6,39 +6,28 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.room.Room;
-
 import com.example.lifelocator360.DataBaseManagement.AppDataBase;
 import com.example.lifelocator360.DataBaseManagement.Contact;
 import com.example.lifelocator360.DataBaseManagement.Note;
-import com.example.lifelocator360.DataBaseManagement.Photo;
-import com.example.lifelocator360.FragmentManagement.NotesFragment;
 import com.example.lifelocator360.MapManagement.HttpDataHandler;
 import com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity;
 import com.example.lifelocator360.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.material.snackbar.Snackbar;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
@@ -46,7 +35,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.contacts;
 import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.notes;
 import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.photos;

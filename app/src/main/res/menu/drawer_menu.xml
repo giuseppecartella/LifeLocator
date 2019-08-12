@@ -10,10 +10,13 @@
             android:id="@+id/nav_photo"
             android:icon="@drawable/ic_photo"
             android:title="@string/menu_photo" />
+
+        <!--
         <item
             android:id="@+id/nav_calendar"
             android:icon="@drawable/ic_calendar"
-            android:title="@string/menu_calendar" />
+            android:title="@string/menu_calendar" />-->
+
         <item
             android:id="@+id/nav_contacts"
             android:icon="@drawable/ic_contacts"
@@ -22,18 +25,20 @@
             android:id="@+id/nav_notes"
             android:icon="@drawable/ic_notes"
             android:title="@string/menu_notes" />
+        <!--
         <item
             android:id="@+id/nav_instagram"
             android:icon="@drawable/ic_instagram"
-            android:title="@string/menu_instagram" />
+            android:title="@string/menu_instagram" />-->
     </group>
 
+    <!--
     <group>
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings"
             android:checkable="true"
             android:title="@string/menu_settings" />
-    </group>
+    </group>-->
 
 </menu>

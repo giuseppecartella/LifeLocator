@@ -17,12 +17,11 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import com.example.lifelocator360.DataBaseManagement.Note;
 import com.example.lifelocator360.MapManagement.HttpDataHandler;
 import com.example.lifelocator360.MapManagement.MapsFragment;
@@ -40,7 +39,6 @@ import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDr
 public class NotesFragment extends Fragment implements View.OnClickListener {
     private RecyclerView recyclerView;
     private NotesAdapter notesAdapter;
-    private RecyclerView.LayoutManager layoutManager;
     private FloatingActionButton floatingActionButton;
     private View view;
     private EditText editTextName;
@@ -107,14 +105,12 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
 
     public void showNotes() {
         updateMissingNotesBackground();
-
         //setto il recycler view
         recyclerView = view.findViewById(R.id.recyclerViewNotes);
 
         recyclerView.setHasFixedSize(true);
-        layoutManager = new GridLayoutManager(getContext(), 2);
         notesAdapter = new NotesAdapter(NavigationDrawerActivity.notes);
-        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL));
         recyclerView.setAdapter(notesAdapter);
         notesAdapter.setOnItemClickListener(new NotesAdapter.OnItemClickListener() {
             @Override
@@ -122,7 +118,6 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
                 updateNoteInfoDialog(position);
             }
         });
-
     }
 
     @Override
@@ -291,7 +286,7 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    public void safeDeleteDialog(int position) {
+    private void safeDeleteDialog(int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         builder.setMessage("Questa nota verrà eliminata")

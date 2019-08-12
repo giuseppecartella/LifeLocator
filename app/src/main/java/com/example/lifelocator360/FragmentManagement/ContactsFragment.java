@@ -1,7 +1,6 @@
 package com.example.lifelocator360.FragmentManagement;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.ConnectivityManager;
@@ -17,9 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -33,21 +30,12 @@ import com.example.lifelocator360.R;
 import com.example.lifelocator360.SplashScreenManagement.SplashActivity;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.internal.NavigationMenuItemView;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.textfield.TextInputEditText;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.ZOOM_TO_MARKER;
-import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.getNavigationDrawerSize;
 
 public class ContactsFragment extends Fragment implements View.OnClickListener {
     private RecyclerView recyclerView;
