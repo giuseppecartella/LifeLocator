@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.location.Location;
 import android.location.LocationManager;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -52,7 +54,7 @@ import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDr
 import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.contacts;
 import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.photos;
 
-public class MapsFragment extends Fragment implements OnMapReadyCallback {
+public class MapsFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     public static GoogleMap mMap;
     private String TAG = "MapsActivity";
     private FusedLocationProviderClient fusedLocationProviderClient;
@@ -169,6 +171,15 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+    private Bitmap addMarkerBorder(Bitmap bmp, int borderSize) {
+        Bitmap bmpWithBorder = Bitmap.createBitmap(bmp.getWidth() + borderSize * 2, bmp.getHeight() + borderSize * 2, bmp.getConfig());
+        Canvas canvas = new Canvas(bmpWithBorder);
+        canvas.drawColor(Color.WHITE);
+        canvas.drawBitmap(bmp, borderSize, borderSize, null);
+        return bmpWithBorder;
+    }
+
+
 
     private void loadMarkerIcon(final Marker marker, File file) {
 
@@ -177,6 +188,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         Glide.with(getActivity()).asBitmap().load(imageUri).apply(new RequestOptions().override(70, 70)).into(new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                resource =  addMarkerBorder(resource, 6);
                 BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(resource);
                 marker.setIcon(icon);
                 tmp++;
@@ -204,9 +216,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
                     MapsFragment.newMarker = MapsFragment.mMap.addMarker(new MarkerOptions().position(new LatLng(latlng[0], latlng[1]))
                             .title("FOTO"));
-
-
-                    MapsFragment.newMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.contact_icon_map));
 
                     loadMarkerIcon(MapsFragment.newMarker, f);
                }
@@ -271,6 +280,12 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         mapFragment.getMapAsync(this);
 
 
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        marker.remove();
+        return true;
     }
 }
 
