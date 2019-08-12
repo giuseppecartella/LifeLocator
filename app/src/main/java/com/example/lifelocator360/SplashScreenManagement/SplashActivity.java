@@ -15,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -70,7 +71,7 @@ public class SplashActivity extends AppCompatActivity {
     private ArrayList<Note> notes;
     private ArrayList<Photo> photos;
     //Salvo in una lista tutti i nuovi pathfile
-    private File[] photosNewPaths;
+    private ArrayList<File> photosNewPaths;
     private String allInformationO1;
     private String allInformationO2;
     private Timer timer;
@@ -84,10 +85,13 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     public void setConnectionAvailable(boolean connectionAvailable) {
+
         this.connectionAvailable = checkNetworkConnectionStatus();
     }
 
+
     /**
+     *
      * @return true if connection is available,false if not
      */
     private boolean checkNetworkConnectionStatus() {
@@ -183,6 +187,23 @@ public class SplashActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
+
+    public void getPhotoPaths(File path,FilenameFilter filenameFilter){
+        File[] tmp;
+
+        //Ottengo effettivamente la lista dei path
+        tmp = path.listFiles(filenameFilter);
+
+        Log.d("FATTO", "trovati " + tmp.length + " elementi dir "+path);
+        for(int i = 0; i < tmp.length; i++) {
+            if(tmp[i].isDirectory() && !tmp[i].isHidden()){
+                getPhotoPaths(tmp[i],filenameFilter);
+            }else{
+                photosNewPaths.add(tmp[i]);
+            }
+        }
+    }
+
     private void setUpDatabaseAndLaunchMainActivity() {
         //A questo punto posso creare il db (spostare in una funzione!)
         appDataBase = Room.databaseBuilder(getApplicationContext(), AppDataBase.class, DBName).allowMainThreadQueries().build();
@@ -255,15 +276,16 @@ public class SplashActivity extends AppCompatActivity {
         //Solo se l'utente mi ha dato il permesso
         if(storagePermissionGranted()) {
 
-
             //Ottengo il path delle foto scattate con la fotocamera
             File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+            photosNewPaths = new ArrayList<File>();
 
             //Impongo un filtro solo per formati jpg, jpeg e png
             FilenameFilter photoFilter = new FilenameFilter() {
                 File f;
                 public boolean accept(File dir, String name) {
-                    if(name.endsWith(".jpg") || name.endsWith(".JPG")|| name.endsWith(".png")|| name.endsWith(".PNG")|| name.endsWith(".jpeg")|| name.endsWith(".JPEG")) {
+                    if((name.endsWith(".jpg") || name.endsWith(".JPG")|| name.endsWith(".png")|| name.endsWith(".PNG")|| name.endsWith(".jpeg")|| name.endsWith(".JPEG")) && !name.startsWith(".") && !dir.isHidden()) {
+                       // Log.d("PROVA", "elemtno nome:  " + name + " " + " nome dir " + dir);
                         return true;
                     }
                     f = new File(dir.getAbsolutePath()+"/"+name);
@@ -272,15 +294,12 @@ public class SplashActivity extends AppCompatActivity {
                 }
             };
 
-            //Ottengo effettivamente la lista dei path
-            photosNewPaths = path.listFiles(photoFilter);
+            getPhotoPaths(path,photoFilter);
 
-            Log.d("FATTO", "trovati " + photosNewPaths.length + " elementi");
-            for(int i = 0; i < photosNewPaths.length; i++) {
-                if(photosNewPaths[i].isDirectory() == false)
-                    Log.d("FATTO", "elemento " + i + " " + photosNewPaths[i]);
-            }
 
+            Log.d("PROVA", "finito, trovati " + photosNewPaths.size() + " elementi");
+
+            //Toast.makeText(this, "trovati " + photosNewPaths.size() + " elementi", Toast.LENGTH_LONG).show();
 
 
         }
@@ -314,7 +333,6 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setConnectionAvailable(connectionAvailable);
         //Il primo if controlla che ci siano la connessione e i google play services (NECESSARI), se questi ci sono,
         // avvio il check delle permissions e il set up del database. Infine vado alla main activity
@@ -364,7 +382,7 @@ public class SplashActivity extends AppCompatActivity {
                     SplashActivity.appDataBase.daoManager().updateLatLngNotes("NO_RESULT", "NO_RESULT", strings[1]);
                     notes.get(Integer.parseInt(strings[2])).setLatitude("NO_RESULT");
                     notes.get(Integer.parseInt(strings[2])).setLongitude("NO_RESULT");
-                } else if(strings[3].equals("CONTACT")){
+                } else if (strings[3].equals("CONTACT")) {
                     SplashActivity.appDataBase.daoManager().updateLatLngContacts("NO_RESULT", "NO_RESULT", strings[1]);
                     contacts.get(Integer.parseInt(strings[2])).setLatitude("NO_RESULT");
                     contacts.get(Integer.parseInt(strings[2])).setLongitude("NO_RESULT");
@@ -389,11 +407,11 @@ public class SplashActivity extends AppCompatActivity {
                 Log.d("prova", "latlng: " + lat + lng);
                 Log.d("richiesta", "Salvataggio con coordinate");
 
-                if(wrapper.dataType.equals("NOTE")) {
+                if (wrapper.dataType.equals("NOTE")) {
                     SplashActivity.appDataBase.daoManager().updateLatLngNotes(lat, lng, Integer.toString(wrapper.id));
                     notes.get(wrapper.index).setLatitude(lat);
                     notes.get(wrapper.index).setLongitude(lng);
-                } else if(wrapper.dataType.equals("CONTACT")){
+                } else if (wrapper.dataType.equals("CONTACT")) {
                     SplashActivity.appDataBase.daoManager().updateLatLngContacts(lat, lng, Integer.toString(wrapper.id));
                     contacts.get(wrapper.index).setLatitude(lat);
                     contacts.get(wrapper.index).setLongitude(lng);
@@ -402,7 +420,7 @@ public class SplashActivity extends AppCompatActivity {
 
             } catch (JSONException e) {
 
-                if(HttpDataHandler.timeOutException) { //ATTENZIONE: QUESTO RAGIONAMENTO CON UNA SOLA VARIABILE STATICA FUNZIONA SOLO SE LE RICHIESTE SONO SEQUENZIALI
+                if (HttpDataHandler.timeOutException) { //ATTENZIONE: QUESTO RAGIONAMENTO CON UNA SOLA VARIABILE STATICA FUNZIONA SOLO SE LE RICHIESTE SONO SEQUENZIALI
                     HttpDataHandler.timeOutException = false;
 
                     Log.d("GESTISCO", "trovato uno con connessione lenta");
