@@ -210,7 +210,6 @@ public class SplashActivity extends AppCompatActivity {
         //prendo dal database i dati necessari
         contacts = (ArrayList<Contact>) SplashActivity.appDataBase.daoManager().getContacts();
         notes = (ArrayList<Note>) SplashActivity.appDataBase.daoManager().getNote();
-        photos = (ArrayList<Photo>) SplashActivity.appDataBase.daoManager().getPhoto();
 
 
         Collections.sort(contacts, new Comparator<Contact>() {
@@ -288,22 +287,24 @@ public class SplashActivity extends AppCompatActivity {
                        // Log.d("PROVA", "elemtno nome:  " + name + " " + " nome dir " + dir);
                         return true;
                     }
-                    f = new File(dir.getAbsolutePath()+"/"+name);
 
-                    return f.isDirectory();
+                    if(!name.startsWith(".")) {
+                        f = new File(dir.getAbsolutePath() + "/" + name);
+                        return f.isDirectory();
+                    }
+                    return false;
                 }
             };
 
             getPhotoPaths(path,photoFilter);
+            Log.d("FINITO", "finito, trovati " + photosNewPaths.size() + " elementi");
 
+            //Ora ho in photos tutti i path AGGIORNATI dalla libreria del telefono
 
-            Log.d("PROVA", "finito, trovati " + photosNewPaths.size() + " elementi");
-
-            //Toast.makeText(this, "trovati " + photosNewPaths.size() + " elementi", Toast.LENGTH_LONG).show();
-
-
+        } else {
+            //L'utente mi ha negato i permessi, il vettore è vuoto
+            photosNewPaths = new ArrayList<File>();
         }
-
 
     }
 
@@ -312,6 +313,7 @@ public class SplashActivity extends AppCompatActivity {
 
         intentNavigationDrawer.putExtra("lista_contatti", contacts); //passo i contatti al nav drawer
         intentNavigationDrawer.putExtra("lista_note", notes);
+        intentNavigationDrawer.putExtra("lista_photo_path", photosNewPaths);
         startActivity(intentNavigationDrawer);
         finish();
     }

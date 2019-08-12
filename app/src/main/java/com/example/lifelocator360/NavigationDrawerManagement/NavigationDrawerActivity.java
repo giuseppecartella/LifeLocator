@@ -37,6 +37,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -55,6 +57,7 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
     private FusedLocationProviderClient fusedLocationProviderClient;
     public static ArrayList<Contact> contacts;
     public static ArrayList<Note> notes;
+    public static ArrayList<File> photos;
 
 
     public static int getNavigationDrawerSize() {
@@ -191,6 +194,7 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
 
         contacts = (ArrayList<Contact>) getIntent().getSerializableExtra("lista_contatti");
         notes = (ArrayList<Note>) getIntent().getSerializableExtra("lista_note");
+        photos = (ArrayList<File>) getIntent().getSerializableExtra("lista_photo_path");
 
 
         Toolbar toolbar = findViewById(R.id.toolbar);
