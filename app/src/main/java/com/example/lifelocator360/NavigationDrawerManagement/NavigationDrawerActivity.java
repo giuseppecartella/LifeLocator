@@ -192,10 +192,6 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation_drawer);
 
-        contacts = (ArrayList<Contact>) getIntent().getSerializableExtra("lista_contatti");
-        notes = (ArrayList<Note>) getIntent().getSerializableExtra("lista_note");
-        photos = (ArrayList<File>) getIntent().getSerializableExtra("lista_photo_path");
-
         if(!photos.isEmpty())
             Log.e("ARRIVATI", "mi sono arrivate " + photos.size());
 

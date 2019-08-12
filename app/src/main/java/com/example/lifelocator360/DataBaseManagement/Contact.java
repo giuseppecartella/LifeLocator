@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 @Entity(tableName = "contact")
 
-public class Contact implements Serializable {
+public class Contact {
     String allInformationO1;
     String allInformationO2;
 

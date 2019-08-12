@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 @Entity(tableName = "photo")
 
-public class Photo implements Serializable {
+public class Photo {
 
     @PrimaryKey
     @NonNull

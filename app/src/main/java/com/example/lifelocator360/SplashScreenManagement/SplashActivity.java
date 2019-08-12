@@ -47,6 +47,9 @@ import java.util.Comparator;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.contacts;
+import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.notes;
+
 /**
  * The class shows a SplashScreen during the app loading.
  */
@@ -67,8 +70,6 @@ public class SplashActivity extends AppCompatActivity {
     //Variabili per la gestione del Data Base
     public static AppDataBase appDataBase;
     public static String DBName = "APP_DB";
-    private ArrayList<Contact> contacts;
-    private ArrayList<Note> notes;
     private ArrayList<Photo> photos;
     //Salvo in una lista tutti i nuovi pathfile
     private ArrayList<File> photosNewPaths;
@@ -311,8 +312,6 @@ public class SplashActivity extends AppCompatActivity {
     private void launchMainActivity() {
         final Intent intentNavigationDrawer = new Intent(this, NavigationDrawerActivity.class);
 
-        intentNavigationDrawer.putExtra("lista_contatti", contacts); //passo i contatti al nav drawer
-        intentNavigationDrawer.putExtra("lista_note", notes);
         intentNavigationDrawer.putExtra("lista_photo_path", photosNewPaths);
         startActivity(intentNavigationDrawer);
         finish();
