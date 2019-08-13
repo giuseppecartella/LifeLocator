@@ -52,7 +52,7 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
     public static ArrayList<Contact> contacts;
     public static ArrayList<Note> notes;
     public static ArrayList<File> photos;
-
+    public static MapsFragment mainMapsFragment;
 
     public static int getNavigationDrawerSize() {
         return navigationDrawerSize;
@@ -199,7 +199,8 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
         toggle.syncState();
 
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new MapsFragment()).commit();
+            mainMapsFragment = new MapsFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mainMapsFragment).commit();
         }
         waitForAvailableLocation();
     }

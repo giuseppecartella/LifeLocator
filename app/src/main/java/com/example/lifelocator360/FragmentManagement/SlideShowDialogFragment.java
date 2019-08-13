@@ -36,6 +36,7 @@ import java.util.Date;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.ZOOM_TO_MARKER;
+import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.mainMapsFragment;
 
 
 public class SlideShowDialogFragment extends DialogFragment implements View.OnClickListener {
@@ -145,26 +146,21 @@ public class SlideShowDialogFragment extends DialogFragment implements View.OnCl
                 break;
             }
         }
+
+        returnToMap();
     }
 
     private void returnToMap() {
         NavigationDrawerActivity.currentFragment = "Mappa";
         NavigationDrawerActivity.uncheckAllNavigationItems();
-/*
-        FragmentManager manager = getFragmentManager();
-        Fragment frag= manager.findFragmentById(R.id.photo_fragment);
-            FragmentTransaction ft=manager.beginTransaction();
-            ft.detach(frag);
-            ft.commit();*/
-
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-
-        getActivity().getSupportFragmentManager().popBackStack();
-        this.dismiss();
-
 
         //Hide return to map button
         getActivity().invalidateOptionsMenu();
+
+        getFragmentManager().popBackStack();
+
+        this.dismiss();
+
     }
 
     //	adapter
