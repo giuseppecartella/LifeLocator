@@ -30,9 +30,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.contacts;
@@ -174,6 +177,22 @@ public class SplashActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
+    private void orderPhotosByDate() {
+        Collections.sort(photos, new Comparator<File>() {
+            @Override
+            public int compare(File o1, File o2) {
+                Date date1 = new Date(o1.lastModified());
+                //DateFormat dateFormat =DateFormat.getDateTimeInstance();
+                //lblDate.setText(dateFormat.format(date));
+                Date date2 = new Date(o2.lastModified());
+
+                if(date1.compareTo(date2) > 0) {
+                    return -1;
+                } else
+                    return 1;
+            }
+        });
+    }
 
     public void getPhotoPaths(File path,FilenameFilter filenameFilter){
         File[] tmp;
@@ -189,6 +208,8 @@ public class SplashActivity extends AppCompatActivity {
                     photos.add(tmp[i]);
             }
         }
+
+        orderPhotosByDate();
     }
 
     private void setUpDatabaseAndLaunchMainActivity() {

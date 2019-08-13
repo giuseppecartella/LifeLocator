@@ -185,14 +185,19 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(resource);
                 marker.setIcon(icon);
                 tmp++;
-                Log.e("FATTO", "Fatto: " + tmp);
+               // Log.e("FATTO", "Fatto: " + tmp);
+
             }
         });
     }
 
 
     private void setPhotoMarkers() {
+
+        ArrayList<Integer> vett = new ArrayList<Integer>();
+
         int newTag = 0; //I marker delle foto, per essere riconosciuti al click, avranno tag negativi
+
         for(File f : NavigationDrawerActivity.photos) {
             String filePath = f.getAbsolutePath();
 
@@ -203,18 +208,26 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 exifInterface.getLatLong(latlng);
 
                 if(latlng[0] != 0 || latlng[1] != 0) {
-                    Log.e("LATLNG", "Latitudine: " + latlng[0] + " Longitudine: " + latlng[1]);
-                    MapsFragment.newMarker = MapsFragment.mMap.addMarker(new MarkerOptions().position(new LatLng(latlng[0], latlng[1])));
+                    //Log.e("LATLNG", "Latitudine: " + latlng[0] + " Longitudine: " + latlng[1]);
+                    MapsFragment.newMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(latlng[0], latlng[1])));
                     MapsFragment.newMarker.setTag(--newTag);
-                    Log.e("TAG", "il tag e'" + newTag);
-                    loadMarkerIcon(MapsFragment.newMarker, f);
-               }
+                    vett.add((Integer) newMarker.getTag());
+                //  Log.e("TAG", "il tag e'" + newTag);
+                    loadMarkerIcon(newMarker, f);
+               } else {
+                    --newTag;
+                }
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
         }
+
+        for(Integer i: vett) {
+            Log.e("PROVA100", "i: " + i);
+        }
+
     }
 
 
@@ -299,6 +312,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         Integer tag = (Integer) marker.getTag();
         if (tag < 0)  { //Ho fatto il click su una foto, la gestisco separatamente
            showImage(tag);
+           //marker.setZIndex(1.0f);
+           Log.e("TAG CLICCATO: "," " + tag);
         return true;
     } else
         return false;

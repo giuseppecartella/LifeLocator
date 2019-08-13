@@ -111,7 +111,7 @@ public class SlideShowDialogFragment extends DialogFragment implements View.OnCl
         File image = NavigationDrawerActivity.photos.get(position);
         lblTitle.setText(image.getName());
         Date date = new Date(image.lastModified());
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        DateFormat dateFormat =DateFormat.getDateTimeInstance();
         lblDate.setText(dateFormat.format(date));
     }
 
