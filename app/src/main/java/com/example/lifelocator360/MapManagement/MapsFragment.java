@@ -33,6 +33,7 @@ import com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerAct
 import com.example.lifelocator360.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -58,6 +59,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     public static ArrayList<Marker> noteMarkers;
     public static ArrayList<Marker> contactMarkers;
     public static Marker newMarker;
+    private Integer tmp = 0;
+
 
     public boolean isGPSActive() {
         return GPSActive;
@@ -174,12 +177,15 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     private void loadMarkerIcon(final Marker marker, File file) {
         Uri imageUri = Uri.fromFile(file);
-        Glide.with(getActivity()).asBitmap().load(imageUri).apply(new RequestOptions().override(70, 70)).into(new SimpleTarget<Bitmap>() {
+        Glide.with(getActivity()).asBitmap().load(imageUri).apply(new RequestOptions().override(120, 120)).into(new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                resource =Bitmap.createBitmap(resource, (resource.getWidth() - 120) / 2,(resource.getHeight() - 120) / 2, 120, 120);
                 resource =  addMarkerBorder(resource, 6);
                 BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(resource);
                 marker.setIcon(icon);
+                tmp++;
+                Log.e("FATTO", "Fatto: " + tmp);
             }
         });
     }
