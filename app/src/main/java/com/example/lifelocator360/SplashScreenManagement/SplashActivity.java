@@ -70,6 +70,8 @@ public class SplashActivity extends AppCompatActivity {
     //e ad ogni richiesta fallita/eseguita decrementa di uno
     //quando vale zero il timer si ferma e parte la  nav drawer.
 
+    public static boolean locationPermissionInitial;
+
     private boolean isConnectionAvailable() {
         return connectionAvailable;
     }
@@ -219,7 +221,6 @@ public class SplashActivity extends AppCompatActivity {
         contacts = (ArrayList<Contact>) SplashActivity.appDataBase.daoManager().getContacts();
         notes = (ArrayList<Note>) SplashActivity.appDataBase.daoManager().getNote();
 
-
         Collections.sort(contacts, new Comparator<Contact>() {
             @Override
             public int compare(Contact o1, Contact o2) {
@@ -263,6 +264,7 @@ public class SplashActivity extends AppCompatActivity {
             }
         }
 
+        locationPermissionInitial = locationPermissionGranted();
 
         /////////////////////////////////////////
         timer = new Timer();

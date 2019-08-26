@@ -15,6 +15,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.lifelocator360.DataBaseManagement.Contact;
@@ -24,6 +25,7 @@ import com.example.lifelocator360.FragmentManagement.NotesFragment;
 import com.example.lifelocator360.FragmentManagement.PhotoFragment;
 import com.example.lifelocator360.MapManagement.MapsFragment;
 import com.example.lifelocator360.R;
+import com.example.lifelocator360.SplashScreenManagement.SplashActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -37,6 +39,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static com.example.lifelocator360.SplashScreenManagement.SplashActivity.locationPermissionInitial;
 
 
 public class NavigationDrawerActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, NotesFragment.NoteFragmentListener,ContactsFragment.ContactFragmentListener {
@@ -78,6 +82,28 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
 
         //Hide return to map button
         this.invalidateOptionsMenu();
+    }
+
+
+    public boolean locationPermissionGranted() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+            return true;
+        else
+            return false;
+    }
+
+    @Override
+    protected void onResume() {
+
+
+        if(locationPermissionGranted() != locationPermissionInitial) {
+            Log.e("PROVA", "arrivato");
+            final Intent intentSplashActivity = new Intent(this, SplashActivity.class);
+            startActivity(intentSplashActivity);
+            finish();
+        }
+
+        super.onResume();
     }
 
     @Override
