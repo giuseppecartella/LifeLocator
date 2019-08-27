@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
@@ -56,8 +57,7 @@ public class SlideShowDialogFragment extends DialogFragment implements View.OnCl
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_image_slider, container, false);
         viewPager = (ViewPager) v.findViewById(R.id.photo_view_pager);
         lblCount = (TextView) v.findViewById(R.id.photo_counter);
@@ -137,6 +137,8 @@ public class SlideShowDialogFragment extends DialogFragment implements View.OnCl
                     if(latlng[0] != 0 || latlng[1] != 0) {
                         MapsFragment.moveCamera(new LatLng(latlng[0], latlng[1]), ZOOM_TO_MARKER);
                         returnToMap();
+                    } else{
+                        Toast.makeText(getContext(),"Nessuna informazione sulla posizione",Toast.LENGTH_SHORT).show();
                     }
 
                 } catch (IOException e) {
@@ -146,8 +148,6 @@ public class SlideShowDialogFragment extends DialogFragment implements View.OnCl
                 break;
             }
         }
-
-        returnToMap();
     }
 
     private void returnToMap() {
@@ -159,7 +159,7 @@ public class SlideShowDialogFragment extends DialogFragment implements View.OnCl
 
         getFragmentManager().popBackStack();
 
-        this.dismiss();
+         this.dismiss();
 
     }
 

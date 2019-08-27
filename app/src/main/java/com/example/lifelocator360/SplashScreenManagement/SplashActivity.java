@@ -264,7 +264,6 @@ public class SplashActivity extends AppCompatActivity {
             }
         }
 
-        locationPermissionInitial = locationPermissionGranted();
 
         /////////////////////////////////////////
         timer = new Timer();
@@ -281,8 +280,7 @@ public class SplashActivity extends AppCompatActivity {
         };
         timer.scheduleAtFixedRate(timerTask, 20, 20);
 
-        //Ora accedo all'archivio dell'utente, e aggiorno il DB delle foto se ce ne sono di nuove/cancellate
-        //Solo se l'utente mi ha dato il permesso
+        //Ora accedo all'archivio dell'utente, solo se mi ha dato il permesso
         if(storagePermissionGranted()) {
 
             //Ottengo il path delle foto scattate con la fotocamera

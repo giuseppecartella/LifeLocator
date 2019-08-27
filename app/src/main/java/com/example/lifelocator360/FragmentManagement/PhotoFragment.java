@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity;
 import com.example.lifelocator360.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -24,6 +27,8 @@ public class PhotoFragment extends Fragment {
     private PhotoAdapter photoAdapter;
     private RecyclerView recyclerView;
     private View view;
+    private ImageView imageMissingPhotos;
+    private TextView textMissingPhotos;
 
 
     @Nullable
@@ -31,6 +36,9 @@ public class PhotoFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.fragment_photo, container, false);
+        imageMissingPhotos = view.findViewById(R.id.image_missing_photos);
+        textMissingPhotos = view.findViewById(R.id.text_missing_photos);
+
         recyclerView = view.findViewById(R.id.recycler_view_photo);
         //recyclerView.setHasFixedSize(true);
         photoAdapter = new PhotoAdapter(getContext(), photos);
@@ -58,6 +66,19 @@ public class PhotoFragment extends Fragment {
             }
         }));
 
+
+        updateMissingPhotosBackground();
         return view;
     }
+
+    public void updateMissingPhotosBackground() {
+        if (NavigationDrawerActivity.photos.isEmpty()) {
+            imageMissingPhotos.setVisibility(View.VISIBLE);
+            textMissingPhotos.setVisibility(View.VISIBLE);
+        } else {
+            imageMissingPhotos.setVisibility(View.INVISIBLE);
+            textMissingPhotos.setVisibility(View.INVISIBLE);
+        }
+    }
+
 }

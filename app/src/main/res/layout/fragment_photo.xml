@@ -21,8 +21,27 @@
             android:layout_height="wrap_content"
             android:id="@+id/recycler_view_photo"
             android:scrollbars="vertical"></androidx.recyclerview.widget.RecyclerView>
-
     </RelativeLayout>
+
+
+    <ImageView
+        android:id="@+id/image_missing_photos"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/ic_no_photo"
+        android:layout_gravity="center"
+        android:layout_marginBottom="90dp"/>
+
+    <TextView
+        android:id="@+id/text_missing_photos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nessuna foto da visualizzare"
+        android:textSize="20dp"
+        android:textStyle="italic"
+        android:textColor="@color/grayColor"
+        android:layout_gravity="center"
+        android:layout_marginTop="120dp"/>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

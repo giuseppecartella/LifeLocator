@@ -83,28 +83,8 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
         //Hide return to map button
         this.invalidateOptionsMenu();
     }
+    
 
-
-    public boolean locationPermissionGranted() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-            return true;
-        else
-            return false;
-    }
-
-    @Override
-    protected void onResume() {
-
-
-        if(locationPermissionGranted() != locationPermissionInitial) {
-            Log.e("PROVA", "arrivato");
-            final Intent intentSplashActivity = new Intent(this, SplashActivity.class);
-            startActivity(intentSplashActivity);
-            finish();
-        }
-
-        super.onResume();
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
