@@ -237,8 +237,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
         //Setto tutti i markers
         setPhotoMarkers();
-        //setNoteMarkers();
-        //setContactMarkers();
+        setNoteMarkers();
+        setContactMarkers();
 
         mMap.setOnMarkerClickListener((GoogleMap.OnMarkerClickListener) this);
 
