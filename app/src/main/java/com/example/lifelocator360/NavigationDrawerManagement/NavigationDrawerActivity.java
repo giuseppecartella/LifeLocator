@@ -40,8 +40,6 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.example.lifelocator360.SplashScreenManagement.SplashActivity.locationPermissionInitial;
-
 
 public class NavigationDrawerActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, NotesFragment.NoteFragmentListener,ContactsFragment.ContactFragmentListener {
     private DrawerLayout drawerLayout;

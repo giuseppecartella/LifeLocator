@@ -70,8 +70,6 @@ public class SplashActivity extends AppCompatActivity {
     //e ad ogni richiesta fallita/eseguita decrementa di uno
     //quando vale zero il timer si ferma e parte la  nav drawer.
 
-    public static boolean locationPermissionInitial;
-
     private boolean isConnectionAvailable() {
         return connectionAvailable;
     }
