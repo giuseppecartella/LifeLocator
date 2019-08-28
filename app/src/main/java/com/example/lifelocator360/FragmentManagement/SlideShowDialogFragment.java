@@ -136,6 +136,7 @@ public class SlideShowDialogFragment extends DialogFragment implements View.OnCl
 
                     if(latlng[0] != 0 || latlng[1] != 0) {
                         MapsFragment.moveCamera(new LatLng(latlng[0], latlng[1]), ZOOM_TO_MARKER);
+
                         returnToMap();
                     } else{
                         Toast.makeText(getContext(),"Nessuna informazione sulla posizione",Toast.LENGTH_SHORT).show();
