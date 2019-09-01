@@ -1,6 +1,5 @@
 <resources>
 
-
     <style name="AppTheme" parent="Theme.MaterialComponents.Light">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -23,7 +22,7 @@
         <item name="backgroundTint">@color/colorAccent</item>
     </style>
     <style name="Widget.MyApp.MyButton" parent="Widget.MaterialComponents.Button.TextButton">
-        <item name="android:textColor">@color/colorAccent</item>
+       <item name="android:textColor">@color/selector_button_disabled</item>
     </style>
 
 <!--
