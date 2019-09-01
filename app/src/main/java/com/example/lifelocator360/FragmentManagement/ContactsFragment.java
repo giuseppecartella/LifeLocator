@@ -315,22 +315,6 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
     }
 
     private void updateContact(String name,String surname,String phone,String address,String lat,String lng) {
-       /* Contact contact = new Contact();
-        contact.setId(NavigationDrawerActivity.contacts.get(position).getId());
-        contact.setName(name.getText().toString());
-        contact.setSurname(surname.getText().toString());
-        contact.setPhone(phone.getText().toString());
-        contact.setAddress(address.getText().toString());
-
-        NavigationDrawerActivity.contacts.remove(position);
-        contactsAdapter.notifyItemRemoved(position);
-
-        position = getNewContactIndex(NavigationDrawerActivity.contacts, contact);
-        NavigationDrawerActivity.contacts.add(position, contact);
-        contactsAdapter.notifyItemInserted(position);
-
-        SplashActivity.appDataBase.daoManager().updateContact(contact);*/
-
         Contact contact = new Contact();
         contact.setId(NavigationDrawerActivity.contacts.get(oldIndex).getId());
         contact.setName(name);

@@ -36,7 +36,7 @@
         android:id="@+id/text_missing_photos"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Nessuna foto da visualizzare"
+        android:text="Nessuna foto"
         android:textSize="20dp"
         android:textStyle="italic"
         android:textColor="@color/grayColor"

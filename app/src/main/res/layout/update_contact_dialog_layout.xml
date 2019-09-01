@@ -1,10 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/contact_info_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layout_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nome"
+        app:boxStrokeColor="@color/colorPrimary"
+        android:layout_margin="10dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/update_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nome"
+            android:inputType="textCapWords"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layout_surname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_name"
+        android:hint="Cognome"
+        app:boxStrokeColor="@color/colorPrimary"
+        android:layout_margin="10dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/update_surname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Cognome"
+            android:inputType="textCapWords"
+            android:layout_below="@id/edit_name"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layout_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_surname"
+        android:hint="Telefono"
+        app:boxStrokeColor="@color/colorPrimary"
+        android:layout_margin="10dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/update_phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Telefono"
+            android:inputType="textCapWords"
+            android:layout_below="@id/edit_surname"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layout_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_phone"
+        android:hint="Indirizzo"
+        app:boxStrokeColor="@color/colorPrimary"
+        android:layout_margin="10dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/update_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Indirizzo"
+            android:inputType="textCapWords"
+            android:layout_below="@id/edit_phone"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+<!--
     <EditText
         android:id="@+id/update_name"
         android:layout_width="match_parent"
@@ -48,5 +131,5 @@
         android:layout_marginLeft="15dp"
         android:layout_marginTop="15dp"
         android:hint="Indirizzo" />
-
+-->
 </RelativeLayout>

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    android:id="@+id/contact_fragment"
+<androidx.coordinatorlayout.widget.CoordinatorLayout android:id="@+id/contact_fragment"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".NavigationDrawerManagement.NavigationDrawerActivity"
-    android:background="@android:color/white">
+    android:background="@android:color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -30,7 +30,7 @@
         android:id="@+id/text_missing_contacts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Nessun contatto da visualizzare"
+        android:text="Nessun contatto"
         android:textSize="20dp"
         android:textStyle="italic"
         android:textColor="@color/grayColor"
@@ -45,6 +45,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_person"
-        android:background="@color/colorAccent"/>
+        android:background="@color/colorAccent"
+        app:backgroundTint="@color/colorAccent"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
