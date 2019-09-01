@@ -14,8 +14,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -388,27 +390,47 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
         updateTextNoteText.setText(NavigationDrawerActivity.notes.get(index).getText());
 
         builder.setView(view)
-                .setTitle("Modifica nota")
-                .setPositiveButton("SALVA", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        onUpdateClicked(index, updateTextName, updateTextPosition, updateTextNoteText);
-                    }
-                })
-                .setNegativeButton("MAPPA", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                            showNoteInMap(NavigationDrawerActivity.notes.get(index).getLatitude(),NavigationDrawerActivity.notes.get(index).getLongitude());
-                    }
-                })
-                .setNeutralButton("ELIMINA", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        safeDeleteDialog(index);
-                    }
-                });
+                .setTitle("Modifica nota");
+
         noteInfoDialog = builder.create();
+
+        noteInfoDialog.setButton(AlertDialog.BUTTON_POSITIVE, "SALVA", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                onUpdateClicked(index, updateTextName, updateTextPosition, updateTextNoteText);
+                dialog.dismiss();
+            }
+        });
+
+        noteInfoDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "MAPPA", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                showNoteInMap(NavigationDrawerActivity.notes.get(index).getLatitude(),NavigationDrawerActivity.notes.get(index).getLongitude());
+                dialog.dismiss();
+            }
+        });
+
+        noteInfoDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "ELIMINA", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                safeDeleteDialog(index);
+                dialog.dismiss();
+            }
+        });
+
+
+        noteInfoDialog.show();
+
+        Button buttonPositive = noteInfoDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        Button buttonNegative = noteInfoDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        Button buttonNeutral = noteInfoDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) buttonPositive.getLayoutParams();
+        layoutParams.weight = 10;
+        buttonPositive.setLayoutParams(layoutParams);
+        buttonNegative.setLayoutParams(layoutParams);
+        buttonNeutral.setLayoutParams(layoutParams);
+
         noteInfoDialog.show();
         oldIndex = index;
         isNewNote = false;

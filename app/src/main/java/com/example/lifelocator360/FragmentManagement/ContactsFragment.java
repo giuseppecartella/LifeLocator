@@ -14,8 +14,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -492,28 +494,47 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
 
 
         builder.setView(view)
-                .setTitle("Scheda contatto")
-                .setNeutralButton("ELIMINA", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        safeDeleteDialog(index);
-                    }
-                })
-                .setNegativeButton("MAPPA", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                       showContactInMap(NavigationDrawerActivity.contacts.get(index).getLatitude(),NavigationDrawerActivity.contacts.get(index).getLongitude());
-                    }
-                })
-                .setPositiveButton("MODIFICA", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        updateContactDialog(index);
-                    }
-                });
+                .setTitle("Scheda contatto");
 
         contactInfoDialog = builder.create();
+
+        contactInfoDialog.setButton(AlertDialog.BUTTON_POSITIVE, "MODIFICA", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                updateContactDialog(index);
+                dialog.dismiss();
+            }
+        });
+
+        contactInfoDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "MAPPA", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                showContactInMap(NavigationDrawerActivity.contacts.get(index).getLatitude(),NavigationDrawerActivity.contacts.get(index).getLongitude());
+                dialog.dismiss();
+            }
+        });
+
+        contactInfoDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "ELIMINA", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                safeDeleteDialog(index);
+                dialog.dismiss();
+            }
+        });
+
+
         contactInfoDialog.show();
+
+        Button buttonPositive = contactInfoDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        Button buttonNegative = contactInfoDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        Button buttonNeutral = contactInfoDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) buttonPositive.getLayoutParams();
+        layoutParams.weight = 10;
+        buttonPositive.setLayoutParams(layoutParams);
+        buttonNegative.setLayoutParams(layoutParams);
+        buttonNeutral.setLayoutParams(layoutParams);
+
         oldIndex = index;
         isNewContact = false;
 
@@ -523,11 +544,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         address = NavigationDrawerActivity.contacts.get(index).getAddress();
 
 
-        Log.d("OLDINDEX", "vale " + oldIndex);
-
         String latStatus = NavigationDrawerActivity.contacts.get(index).getLatitude();
-        Log.d("prova","latitude vale"+latStatus);
-
 
         if (latStatus.equals("NO_ADDRESS") || latStatus.equals("NO_RESULT")) {
             contactInfoDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
