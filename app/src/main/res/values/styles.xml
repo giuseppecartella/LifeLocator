@@ -18,18 +18,9 @@
     </style>
 
 
-    <style name="Widget.MyApp.MyButton.FloatingButton" parent="Widget.MaterialComponents.FloatingActionButton">
-        <item name="backgroundTint">@color/colorAccent</item>
-    </style>
     <style name="Widget.MyApp.MyButton" parent="Widget.MaterialComponents.Button.TextButton">
        <item name="android:textColor">@color/selector_button_disabled</item>
     </style>
-
-<!--
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>-->
 
 </resources>
 

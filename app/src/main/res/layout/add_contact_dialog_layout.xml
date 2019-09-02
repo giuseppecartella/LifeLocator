@@ -19,7 +19,6 @@
             android:id="@+id/edit_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nome"
             android:drawableLeft="@drawable/ic_person_info"
             android:inputType="textCapWords"/>
     </com.google.android.material.textfield.TextInputLayout>
@@ -40,7 +39,6 @@
             android:id="@+id/edit_surname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Cognome"
             android:inputType="textCapWords"
             android:drawableLeft="@drawable/ic_person_info"
             android:layout_below="@id/edit_name"
@@ -63,7 +61,6 @@
             android:id="@+id/edit_phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Telefono"
             android:inputType="phone"
             android:drawableLeft="@drawable/ic_phone"
             android:layout_below="@id/edit_surname"
@@ -86,7 +83,6 @@
             android:id="@+id/edit_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Indirizzo"
             android:inputType="textCapWords"
             android:drawableLeft="@drawable/ic_place"
             android:layout_below="@id/edit_phone"
