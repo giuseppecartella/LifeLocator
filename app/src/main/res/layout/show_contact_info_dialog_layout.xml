@@ -12,7 +12,9 @@
         android:layout_marginLeft="15dp"
         android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
+        android:drawableLeft="@drawable/ic_person_info"
         android:hint="Nessun nome" />
+
 
     <TextView
         android:id="@+id/text_surname"
@@ -24,6 +26,7 @@
         android:layout_marginLeft="15dp"
         android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
+        android:drawableLeft="@drawable/ic_person_info"
         android:hint="Nessun cognome" />
 
     <TextView
@@ -36,6 +39,7 @@
         android:layout_marginLeft="15dp"
         android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
+        android:drawableLeft="@drawable/ic_phone"
         android:hint="Nessun cellulare" />
 
     <TextView
@@ -48,5 +52,6 @@
         android:layout_marginLeft="15dp"
         android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
+        android:drawableLeft="@drawable/ic_place"
         android:hint="Nessun indrizzo" />
 </RelativeLayout>
