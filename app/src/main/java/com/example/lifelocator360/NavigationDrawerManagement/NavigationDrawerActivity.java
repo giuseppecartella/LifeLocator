@@ -290,6 +290,8 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
 
                 break;*/
 
+                //NB: SE SI AGGIUNGONO ALTRE COSE AL NAV DRAWER L INDICE DELLA MAIL NON SARA PIU 3 MA CAMBIA
+                //IN BASE ALLA POSIZIONE IN CUI ANDIAMO A REINSERIRLA
             case R.id.nav_send_email:
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                         "mailto","cartellagiuseppe@hotmail.it", null));
