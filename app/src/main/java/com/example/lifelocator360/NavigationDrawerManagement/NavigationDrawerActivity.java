@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -288,11 +289,18 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
                 this.invalidateOptionsMenu();
 
                 break;*/
+
+            case R.id.nav_send_email:
+                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                        "mailto","cartellagiuseppe@hotmail.it", null));
+                navigationView.getMenu().getItem(3).setCheckable(false);
+                startActivity(Intent.createChooser(emailIntent, "Send email..."));
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
+
 
     @Override
     public void onBackPressed() {

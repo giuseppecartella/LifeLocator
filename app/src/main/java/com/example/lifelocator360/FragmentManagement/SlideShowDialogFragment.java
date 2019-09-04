@@ -25,6 +25,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.lifelocator360.MapManagement.MapsFragment;
 import com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity;
 import com.example.lifelocator360.R;
+import com.github.chrisbanes.photoview.PhotoView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -178,9 +179,9 @@ public class SlideShowDialogFragment extends DialogFragment implements View.OnCl
             layoutInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View view = layoutInflater.inflate(R.layout.image_full_screen_preview, container, false);
 
-            ImageView imageViewPreview = (ImageView) view.findViewById(R.id.image_preview);
+            //class from github library
+            PhotoView photoViewPreview = (PhotoView) view.findViewById(R.id.image_preview);
 
-            File image = NavigationDrawerActivity.photos.get(position);
 
             File file = NavigationDrawerActivity.photos.get(position);
 
@@ -189,10 +190,9 @@ public class SlideShowDialogFragment extends DialogFragment implements View.OnCl
                     .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
                     .thumbnail(0.5f)
                     .transition(withCrossFade())
-                    .into(imageViewPreview);
+                    .into(photoViewPreview);
 
             container.addView(view);
-
             return view;
         }
 

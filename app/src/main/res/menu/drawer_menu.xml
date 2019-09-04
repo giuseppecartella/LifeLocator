@@ -41,4 +41,12 @@
             android:title="@string/menu_settings" />
     </group>-->
 
+    <group>
+        <item
+            android:id="@+id/nav_send_email"
+            android:icon="@drawable/ic_email"
+            android:checkable="true"
+            android:title="@string/menu_send_email" />
+    </group>
+
 </menu>
