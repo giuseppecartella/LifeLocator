@@ -294,7 +294,7 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
                 //IN BASE ALLA POSIZIONE IN CUI ANDIAMO A REINSERIRLA
             case R.id.nav_send_email:
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                        "mailto","cartellagiuseppe@hotmail.it", null));
+                        "mailto","locator.development@gmail.com", null));
                 navigationView.getMenu().getItem(3).setCheckable(false);
                 startActivity(Intent.createChooser(emailIntent, "Send email..."));
         }
