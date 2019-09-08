@@ -67,18 +67,7 @@ public class PhotoFragment extends Fragment {
         }));
 
 
-        updateMissingPhotosBackground();
+        UISupport.updateBackground(photos,textMissingPhotos,imageMissingPhotos);
         return view;
     }
-
-    public void updateMissingPhotosBackground() {
-        if (NavigationDrawerActivity.photos.isEmpty()) {
-            imageMissingPhotos.setVisibility(View.VISIBLE);
-            textMissingPhotos.setVisibility(View.VISIBLE);
-        } else {
-            imageMissingPhotos.setVisibility(View.INVISIBLE);
-            textMissingPhotos.setVisibility(View.INVISIBLE);
-        }
-    }
-
 }

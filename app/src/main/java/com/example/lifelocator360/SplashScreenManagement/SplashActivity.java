@@ -48,40 +48,77 @@ import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDr
 public class SplashActivity extends AppCompatActivity {
 
     /**
-     * Variabile to check if connection is available or not
+     * The tag of SplashActivity
      */
-    private boolean connectionAvailable;
-
-    //Servono per controllare google play services
     private static final String TAG = "SplashActivity";
     private static final int ERROR_DIALOG_REQUEST = 9001;
 
-    //Servono per gestire i permessi
-    final private int ALL_PERMISSION_CODE = 1;
+    /**
+     * The name of the local database
+     */
+    public static final String DBNAME = "APP_DB";
 
-    //Variabili per la gestione del Data Base
+    /**
+     * The variable keep trace
+     * of the number of requests
+     * that must be done.
+     * When the value is 0 timer stops and
+     * NavigationDrawerActivity starts.
+     */
+    private static int numNoInternet = 0;
+
+    /**
+     * Code to manage all permissions
+     */
+     private final int ALL_PERMISSION_CODE = 1;
+
+    /**
+     * The database used to
+     * store contacts and notes
+     */
     public static AppDataBase appDataBase;
-    public static String DBName = "APP_DB";
+
+    /**
+     * The variable is used to check
+     * if connection is available or not
+     */
+    private boolean connectionAvailable;
+
+    /**
+     * The string contains the concatenated
+     * information of a contact
+     * in order to make an easier sorting
+     */
     private String allInformationO1;
     private String allInformationO2;
+
+    /**
+     * It checks the value of numNoInternet
+     * variable. When the value is 0, it stops.
+     */
     private Timer timer;
     private TimerTask timerTask;
-    private static int numNoInternet = 0;  //variabili che all inizio vale il num di nointernet
-    //e ad ogni richiesta fallita/eseguita decrementa di uno
-    //quando vale zero il timer si ferma e parte la  nav drawer.
 
+
+    /**
+     * @return The actual status of connection
+     */
     private boolean isConnectionAvailable() {
         return connectionAvailable;
     }
 
+    /**
+     * Set the new status of connection
+     * @param connectionAvailable
+     *        The status of connection
+     */
     public void setConnectionAvailable(boolean connectionAvailable) {
-
         this.connectionAvailable = checkNetworkConnectionStatus();
     }
 
 
     /**
-     *
+     * Calls to the connectivity service
      * @return true if connection is available,false if not
      */
     private boolean checkNetworkConnectionStatus() {
@@ -94,7 +131,11 @@ public class SplashActivity extends AppCompatActivity {
             return false;
     }
 
-    //Funzione per controllare google play services
+    /**
+     * Check if google play services
+     * are available
+     * @return true if services are available,false if not
+     */
     public boolean isServicesOK() {
         Log.d(TAG, "isServicesOK: checking google services version");
 
@@ -130,6 +171,10 @@ public class SplashActivity extends AppCompatActivity {
         return false;
     }
 
+    /**
+     * Check if user granted storage permission
+     * @return true if permission is granted, false if not
+     */
     public boolean storagePermissionGranted() {
         if (ContextCompat.checkSelfPermission(SplashActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
             return true;
@@ -137,6 +182,11 @@ public class SplashActivity extends AppCompatActivity {
             return false;
     }
 
+
+    /**
+     * Check if user granted lccation permission
+     * @return true if permission is granted, false if not
+     */
     public boolean locationPermissionGranted() {
         if (ContextCompat.checkSelfPermission(SplashActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             return true;
@@ -144,6 +194,10 @@ public class SplashActivity extends AppCompatActivity {
             return false;
     }
 
+    /**
+     * Check if all permissions were granted
+     * before NavigationDrawerActivity starts
+     */
     public void checkPermissionsSetUpDatabaseAndLauchMainActivity() {
         if (!storagePermissionGranted() || !locationPermissionGranted()) {
             Log.d(TAG, "Requesting permissions");
@@ -154,6 +208,10 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Build an alert dialog
+     * if connection is not available
+     */
     private void createAlertDialogNoConnection() {
         final Intent intentSplash = new Intent(this, SplashActivity.class);
 
@@ -177,13 +235,16 @@ public class SplashActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
+    /**
+     * Order photos by date of creation
+     * If the user copies a photo in DCIM directory,
+     * date of creation changes
+     */
     private void orderPhotosByDate() {
         Collections.sort(photos, new Comparator<File>() {
             @Override
             public int compare(File o1, File o2) {
                 Date date1 = new Date(o1.lastModified());
-                //DateFormat dateFormat =DateFormat.getDateTimeInstance();
-                //lblDate.setText(dateFormat.format(date));
                 Date date2 = new Date(o2.lastModified());
 
                 if(date1.compareTo(date2) > 0) {
@@ -194,6 +255,13 @@ public class SplashActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Get absolute paths of photos
+     * @param path
+     *        The absolute path of the file
+     * @param filenameFilter
+     *        Filter that selects only .jpg or . jpeg files
+     */
     public void getPhotoPaths(File path,FilenameFilter filenameFilter){
         File[] tmp;
 
@@ -213,9 +281,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void setUpDatabaseAndLaunchMainActivity() {
-        //A questo punto posso creare il db (spostare in una funzione!)
-        appDataBase = Room.databaseBuilder(getApplicationContext(), AppDataBase.class, DBName).allowMainThreadQueries().build();
-        //prendo dal database i dati necessari
+        appDataBase = Room.databaseBuilder(getApplicationContext(), AppDataBase.class, DBNAME).allowMainThreadQueries().build();
         contacts = (ArrayList<Contact>) SplashActivity.appDataBase.daoManager().getContacts();
         notes = (ArrayList<Note>) SplashActivity.appDataBase.daoManager().getNote();
 
@@ -236,7 +302,7 @@ public class SplashActivity extends AppCompatActivity {
             }
         });
 
-        /////////////////////////////////////////
+
         for (Note n : notes) {
             if (n.getLatitude().equals("NO_INTERNET")) {
                 numNoInternet++;
@@ -249,7 +315,7 @@ public class SplashActivity extends AppCompatActivity {
             }
         }
 
-        //ATTENZIONE PASSIAMO L ID E NON INDEX COSI SONO SICURO CHE SIA PER LE NOTE CHE EPR I CONTATTI CE CORRISPONDENZA CON IL DATABASE
+        //ATTENZIONE SI PASSA L'ID E NON INDEX COSI SIA PER LE NOTE CHE PER I CONTATTI C'E' CORRISPONDENZA CON IL DATABASE
         for (int i = 0; i < notes.size(); ++i) {
             if (notes.get(i).getLatitude().equals("NO_INTERNET")) {
                 new GetCoordinates().execute(notes.get(i).getPosition().replace(" ", "+"), Integer.toString(notes.get(i).getId()), Integer.toString(i), "NOTE");
@@ -263,7 +329,6 @@ public class SplashActivity extends AppCompatActivity {
         }
 
 
-        /////////////////////////////////////////
         timer = new Timer();
         timerTask = new TimerTask() {
             @Override
@@ -278,10 +343,8 @@ public class SplashActivity extends AppCompatActivity {
         };
         timer.scheduleAtFixedRate(timerTask, 20, 20);
 
-        //Ora accedo all'archivio dell'utente, solo se mi ha dato il permesso
-        if(storagePermissionGranted()) {
 
-            //Ottengo il path delle foto scattate con la fotocamera
+        if(storagePermissionGranted()) {
             File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
             photos = new ArrayList<File>();
 
@@ -304,11 +367,7 @@ public class SplashActivity extends AppCompatActivity {
 
             getPhotoPaths(path,photoFilter);
             Log.d("FINITO", "finito, trovati " + photos.size() + " elementi");
-
-            //Ora ho in photos tutti i path AGGIORNATI dalla libreria del telefono
-
         } else {
-            //L'utente mi ha negato i permessi, il vettore è vuoto
             photos = new ArrayList<File>();
         }
 
@@ -460,5 +519,4 @@ public class SplashActivity extends AppCompatActivity {
             }
         }
     }
-
 }

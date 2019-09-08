@@ -37,6 +37,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.ZOOM_TO_MARKER;
+import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.notes;
 
 public class NotesFragment extends Fragment implements View.OnClickListener {
     private RecyclerView recyclerView;
@@ -95,18 +96,9 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
-    public void updateMissingNotesBackground() {
-        if (NavigationDrawerActivity.notes.isEmpty()) {
-            imageMissingNote.setVisibility(View.VISIBLE);
-            textMissingNote.setVisibility(View.VISIBLE);
-        } else {
-            imageMissingNote.setVisibility(View.INVISIBLE);
-            textMissingNote.setVisibility(View.INVISIBLE);
-        }
-    }
 
     public void showNotes() {
-        updateMissingNotesBackground();
+        UISupport.updateBackground(notes,textMissingNote,imageMissingNote);
         //setto il recycler view
         recyclerView = view.findViewById(R.id.recyclerViewNotes);
 
@@ -171,7 +163,7 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
         NavigationDrawerActivity.notes.get(index).setId(noteIds[noteIds.length - 1]);
 
         notesAdapter.notifyItemInserted(index);
-        updateMissingNotesBackground();
+        UISupport.updateBackground(notes,textMissingNote,imageMissingNote);
 
         Log.d("richiesta", "Salvataggio con coordinate dal save note");
 
@@ -311,7 +303,7 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
         NavigationDrawerActivity.notes.clear();
         SplashActivity.appDataBase.daoManager().deleteAllNotes();
         notesAdapter.notifyDataSetChanged();
-        updateMissingNotesBackground();
+        UISupport.updateBackground(notes,textMissingNote,imageMissingNote);
 
         noteFragmentListener.onInputNoteSent("DELETE_ALL", "DELETE_ALL", "DELETE_ALL", "DELETE_ALL", -1);
     }
@@ -354,7 +346,7 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
         NavigationDrawerActivity.notes.remove(index);
         SplashActivity.appDataBase.daoManager().deleteNote(note);
         notesAdapter.notifyItemRemoved(index);
-        updateMissingNotesBackground();
+        UISupport.updateBackground(notes,textMissingNote,imageMissingNote);
         noteFragmentListener.onInputNoteSent("DELETING", "DELETING", "DELETE", name, index);
     }
 

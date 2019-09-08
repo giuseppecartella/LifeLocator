@@ -38,6 +38,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.ZOOM_TO_MARKER;
+import static com.example.lifelocator360.NavigationDrawerManagement.NavigationDrawerActivity.contacts;
 
 public class ContactsFragment extends Fragment implements View.OnClickListener {
     private RecyclerView recyclerView;
@@ -109,18 +110,9 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
-    public void updateMissingContactsBackground() {
-        if (NavigationDrawerActivity.contacts.isEmpty()) {
-            imageMissingContacts.setVisibility(View.VISIBLE);
-            textMissingContacts.setVisibility(View.VISIBLE);
-        } else {
-            imageMissingContacts.setVisibility(View.INVISIBLE);
-            textMissingContacts.setVisibility(View.INVISIBLE);
-        }
-    }
 
     public void showContacts() {
-        updateMissingContactsBackground();
+        UISupport.updateBackground(contacts,textMissingContacts,imageMissingContacts);
 
         //setto il recycler view
         recyclerView = view.findViewById(R.id.recyclerView);
@@ -229,7 +221,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
             NavigationDrawerActivity.contacts.get(index).setId(contactIds[contactIds.length - 1]);
 
             contactsAdapter.notifyItemInserted(index);
-            updateMissingContactsBackground();
+            UISupport.updateBackground(contacts,textMissingContacts,imageMissingContacts);
 
         Log.d("richiesta", "Salvataggio con coordinate dal save contact");
 
@@ -373,7 +365,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         NavigationDrawerActivity.contacts.clear();
         SplashActivity.appDataBase.daoManager().deleteAllContacts();
         contactsAdapter.notifyDataSetChanged();
-        updateMissingContactsBackground();
+        UISupport.updateBackground(contacts,textMissingContacts,imageMissingContacts);
 
         contactFragmentListener.onInputContactSent("DELETE_ALL","DELETE_ALL","DELETE_ALL","DELETE_ALL",-1);
     }
@@ -405,7 +397,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         NavigationDrawerActivity.contacts.remove(index);
         SplashActivity.appDataBase.daoManager().deleteContact(contact);
         contactsAdapter.notifyItemRemoved(index);
-        updateMissingContactsBackground();
+        UISupport.updateBackground(contacts,textMissingContacts,imageMissingContacts);
 
         contactFragmentListener.onInputContactSent("DELETING", "DELETING", "DELETE", name + " " + surname, id);
     }
