@@ -5,7 +5,7 @@
 
     <item android:drawable="@drawable/logo_per_splash"
             android:gravity="center"
-             android:height="560dp"
-        android:width="311dp"/>
+             android:height="448dp"
+        android:width="248.8dp"/>
 
 </layer-list>
