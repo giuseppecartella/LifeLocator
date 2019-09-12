@@ -3,9 +3,9 @@
     <item
         android:drawable="@android:color/white"/>
 
-    <item android:drawable="@drawable/logo_foreground"
+    <item android:drawable="@drawable/logo_per_splash"
             android:gravity="center"
-             android:height="225dp"
-        android:width="200dp"/>
+             android:height="560dp"
+        android:width="311dp"/>
 
 </layer-list>
