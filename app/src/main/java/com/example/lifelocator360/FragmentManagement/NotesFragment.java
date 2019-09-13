@@ -345,6 +345,7 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+
     private void deleteNote(int index) {
         Integer id = NavigationDrawerActivity.notes.get(index).getId();
         Note note = new Note();
