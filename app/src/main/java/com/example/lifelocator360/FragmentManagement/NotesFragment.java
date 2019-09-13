@@ -256,26 +256,32 @@ public class NotesFragment extends Fragment implements View.OnClickListener {
         note.setLatitude(lat);
         note.setLongitude(lng);
 
-        Log.d("updatenote: ", NavigationDrawerActivity.notes.get(oldIndex).getId() + name + position + textNote + lat + lng);
+        if(!name.isEmpty() || !position.isEmpty() || !textNote.isEmpty()) {
 
-        NavigationDrawerActivity.notes.remove(oldIndex);
-        notesAdapter.notifyItemRemoved(oldIndex);
+            Log.d("updatenote: ", NavigationDrawerActivity.notes.get(oldIndex).getId() + name + position + textNote + lat + lng);
 
-        NavigationDrawerActivity.notes.add(oldIndex, note);
-        notesAdapter.notifyItemInserted(oldIndex);
-        SplashActivity.appDataBase.daoManager().updateNote(note);
+            NavigationDrawerActivity.notes.remove(oldIndex);
+            notesAdapter.notifyItemRemoved(oldIndex);
 
-        //Eventualmente sposto il marker
-        if (note.getLatitude().equals("NO_INTERNET") || note.getLatitude().equals("NO_ADDRESS") || note.getLatitude().equals("NO_RESULT")) {
-            noteFragmentListener.onInputNoteSent("REMOVE_MARKER", "REMOVE_MARKER", "DELETE", name, oldIndex);
-            Log.d("richiesta", "aggiornata nota con errore: " + note.getLatitude());
+            NavigationDrawerActivity.notes.add(oldIndex, note);
+            notesAdapter.notifyItemInserted(oldIndex);
+            SplashActivity.appDataBase.daoManager().updateNote(note);
+
+            //Eventualmente sposto il marker
+            if (note.getLatitude().equals("NO_INTERNET") || note.getLatitude().equals("NO_ADDRESS") || note.getLatitude().equals("NO_RESULT")) {
+                noteFragmentListener.onInputNoteSent("REMOVE_MARKER", "REMOVE_MARKER", "DELETE", name, oldIndex);
+                Log.d("richiesta", "aggiornata nota con errore: " + note.getLatitude());
+            } else {
+                Log.d("richiesta", "aggiornata nota con coordinate: " + note.getLatitude() + " " + note.getLongitude());
+
+                //Invio i dati alla mappa tramite il navigation drawer
+                String inputLatitude = note.getLatitude();
+                String inputLongitude = note.getLongitude();
+                noteFragmentListener.onInputNoteSent(inputLatitude, inputLongitude, "UPDATE", name, oldIndex);
+            }
+
         } else {
-            Log.d("richiesta", "aggiornata nota con coordinate: " + note.getLatitude() + " " + note.getLongitude());
-
-            //Invio i dati alla mappa tramite il navigation drawer
-            String inputLatitude = note.getLatitude();
-            String inputLongitude = note.getLongitude();
-            noteFragmentListener.onInputNoteSent(inputLatitude, inputLongitude, "UPDATE", name, oldIndex);
+            deleteNote(oldIndex);
         }
 
     }

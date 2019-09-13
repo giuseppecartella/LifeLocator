@@ -316,29 +316,32 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         contact.setLatitude(lat);
         contact.setLongitude(lng);
 
-        NavigationDrawerActivity.contacts.remove(oldIndex);
-        contactsAdapter.notifyItemRemoved(oldIndex);
+        if(!name.isEmpty() || !surname.isEmpty() || !phone.isEmpty() || !address.isEmpty()) {
 
-        Integer newIndex = getNewContactIndex(NavigationDrawerActivity.contacts, contact);
-        NavigationDrawerActivity.contacts.add(newIndex, contact);
+            NavigationDrawerActivity.contacts.remove(oldIndex);
+            contactsAdapter.notifyItemRemoved(oldIndex);
 
-        SplashActivity.appDataBase.daoManager().updateContact(contact);
-        contactsAdapter.notifyItemInserted(newIndex);
+            Integer newIndex = getNewContactIndex(NavigationDrawerActivity.contacts, contact);
+            NavigationDrawerActivity.contacts.add(newIndex, contact);
 
-        //Eventualmente sposto il marker
-        if (contact.getLatitude().equals("NO_INTERNET") || contact.getLatitude().equals("NO_ADDRESS") || contact.getLatitude().equals("NO_RESULT")) {
-            contactFragmentListener.onInputContactSent("REMOVE_MARKER", "REMOVE_MARKER", "DELETE",  name + " " + surname,contact.getId());
-            Log.d("richiesta", "aggiornato contatto con errore: " + contact.getLatitude());
-        } else {
-            Log.d("richiesta", "aggiornato contatto con coordinate: " + contact.getLatitude() + " " + contact.getLongitude());
+            SplashActivity.appDataBase.daoManager().updateContact(contact);
+            contactsAdapter.notifyItemInserted(newIndex);
 
-            //Invio i dati alla mappa tramite il navigation drawer
-            String inputLatitude = contact.getLatitude();
-            String inputLongitude = contact.getLongitude();
-            contactFragmentListener.onInputContactSent(inputLatitude, inputLongitude, "UPDATE", name + " " + surname, contact.getId());
-        }
+            //Eventualmente sposto il marker
+            if (contact.getLatitude().equals("NO_INTERNET") || contact.getLatitude().equals("NO_ADDRESS") || contact.getLatitude().equals("NO_RESULT")) {
+                contactFragmentListener.onInputContactSent("REMOVE_MARKER", "REMOVE_MARKER", "DELETE", name + " " + surname, contact.getId());
+                Log.d("richiesta", "aggiornato contatto con errore: " + contact.getLatitude());
+            } else {
+                Log.d("richiesta", "aggiornato contatto con coordinate: " + contact.getLatitude() + " " + contact.getLongitude());
 
+                //Invio i dati alla mappa tramite il navigation drawer
+                String inputLatitude = contact.getLatitude();
+                String inputLongitude = contact.getLongitude();
+                contactFragmentListener.onInputContactSent(inputLatitude, inputLongitude, "UPDATE", name + " " + surname, contact.getId());
+            }
 
+        } else
+            deleteContact(oldIndex);
 
     }
 
